@@ -1,0 +1,109 @@
+[
+  {
+      "name": "Cisco",
+      "aliases": ["[Cc]iscoSystems"],
+      "type": "networking",
+      "default_os": "IOS",
+      "default_prompt": ">\\s*$",
+      "enable_prompt": "(?:(?!\\)).)#\\s*$",
+      "operation_systems":
+      [
+          {
+              "name": "IOS",
+              "aliases": ["CAT[ -]?OS", "IOS[ -]?X?[E]?"],
+              "multi_models": true,
+              "default_model": "switch",
+              "models_map": [
+                  {
+                      "model": "switch",
+                      "aliases": ["[Cc]atalyst", "C2950"]
+                  },
+                  {
+                      "model": "router",
+                      "aliases": ["IOS[ -]?X?[E]?"]
+                  }
+              ],
+              "families": {
+                  "switch": {
+                      "family_name": "Switch",
+                      "model_name": "Cisco IOS Switch"
+                  },
+                  "router": {
+                      "family_name": "Router",
+                      "model_name": "Cisco IOS Router"
+                  }
+              },
+              "first_gen": {
+                  "driver_name": "Generic Cisco IOS Driver Version3"
+              },
+              "second_gen": {
+                  "switch": {
+                      "driver_name": "Generic Cisco IOS Switch Driver Version3"
+                  },
+                  "router": {
+                      "driver_name": "Generic Cisco IOS Router Driver Version3"
+                  }
+              }
+          },
+          {
+              "name": "NXOS",
+              "aliases": ["NX[ -]?OS", "NXOS"],
+              "multi_models": false,
+              "default_model": "switch",
+              "families": {
+                  "switch": {
+                      "family_name": "Switch",
+                      "model_name": "Cisco NXOS Switch"
+                  }
+              },
+              "first_gen": {
+                  "driver_name": "Generic Cisco NXOS Driver Version2"
+              },
+              "second_gen": {
+                  "switch": {
+                      "driver_name": "Generic Cisco NXOS Switch Driver Version2"
+                  }
+              }
+          }
+    ]
+  },
+  {
+      "name": "Juniper",
+      "aliases": ["[Jj]uniper"],
+      "type": "networking",
+      "default_os": "JUNOS",
+      "default_prompt": ">\\s*$",
+      "enable_prompt": "(?:(?!\\)).)#\\s*$",
+      "operation_systems":
+      [
+          {
+              "name": "JUNOS",
+              "aliases": ["JUNOS"],
+              "multi_models": false,
+              "default_model": "switch",
+              "families": {
+                  "switch": {
+                      "family_name": "Switch",
+                      "model_name": "Cisco NXOS Switch"
+                  }
+              },
+              "first_gen": {
+                  "driver_name": "Generic Cisco NXOS Driver Version2"
+              },
+              "second_gen": {
+                  "switch": {
+                      "driver_name": "Generic Cisco NXOS Switch Driver Version2"
+                  }
+              }
+          }
+      ]
+  },
+  {
+      "name": "Raritan",
+      "aliases": ["[Rr]aritan"],
+      "type": "PDU",
+      "family_name": "PDU",
+      "model_name": "Raritan PDU",
+      "driver_name": ""
+  }
+]

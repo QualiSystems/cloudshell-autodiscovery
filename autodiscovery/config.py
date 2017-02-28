@@ -1,0 +1,5 @@
+VENDOR_ENTERPRISE_NUMBERS_URL = "https://www.iana.org/assignments/enterprise-numbers/enterprise-numbers"
+DATA_FOLDER = "data"
+VENDOR_ENTERPRISE_NUMBERS_FILE = "vendor_enterprise_numbers.json"
+VENDOR_DEFINITION_FILE = "vendor_definition.json"
+USER_INPUT_EXAMPLE_FILE = "user_input_example.yml"
