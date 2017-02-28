@@ -31,16 +31,26 @@ class AbstractReport(object):
         self._entries = []
 
     def add_entry(self, ip):
+        """Add new Entry for the device with given IP
+
+        :param str ip: IP address of the discovered device
+        :rtype: Entry
+        """
         entry = Entry(ip)
         self._entries.append(entry)
 
         return entry
 
     def get_current_entry(self):
+        """Get last added entry to the report"""
         if self._entries:
             return self._entries[-1]
 
     def generate(self):
+        """Generate report for all discovered devices (entries)
+
+        :return:
+        """
         raise NotImplementedError("Class {} must implement method 'generate'".format(type(self)))
 
 
@@ -49,6 +59,7 @@ class ConsoleReport(AbstractReport):
     COMMENT_COLUMN_WIDTH = 40
 
     def generate(self):
+        """Print report for all discovered devices to the console"""
         table_data = [("IP", "VENDOR", "sysObjectID", "DESCRIPTION", "ADDED TO CLOUDSHELL", "COMMENT")]
 
         for entry in self._entries:

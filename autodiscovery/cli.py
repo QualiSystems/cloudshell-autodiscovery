@@ -17,7 +17,7 @@ def cli():
 
 @cli.command()
 def version():
-    """Get version of the CloudShell Auto-discovery CLI"""
+    """Get version of the CloudShell Autodiscovery CLI tool"""
     click.echo(pkg_resources.get_distribution('cloudshell-autodiscovery').version)
 
 
@@ -40,7 +40,8 @@ def echo_user_input_template(template_format, save_to_file):
 
 
 @cli.command()
-@click.option('--input-file', required=True, help='Input file with devices IP. Generate in')
+@click.option('--input-file', required=True, help='Input file with devices IPs and other configuration data. '
+                                                  'Can be generated with a "echo-user-input-template" command')
 def run(input_file):
     """Run Auto discovery command with given arguments from the input file"""
     parser = get_input_data_parser(input_file)

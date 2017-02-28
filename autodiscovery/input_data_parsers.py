@@ -20,28 +20,28 @@ def get_input_data_parser(file_name):
 class AbstractInputDataParser(object):
     FILE_EXTENSION = "*"
 
-    def _find_ips(self, start, end):
-        """
+    def _find_ips(self, start_ip, last_ip):
+        """Find all IPs in the given range
 
-        :param start:
-        :param end:
-        :return:
+        :param str start_ip: first IP address in the range
+        :param str last_ip:  last IP address in the range
+        :return: list of all IPs from the given range
         """
-        start = ip_address(start)
-        end = ip_address(end)
+        start_ip = ip_address(start_ip)
+        last_ip = ip_address(last_ip)
         result = []
 
-        while start <= end:
-            result.append(str(start))
-            start += 1
+        while start_ip <= last_ip:
+            result.append(str(start_ip))
+            start_ip += 1
 
         return result
 
     def _parse_devices_ips(self, devices_ips):
-        """
+        """Parse all devices IPs and IP ranges into a single list
 
-        :param devices_ips:
-        :return:
+        :param list[str] devices_ips:
+        :rtype: list
         """
         parsed_ips = []
 
@@ -51,7 +51,7 @@ class AbstractInputDataParser(object):
                 first_ip_octets = first_ip.split(".")
                 last_ip_octets = last_ip.split(".")
                 last_ip = first_ip_octets[:4-len(last_ip_octets)] + last_ip_octets[:4-len(last_ip_octets)]
-                ips = self._find_ips(start=first_ip, end=".".join(last_ip))
+                ips = self._find_ips(start_ip=first_ip, last_ip=".".join(last_ip))
                 parsed_ips.extend(ips)
             else:
                 parsed_ips.append(device_range)
@@ -59,6 +59,11 @@ class AbstractInputDataParser(object):
         return parsed_ips
 
     def parse(self, input_file):
+        """File with the Input data for the run command
+
+        :param str input_file: full path to the input data file
+        :rtype: models.InputDataModel
+        """
         raise NotImplementedError("Class {} must implement method 'parse'".format(type(self)))
 
 
@@ -66,6 +71,11 @@ class YAMLInputDataParser(AbstractInputDataParser):
     FILE_EXTENSION = "yml"
 
     def parse(self, input_file):
+        """File with the Input data for the run command
+
+        :param str input_file: full path to the input data file
+        :rtype: models.InputDataModel
+        """
         with open(input_file) as input_f:
             file_data = input_f.read()
 
@@ -85,6 +95,11 @@ class JSONInputDataParser(AbstractInputDataParser):
     FILE_EXTENSION = "json"
 
     def parse(self, input_file):
+        """File with the Input data for the run command
+
+        :param str input_file: full path to the input data file
+        :rtype: models.InputDataModel
+        """
         with open(input_file) as input_f:
             data = json.load(input_f)
 

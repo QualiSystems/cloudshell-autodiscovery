@@ -9,7 +9,6 @@ from autodiscovery.models import CLICredentials
 
 
 class TelnetDiscoverySession(TelnetSession, AbstractDiscoverySession):
-
     def __init__(self, host, port=None):
         super(TelnetDiscoverySession, self).__init__(host=host, port=port, username=None, password=None)
         self._handler = telnetlib.Telnet()
@@ -20,7 +19,7 @@ class TelnetDiscoverySession(TelnetSession, AbstractDiscoverySession):
         :param autodiscovery.models.VendorCLICredentials cli_credentials: list of possible CLI credentials
         :param str default_prompt: prompt for the "default" mode
         :param str enable_prompt: prompt for the "enable" mode
-        :param logger: logging.Logger
+        :param logging.Logger logger:
         :rtype: autodiscovery.models.CLICredentials
         """
         self._handler.open(self.host, int(self.port), self._timeout)

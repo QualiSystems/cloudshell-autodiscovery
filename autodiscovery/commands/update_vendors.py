@@ -20,8 +20,8 @@ class UpdateVendorsCommand(object):
     def _parse_vendor_numbers(self, data_string):
         """Parse vendor PEN into dict
 
-        :return: dictionary {"vendpor PEN" => "vendor name"}
-        :rtype dict
+        :return: dictionary {"vendpor PEN": "vendor name"}
+        :rtype: dict
         """
         res_dict = {}
         resp_lines = data_string.split("\n")

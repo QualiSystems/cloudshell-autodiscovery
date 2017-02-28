@@ -18,7 +18,7 @@ class SSHDiscoverySession(SSHSession, AbstractDiscoverySession):
         :param autodiscovery.models.VendorCLICredentials cli_credentials: list of possible CLI credentials
         :param str default_prompt: prompt for the "default" mode
         :param str enable_prompt: prompt for the "enable" mode
-        :param logger: logging.Logger
+        :param logging.Logger logger:
         :rtype: autodiscovery.models.CLICredentials
         """
         for credentials in cli_credentials.cli_credentials:
@@ -47,8 +47,8 @@ class SSHDiscoverySession(SSHSession, AbstractDiscoverySession):
                 return valid_creds
 
             except paramiko.AuthenticationException:
-                logger.warning("Credentials {} aren't valid for the device {} for SSH connection"
-                               .format(credentials, self.host))
+                logger.warning("Credentials {}/{} aren't valid for the device {} for SSH connection"
+                               .format(credentials.user, credentials.password, self.host))
             finally:
                 self._handler.close()
 

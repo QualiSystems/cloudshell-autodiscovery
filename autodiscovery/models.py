@@ -44,16 +44,16 @@ class VendorDefinition(object):
         """Check in given vendor name is in aliases for current Vendor
 
         :param str vendor_name: vendor name from the PEN data file
-        :return
+        :rtype: bool
         """
         aliases_regexp = r"({})".format("|".join(self.aliases))
-        return re.search(aliases_regexp, vendor_name, flags=re.DOTALL)
+        return bool(re.search(aliases_regexp, vendor_name, flags=re.DOTALL))
 
     def check_vendor_name(self, vendor_name):
-        """
+        """Check if given name is a name for the Vendor
 
         :param str vendor_name: vendor name from the PEN data file
-        :rtype bool
+        :rtype: bool
         """
         return self.name.lower() == vendor_name.lower() or self.check_in_aliases(vendor_name)
 
@@ -120,7 +120,7 @@ class OperationSystem(object):
         """Get Resource Family for the given model type
 
         :param str model_type:
-        :rtype srt
+        :rtype: str
         """
         return self.families[model_type]["family_name"]
 
@@ -128,14 +128,14 @@ class OperationSystem(object):
         """Get Resource Model for the given model type
 
         :param str model_type:
-        :rtype srt
+        :rtype: str
         """
         return self.families[model_type]["model_name"]
 
     def get_driver_name_1st_gen(self):
         """Get Driver Name for the 1-st generation shells (CloudShell version < 8.0)
 
-        :rtype srt
+        :rtype: str
         """
         return self.first_gen["driver_name"]
 
@@ -143,29 +143,48 @@ class OperationSystem(object):
         """Get Driver Name for the 2-nd generation shells (CloudShell version > 8.0)
 
         :param str model_type:
-        :rtype srt
+        :rtype: str
         """
         return self.second_gen[model_type]["driver_name"]
 
 
 class CLICredentials(object):
     def __init__(self, user=None, password=None, enable_password=None):
+        """
+
+        :param str user:
+        :param str password:
+        :param str enable_password:
+        """
         self.user = user
         self.password = password
         self.enable_password = enable_password
 
     def __eq__(self, other):
-        return all([self.user == other.user,
-                    self.password == other.password,
-                    self.enable_password == other.enable_password])
+        if isinstance(other, self.__class__):
+            return all([self.user == other.user,
+                        self.password == other.password,
+                        self.enable_password == other.enable_password])
+
+        return False
 
 
 class VendorCLICredentials(object):
     def __init__(self, name, cli_credentials):
+        """
+
+        :param str name: vendor name
+        :param list[CLICredentials] cli_credentials:
+        """
         self.name = name
         self.cli_credentials = cli_credentials
 
     def update_valid_creds(self, valid_creds):
+        """Set valid credentials to be first in the list of possible CLI credentials for the Vendor
+
+        :param CLICredentials valid_creds:
+        :return:
+        """
         if valid_creds in self.cli_credentials:
             self.cli_credentials.remove(valid_creds)
 
@@ -174,6 +193,10 @@ class VendorCLICredentials(object):
 
 class CLICredentialsCollection(object):
     def __init__(self, cli_credentials):
+        """
+
+        :param dict cli_credentials:
+        """
         self._cli_creds = []
         default_creds = [CLICredentials(**creds) for creds in cli_credentials.pop("default", [])]
         self._default_creds = VendorCLICredentials(name="default", cli_credentials=default_creds)
@@ -184,10 +207,10 @@ class CLICredentialsCollection(object):
             self._cli_creds.append(VendorCLICredentials(name=vendor_name, cli_credentials=cli_creds))
 
     def get_creds_by_vendor(self, vendor):
-        """
+        """Get CLI credentials by given vendor
 
-        :param vendor:
-        :return:
+        :param VendorDefinition vendor:
+        :rtype: VendorCLICredentials
         """
         for vendor_creds in self._cli_creds:
             if vendor.check_vendor_name(vendor_creds.name):
@@ -198,6 +221,15 @@ class CLICredentialsCollection(object):
 
 class InputDataModel(object):
     def __init__(self, devices_ips, cs_ip, cs_user, cs_password, snmp_community_strings, cli_credentials):
+        """
+
+        :param list[str] devices_ips:
+        :param str cs_ip:
+        :param str cs_user:
+        :param str cs_password:
+        :param list[str] snmp_community_strings:
+        :param CLICredentialsCollection cli_credentials:
+        """
         self.devices_ips = devices_ips
         self.cs_ip = cs_ip
         self.cs_user = cs_user

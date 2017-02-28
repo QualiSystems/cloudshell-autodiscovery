@@ -8,9 +8,9 @@ class AbstractDiscoverySession(ExpectSession):
     ENABLE_MODE_COMMAND = "enable"
 
     def check_credentials(self, cli_credentials, default_prompt, enable_prompt, logger):
-        """Connect to device through SSH
+        """Connect to the device and check possible credentials
 
-        :param cli_credentials:
+        :param autodiscovery.models.VendorCLICredentials cli_credentials: list of possible CLI credentials
         :param str default_prompt: expected string in output
         :param str enable_prompt: expected string in output for Enable mode
         :param logging.Logger logger:
@@ -52,7 +52,7 @@ class AbstractDiscoverySession(ExpectSession):
 
     @staticmethod
     def prepare_credentials_action_map(cli_credentials, valid_creds, creds_key=""):
-        """Send user/password from credentials list and add valid one to the valid_creds dictionary
+        """Send user/password/enable_password from credentials list and add valid one to the valid_creds object
 
         :param autodiscovery.models.VendorCLICredentials cli_credentials: list of possible CLI credentials
         :param autodiscovery.models.CLICredentials valid_creds: object where valid credentials should be added
@@ -66,7 +66,8 @@ class AbstractDiscoverySession(ExpectSession):
             try:
                 val = next(possible_values)
             except StopIteration:
-                raise Exception("All given credentials aren't valid for the Telnet connection")
+                raise Exception("All given credentials aren't valid for the {} connection"
+                                .format(session.session_type))
 
             setattr(valid_creds, creds_key, val)
             session.send_line(val, logger)

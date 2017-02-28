@@ -107,9 +107,9 @@ class AutoDiscoverCommand(object):
     def _get_cli_credentials(self, vendor, cli_credentials, device_ip):
         """
 
-        :param vendor:
-        :param cli_credentials:
-        :param device_ip:
+        :param autodiscovery.models.VendorDefinition vendor:
+        :param autodiscovery.models.CLICredentialsCollection cli_credentials:
+        :param str device_ip:
         :return:
         """
         vendor_cli_creds = cli_credentials.get_creds_by_vendor(vendor)
@@ -171,7 +171,6 @@ class AutoDiscoverCommand(object):
             entry = self.report.get_current_entry()
             entry.comment = "Unable to discover user/password"
         else:
-            self._update_vendor_creds(cli_creds)
             if cli_creds.user is not None:
                 attributes[ResourceModelsAttributes.USER] = cli_creds.user
             if cli_creds.password is not None:

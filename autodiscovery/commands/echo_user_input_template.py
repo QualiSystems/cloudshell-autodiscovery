@@ -12,9 +12,10 @@ logging.basicConfig(level=logging.INFO)
 
 class EchoUserInputTemplateCommand(object):
     def execute(self, template_format, save_to_file=None):
-        """Execute Update vendors command
+        """Execute echo user input file command
 
-        :param str save_to_file: URL for the vendor private enterprise numbers
+        :param str template_format: format of the template file (yml/json)
+        :param str save_to_file: file name to save generated template in
         :return:
         """
         with open(config.USER_INPUT_EXAMPLE_FILE) as template_file:
