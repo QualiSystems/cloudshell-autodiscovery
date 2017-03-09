@@ -3,6 +3,7 @@ import json
 import yaml
 from ipaddress import ip_address
 
+from autodiscovery.exceptions import AutoDiscoveryException
 from autodiscovery import models
 
 
@@ -13,7 +14,7 @@ def get_input_data_parser(file_name):
         if file_name.endswith(parser_cls.FILE_EXTENSION):
             return parser_cls()
 
-    raise Exception("Invalid Input Data file format. Available formats are: {}".format(
+    raise AutoDiscoveryException("Invalid Input Data file format. Available formats are: {}".format(
         ", ".join([parser.FILE_EXTENSION for parser in parsers])))
 
 

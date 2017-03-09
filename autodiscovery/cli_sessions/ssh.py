@@ -3,6 +3,7 @@ import paramiko
 from cloudshell.cli.session.ssh_session import SSHSession
 
 from autodiscovery.cli_sessions.base import AbstractDiscoverySession
+from autodiscovery.exceptions import AutoDiscoveryException
 
 
 class SSHDiscoverySession(SSHSession, AbstractDiscoverySession):
@@ -52,4 +53,5 @@ class SSHDiscoverySession(SSHSession, AbstractDiscoverySession):
             finally:
                 self._handler.close()
 
-        raise Exception("All given credentials aren't valid for the device {} for SSH connection".format(self.host))
+        raise AutoDiscoveryException("All given credentials aren't valid for the device {} for SSH connection"
+                                     .format(self.host))

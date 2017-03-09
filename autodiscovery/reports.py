@@ -3,6 +3,8 @@ from textwrap import wrap
 import click
 from terminaltables import AsciiTable
 
+from autodiscovery.exceptions import ReportableException
+
 
 class Entry(object):
     SUCCESS_STATUS = "Success"
@@ -22,8 +24,8 @@ class Entry(object):
     def __exit__(self, exc_type, exc_val, exc_tb):
         if exc_type is not None:
             self.status = self.FAILED_STATUS
-            # todo: set only ReportableException exceptions as messages
-            self.comment = exc_val
+            if isinstance(exc_val, ReportableException):
+                self.comment = exc_val
 
 
 class AbstractReport(object):

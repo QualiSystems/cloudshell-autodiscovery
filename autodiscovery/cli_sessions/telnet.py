@@ -48,12 +48,11 @@ class TelnetDiscoverySession(TelnetSession, AbstractDiscoverySession):
                                               action_map=action_map,
                                               check_action_loop_detector=False)
 
-            valid_creds = self._check_enable_password(enable_prompt=enable_prompt,
-                                                      cli_credentials=cli_credentials,
-                                                      valid_creds=valid_creds,
-                                                      output_str=output_str,
-                                                      logger=logger)
+            return self._check_enable_password(enable_prompt=enable_prompt,
+                                               cli_credentials=cli_credentials,
+                                               valid_creds=valid_creds,
+                                               output_str=output_str,
+                                               logger=logger)
+
         finally:
             self._handler.close()
-
-        return valid_creds

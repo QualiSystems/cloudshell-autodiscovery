@@ -68,7 +68,6 @@ class JsonDataProcessor(object):
             for os_data in vendor_data.get("operation_systems", []):
                 operating_sys = models.OperationSystem(name=os_data["name"],
                                                        aliases=os_data.get("aliases", []),
-                                                       multi_models=os_data["multi_models"],
                                                        default_model=os_data.get("default_model"),
                                                        models_map=os_data.get("models_map"),
                                                        families=os_data.get("families"),

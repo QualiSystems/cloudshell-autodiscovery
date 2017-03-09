@@ -8,7 +8,7 @@ def get_file_content(file_name):
 setup(name='cloudshell-autodiscovery',
       version='1.0.0',
       description="",
-      long_description=get_file_content('README.rst'),
+      long_description=get_file_content('README.md'),
       author='Quali',
       author_email='anton.p@qualisystems.com',
       packages=['autodiscovery'],

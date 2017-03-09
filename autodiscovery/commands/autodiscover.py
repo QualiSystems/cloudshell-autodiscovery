@@ -9,6 +9,7 @@ from cloudshell.snmp.quali_snmp import QualiSnmp
 from cloudshell.snmp.snmp_parameters import SNMPV2Parameters
 
 from autodiscovery.exceptions import AutoDiscoveryException
+from autodiscovery.exceptions import ReportableException
 from autodiscovery.cli_sessions import TelnetDiscoverySession
 from autodiscovery.cli_sessions import SSHDiscoverySession
 
@@ -143,17 +144,12 @@ class AutoDiscoverCommand(object):
         :return:
         """
         device_os = vendor.get_device_os(system_description)
-
         if device_os is None:
-            device_os = vendor.get_default_device_os()
+            raise ReportableException("Unable to determine device OS")
 
-        if device_os.multi_models:
-            model_type = device_os.get_device_model_type(system_description=system_description)
-
-            if model_type is None:
-                model_type = device_os.default_model
-        else:
-            model_type = device_os.default_model
+        model_type = device_os.get_device_model_type(system_description=system_description)
+        if model_type is None:
+            raise ReportableException("Unable to determine device model type")
 
         resource_family = device_os.get_resource_family(model_type)
         resource_model = device_os.get_resource_model(model_type)
@@ -169,7 +165,7 @@ class AutoDiscoverCommand(object):
 
         if cli_creds is None:
             entry = self.report.get_current_entry()
-            entry.comment = "Unable to discover user/password"
+            entry.comment = "Unable to discover device user/password"
         else:
             if cli_creds.user is not None:
                 attributes[ResourceModelsAttributes.USER] = cli_creds.user
@@ -185,17 +181,34 @@ class AutoDiscoverCommand(object):
                                                  resource_name=resource_name,
                                                  attributes=attributes)
 
-        try:
-            cs_session.UpdateResourceDriver(resourceFullPath=resource_name,
-                                            driverName=device_os.get_driver_name_2nd_gen(model_type))
-        except CloudShellAPIError as e:
-            if e.code == CloudshellAPIErrorCodes.UNABLE_TO_LOCATE_DRIVER:
-                cs_session.UpdateResourceDriver(resourceFullPath=resource_name,
-                                                driverName=device_os.get_driver_name_1st_gen())
-            else:
-                raise
+        self._add_resource_driver(cs_session=cs_session,
+                                  resource_name=resource_name,
+                                  device_os=device_os,
+                                  model_type=model_type)
 
         cs_session.AutoLoad(resource_name)
+
+    def _add_resource_driver(self, cs_session, resource_name, device_os, model_type):
+        """Add appropriate driver to the created CloudShell resource
+
+        :param CloudShellAPISession cs_session:
+        :param str resource_name:
+        :param autodiscovery.models.OperationSystem device_os:
+        :param str model_type:
+        :return:
+        """
+        for driver_name in (device_os.get_driver_name_2nd_gen(model_type), device_os.get_driver_name_1st_gen()):
+            try:
+                cs_session.UpdateResourceDriver(resourceFullPath=resource_name,
+                                                driverName=driver_name)
+            except CloudShellAPIError as e:
+                if e.code == CloudshellAPIErrorCodes.UNABLE_TO_LOCATE_DRIVER:
+                    continue
+            else:
+                return
+
+        raise ReportableException("Shell {} is not installed on the CloudShell".format(
+            device_os.get_driver_name_2nd_gen(model_type)))
 
     def _get_snmp_handler(self, device_ip, snmp_comunity_strings):
         """Get SNMP Handler and valid community string for the device
@@ -215,7 +228,7 @@ class AutoDiscoverCommand(object):
                 self.logger.warning("SNMP Community string '{}' is not valid for device with IP {}"
                                     .format(snmp_community, device_ip))
 
-        raise AutoDiscoveryException("SNMP Community aren't valid for IP..")
+        raise ReportableException("SNMP timeout – no resource detected")
 
     def _create_cs_resource(self, cs_session, device_ip, resource_family, resource_model,
                             resource_name, attributes):
@@ -263,7 +276,14 @@ class AutoDiscoverCommand(object):
         """
         vendor_definition = self.data_processor.load_vendor_definition()
         vendor_enterprise_numbers = self.data_processor.load_vendor_enterprise_numbers()
-        cs_session = CloudShellAPISession(host=cs_ip, username=cs_user, password=cs_password)
+
+        try:
+            cs_session = CloudShellAPISession(host=cs_ip, username=cs_user, password=cs_password)
+        except Exception:  # TODO: handle both cases
+            # 1) cloudshell server unreachable
+            # 2) wrong cloudshell user/pass
+            self.logger.exception("Unable to connect to the CloudShell API")
+            raise AutoDiscoveryException("CloudShell server is unreachable")
 
         for device_ip in devices_ips:
             try:
@@ -285,14 +305,13 @@ class AutoDiscoverCommand(object):
                     vendor = vendor_definition.get_vendor(vendor_name=vendor_name)
 
                     if vendor is None:
-                        # error to report
-                        raise AutoDiscoveryException("Vendor {} is not supported on the CloudShell")
+                        raise ReportableException("Unsupported vendor {}".format(vendor_name))
 
                     try:
                         handler = self.vendor_type_handlers_map[vendor.vendor_type.lower()]
                     except KeyError:
-                        raise AutoDiscoveryException("Invalid vendor type '{}'. Possible values are: {}"
-                                                     .format(vendor.vendor_type, self.vendor_type_handlers_map.keys()))
+                        raise ReportableException("Invalid vendor type '{}'. Possible values are: {}"
+                                                  .format(vendor.vendor_type, self.vendor_type_handlers_map.keys()))
                     handler(cs_session=cs_session,
                             device_ip=device_ip,
                             resource_name=resource_name,

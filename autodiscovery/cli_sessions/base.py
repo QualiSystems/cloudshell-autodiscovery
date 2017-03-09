@@ -3,6 +3,8 @@ import re
 
 from cloudshell.cli.session.expect_session import ExpectSession
 
+from autodiscovery.exceptions import AutoDiscoveryException
+
 
 class AbstractDiscoverySession(ExpectSession):
     ENABLE_MODE_COMMAND = "enable"
@@ -66,8 +68,8 @@ class AbstractDiscoverySession(ExpectSession):
             try:
                 val = next(possible_values)
             except StopIteration:
-                raise Exception("All given credentials aren't valid for the {} connection"
-                                .format(session.session_type))
+                raise AutoDiscoveryException("All given credentials aren't valid for the {} connection"
+                                             .format(session.session_type))
 
             setattr(valid_creds, creds_key, val)
             session.send_line(val, logger)

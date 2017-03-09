@@ -84,12 +84,11 @@ class VendorDefinition(object):
 
 
 class OperationSystem(object):
-    def __init__(self, name, aliases, multi_models, default_model, models_map, families, first_gen, second_gen):
+    def __init__(self, name, aliases, default_model, models_map, families, first_gen, second_gen):
         """
 
         :param str name:
         :param list aliases:
-        :param bool multi_models:
         :param str default_model:
         :param list[dict] models_map:
         :param dict families:
@@ -98,7 +97,6 @@ class OperationSystem(object):
         """
         self.name = name
         self.aliases = aliases
-        self.multi_models = multi_models
         self.default_model = default_model
         self.models_map = models_map
         self.families = families
@@ -115,6 +113,8 @@ class OperationSystem(object):
             aliases_regexp = r"({})".format("|".join(model_map["aliases"]))
             if re.search(aliases_regexp, system_description, flags=re.DOTALL):
                 return model_map["model"]
+
+        return self.default_model
 
     def get_resource_family(self, model_type):
         """Get Resource Family for the given model type
@@ -198,11 +198,18 @@ class CLICredentialsCollection(object):
         :param dict cli_credentials:
         """
         self._cli_creds = []
-        default_creds = [CLICredentials(**creds) for creds in cli_credentials.pop("default", [])]
+        default_creds = [CLICredentials(user=creds.get("user"),
+                                        password=creds.get("password"),
+                                        enable_password=creds.get("enable password"))
+                         for creds in cli_credentials.pop("default", [])]
+
         self._default_creds = VendorCLICredentials(name="default", cli_credentials=default_creds)
 
         for vendor_name, vendor_creds in cli_credentials.iteritems():
-            cli_creds = [CLICredentials(**creds) for creds in vendor_creds]
+            cli_creds = [CLICredentials(user=creds.get("user"),
+                                        password=creds.get("password"),
+                                        enable_password=creds.get("enable password"))
+                         for creds in vendor_creds]
             cli_creds.extend(default_creds)
             self._cli_creds.append(VendorCLICredentials(name=vendor_name, cli_credentials=cli_creds))
 
