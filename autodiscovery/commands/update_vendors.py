@@ -1,21 +1,17 @@
-import logging
-
 import requests
 
 from autodiscovery import config
 
 
-logging.basicConfig(level=logging.INFO)
-
-
 class UpdateVendorsCommand(object):
-    def __init__(self, data_processor):
+    def __init__(self, data_processor, logger):
         """
 
         :param autodiscovery.data_processors.JsonDataProcessor data_processor:
+        :param logging.Logger logger:
         """
         self.data_processor = data_processor
-        self.logger = logging.getLogger(__name__)
+        self.logger = logger
 
     def _parse_vendor_numbers(self, data_string):
         """Parse vendor PEN into dict

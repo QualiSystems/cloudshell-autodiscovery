@@ -1,4 +1,3 @@
-import logging
 import re
 
 from cloudshell.api.cloudshell_api import AttributeNameValue
@@ -12,8 +11,6 @@ from autodiscovery.exceptions import AutoDiscoveryException
 from autodiscovery.exceptions import ReportableException
 from autodiscovery.cli_sessions import TelnetDiscoverySession
 from autodiscovery.cli_sessions import SSHDiscoverySession
-
-logging.basicConfig(level=logging.INFO)
 
 
 class ResourceModelsAttributes(object):
@@ -32,15 +29,16 @@ class CloudshellAPIErrorCodes(object):
 
 
 class AutoDiscoverCommand(object):
-    def __init__(self, data_processor, report):
+    def __init__(self, data_processor, report, logger):
         """
 
         :param autodiscovery.data_processors.JsonDataProcessor data_processor:
         :param autodiscovery.reports.ConsoleReport report:
+        :param logging.Logger logger:
         """
         self.data_processor = data_processor
         self.report = report
-        self.logger = logging.getLogger(__name__)
+        self.logger = logger
 
         self.vendor_type_handlers_map = {
             "networking": self._networking_type_handler,
@@ -228,7 +226,7 @@ class AutoDiscoverCommand(object):
                 self.logger.warning("SNMP Community string '{}' is not valid for device with IP {}"
                                     .format(snmp_community, device_ip))
 
-        raise ReportableException("SNMP timeout – no resource detected")
+        raise ReportableException("SNMP timeout - no resource detected")
 
     def _create_cs_resource(self, cs_session, device_ip, resource_family, resource_model,
                             resource_name, attributes):

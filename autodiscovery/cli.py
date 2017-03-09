@@ -8,6 +8,7 @@ from autodiscovery.commands import UpdateVendorsCommand
 from autodiscovery.data_processors import JsonDataProcessor
 from autodiscovery.input_data_parsers import get_input_data_parser
 from autodiscovery.reports import ConsoleReport
+from autodiscovery.utils import get_logger
 
 
 @click.group()
@@ -23,9 +24,11 @@ def version():
 
 @cli.command(name="update-vendor-data")
 @click.option('--url', help='URL for file with private enterprise numbers')
-def update_vendor_data(url):
+@click.option('--log-file', help='File name for logs')
+def update_vendor_data(url, log_file):
     """Update file with vendor enterprise numbers data"""
-    update_vendor_data_command = UpdateVendorsCommand(data_processor=JsonDataProcessor())
+    update_vendor_data_command = UpdateVendorsCommand(data_processor=JsonDataProcessor(),
+                                                      logger=get_logger(log_file))
     update_vendor_data_command.execute(url=url)
 
 
@@ -42,12 +45,14 @@ def echo_user_input_template(template_format, save_to_file):
 @cli.command()
 @click.option('--input-file', required=True, help='Input file with devices IPs and other configuration data. '
                                                   'Can be generated with a "echo-user-input-template" command')
-def run(input_file):
+@click.option('--log-file', help='File name for logs')
+def run(input_file, log_file):
     """Run Auto discovery command with given arguments from the input file"""
     parser = get_input_data_parser(input_file)
     input_data_model = parser.parse(input_file)
     auto_discover_command = AutoDiscoverCommand(data_processor=JsonDataProcessor(),
-                                                report=ConsoleReport())
+                                                report=ConsoleReport(),
+                                                logger=get_logger(log_file))
 
     auto_discover_command.execute(devices_ips=input_data_model.devices_ips,
                                   snmp_comunity_strings=input_data_model.snmp_community_strings,

@@ -1,13 +1,8 @@
-import logging
-
 import click
 import json
 import yaml
 
 from autodiscovery import config
-
-
-logging.basicConfig(level=logging.INFO)
 
 
 class EchoUserInputTemplateCommand(object):
