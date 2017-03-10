@@ -1,8 +1,8 @@
 import json
-import os
 
 from autodiscovery import config
 from autodiscovery import models
+from autodiscovery import utils
 
 
 class JsonDataProcessor(object):
@@ -13,8 +13,7 @@ class JsonDataProcessor(object):
         :return: Full path to the file ("/var/projects/cloudshell-autodiscovery-tool/example.com")
         :rtype: str
         """
-        dir_name = os.path.split(os.path.abspath(__file__))[0]
-        return os.path.join(dir_name, os.pardir, config.DATA_FOLDER, filename)
+        return utils.get_full_path(config.DATA_FOLDER, filename)
 
     def _save(self, data, filename):
         """Save JSON Data to the given file
@@ -33,7 +32,6 @@ class JsonDataProcessor(object):
 
         :param str filename: Name of the file to save ("example.com")
         :return: JSON data
-        :rtype: dict
         """
         file_path = self._prepare_file_path(filename)
 
@@ -56,14 +54,43 @@ class JsonDataProcessor(object):
         """
         return self._load(filename=config.VENDOR_ENTERPRISE_NUMBERS_FILE)
 
-    def load_vendor_definition(self):
+    def _merge_vendors_data(self, conf_data, additional_data):
+        """Merge default vendors configuration with additional one
+
+        :param list[dict] conf_data: default vendors config data
+        :param list[dict] additional_data: additional vendors config data
+        :rtype: list[dict]
+        """
+        merged_data = []
+        for add_vendor_data in additional_data:
+            for conf_vendor_data in conf_data:
+                if conf_vendor_data["name"] == add_vendor_data["name"]:
+                    conf_data.remove(conf_vendor_data)
+
+                    for conf_os in conf_vendor_data.get("operation_systems", []):
+                        for add_os in add_vendor_data.get("operation_systems", []):
+                            if conf_os["name"] == add_os["name"]:
+                                conf_vendor_data["operation_systems"].remove(conf_os)
+
+                    if "operation_systems" in conf_vendor_data:
+                        oses = add_vendor_data.setdefault("operation_systems", [])
+                        oses.extend(conf_vendor_data["operation_systems"])
+
+            merged_data.append(add_vendor_data)
+
+        merged_data.extend(conf_data)
+        return merged_data
+
+    def load_vendor_config(self, additional_vendors_data=None):
         """Load Vendors definitions from JSON file into the corresponding models
 
         :rtype: models.VendorDefinitionCollection
         """
-        vendors_data = self._load(filename=config.VENDOR_DEFINITION_FILE)
+        vendors_data = self._load(filename=config.VENDORS_CONFIG_FILE)
         vendors = []
-        for vendor_data in vendors_data:
+
+        for vendor_data in self._merge_vendors_data(conf_data=vendors_data,
+                                                    additional_data=additional_vendors_data):
             operation_systems = []
             for os_data in vendor_data.get("operation_systems", []):
                 operating_sys = models.OperationSystem(name=os_data["name"],

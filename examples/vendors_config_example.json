@@ -1,0 +1,49 @@
+[
+  {
+      "name": "Cisco",
+      "aliases": ["[Cc]iscoSystems"],
+      "type": "networking",
+      "default_os": "IOS",
+      "default_prompt": ">\\s*$",
+      "enable_prompt": "(?:(?!\\)).)#\\s*$",
+      "operation_systems":
+      [
+          {
+              "name": "IOS",
+              "aliases": ["CAT[ -]?OS", "IOS[ -]?X?[E]?"],
+              "default_model": "switch",
+              "models_map": [
+                  {
+                      "model": "switch",
+                      "aliases": ["[Cc]atalyst", "C2950"]
+                  },
+                  {
+                      "model": "router",
+                      "aliases": ["IOS[ -]?X?[E]?"]
+                  }
+              ],
+              "families": {
+                  "switch": {
+                      "family_name": "Switch",
+                      "model_name": "Cisco IOS Switch"
+                  },
+                  "router": {
+                      "family_name": "Router",
+                      "model_name": "Cisco IOS Router"
+                  }
+              },
+              "first_gen": {
+                  "driver_name": "Custom Generic Cisco IOS Driver Version3"
+              },
+              "second_gen": {
+                  "switch": {
+                      "driver_name": "Custom Generic Cisco IOS Switch Driver Version3"
+                  },
+                  "router": {
+                      "driver_name": "Custom Generic Cisco IOS Router Driver Version3"
+                  }
+              }
+          }
+      ]
+  }
+]

@@ -12,8 +12,8 @@ cloudshell:
 
 # Possible SNMP community strings
 community-strings:
-    -   fake_string
     -   public
+    -   public2
 
 # Possible CLI credentials: username/password (default ones and some specific for different Vendors)
 cli-credentials:

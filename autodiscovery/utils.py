@@ -1,4 +1,5 @@
 import logging
+import os
 
 
 def get_logger(file_path=None):
@@ -18,3 +19,13 @@ def get_logger(file_path=None):
     logger.setLevel(logging.INFO)
 
     return logger
+
+
+def get_full_path(*args):
+    """
+
+    :param args:
+    :return:
+    """
+    dir_name = os.path.split(os.path.abspath(__file__))[0]
+    return os.path.join(dir_name, os.pardir, *args)

@@ -261,7 +261,8 @@ class AutoDiscoverCommand(object):
 
         return resource_name
 
-    def execute(self, devices_ips, snmp_comunity_strings, cli_credentials, cs_ip, cs_user, cs_password):
+    def execute(self, devices_ips, snmp_comunity_strings, cli_credentials, cs_ip, cs_user, cs_password,
+                additional_vendors_data):
         """Execute Auto-discovery command
 
         :param list devices_ips: list of devices IPs to discover
@@ -270,9 +271,10 @@ class AutoDiscoverCommand(object):
         :param str cs_ip: IP address of the CloudShell API
         :param str cs_user: user for the CloudShell API
         :param str cs_password: password for the CloudShell API
+        :param list[dict] additional_vendors_data: additional vendors configuration
         :return:
         """
-        vendor_definition = self.data_processor.load_vendor_definition()
+        vendor_config = self.data_processor.load_vendor_config(additional_vendors_data=additional_vendors_data)
         vendor_enterprise_numbers = self.data_processor.load_vendor_enterprise_numbers()
 
         try:
@@ -300,7 +302,7 @@ class AutoDiscoverCommand(object):
                     vendor_number = self._parse_vendor_number(sys_obj_id)
                     vendor_name = vendor_enterprise_numbers[vendor_number]
                     entry.vendor = vendor_name
-                    vendor = vendor_definition.get_vendor(vendor_name=vendor_name)
+                    vendor = vendor_config.get_vendor(vendor_name=vendor_name)
 
                     if vendor is None:
                         raise ReportableException("Unsupported vendor {}".format(vendor_name))
