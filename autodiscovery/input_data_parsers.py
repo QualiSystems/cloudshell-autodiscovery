@@ -51,7 +51,7 @@ class AbstractInputDataParser(object):
                 first_ip, last_ip = device_range.split("-")
                 first_ip_octets = first_ip.split(".")
                 last_ip_octets = last_ip.split(".")
-                last_ip = first_ip_octets[:4-len(last_ip_octets)] + last_ip_octets[:4-len(last_ip_octets)]
+                last_ip = first_ip_octets[:4-len(last_ip_octets)] + last_ip_octets
                 ips = self._find_ips(start_ip=unicode(first_ip), last_ip=unicode(".".join(last_ip)))
                 parsed_ips.extend(ips)
             else:
