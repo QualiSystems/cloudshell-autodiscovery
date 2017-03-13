@@ -8,7 +8,7 @@ from autodiscovery.commands import EchoVendorsConfigTemplateCommand
 from autodiscovery.commands import UpdateVendorsCommand
 from autodiscovery.data_processors import JsonDataProcessor
 from autodiscovery.input_data_parsers import get_input_data_parser
-from autodiscovery.reports import ConsoleReport
+from autodiscovery.reports import FileReport
 from autodiscovery.utils import get_logger
 
 
@@ -59,7 +59,8 @@ def echo_vendors_config_template(template_format, save_to_file):
 @click.option('--config-file', help='Vendors configuration file with additional data. Can be generated with a '
                                     '"echo-vendors-configuration-template" command')
 @click.option('--log-file', help='File name for logs')
-def run(input_file, config_file, log_file):
+@click.option('--report-file', help='File name for generated report')
+def run(input_file, config_file, log_file, report_file):
     """Run Auto discovery command with given arguments from the input file"""
     parser = get_input_data_parser(input_file)
     input_data_model = parser.parse(input_file)
@@ -73,7 +74,7 @@ def run(input_file, config_file, log_file):
         additional_vendors_data = []
 
     auto_discover_command = AutoDiscoverCommand(data_processor=JsonDataProcessor(),
-                                                report=ConsoleReport(),
+                                                report=FileReport(report_file),
                                                 logger=get_logger(log_file))
 
     auto_discover_command.execute(devices_ips=input_data_model.devices_ips,

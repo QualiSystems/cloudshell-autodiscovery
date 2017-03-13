@@ -33,7 +33,7 @@ class AutoDiscoverCommand(object):
         """
 
         :param autodiscovery.data_processors.JsonDataProcessor data_processor:
-        :param autodiscovery.reports.ConsoleReport report:
+        :param autodiscovery.reports.AbstractReport report:
         :param logging.Logger logger:
         """
         self.data_processor = data_processor
@@ -165,12 +165,16 @@ class AutoDiscoverCommand(object):
             entry = self.report.get_current_entry()
             entry.comment = "Unable to discover device user/password"
         else:
+            current_entry = self.report.get_current_entry()
             if cli_creds.user is not None:
                 attributes[ResourceModelsAttributes.USER] = cli_creds.user
+                current_entry.user = cli_creds.user
             if cli_creds.password is not None:
                 attributes[ResourceModelsAttributes.PASSWORD] = cli_creds.password
+                current_entry.password = cli_creds.password
             if cli_creds.enable_password is not None:
                 attributes[ResourceModelsAttributes.ENABLE_PASSWORD] = cli_creds.enable_password
+                current_entry.enable_password = cli_creds.enable_password
 
         resource_name = self._create_cs_resource(cs_session=cs_session,
                                                  device_ip=device_ip,
@@ -295,6 +299,7 @@ class AutoDiscoverCommand(object):
                 with self.report.add_entry(ip=device_ip) as entry:
                     snmp_handler, snmp_community = self._get_snmp_handler(device_ip=device_ip,
                                                                           snmp_comunity_strings=snmp_comunity_strings)
+                    entry.snmp_community = snmp_community
                     # set valid SNMP string to be first in the list
                     snmp_comunity_strings.remove(snmp_community)
                     snmp_comunity_strings.insert(0, snmp_community)
