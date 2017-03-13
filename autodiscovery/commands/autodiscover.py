@@ -172,15 +172,13 @@ class AutoDiscoverCommand(object):
             if cli_creds.enable_password is not None:
                 attributes[ResourceModelsAttributes.ENABLE_PASSWORD] = cli_creds.enable_password
 
-        try:
-            resource_name = self._create_cs_resource(cs_session=cs_session,
-                                                     device_ip=device_ip,
-                                                     resource_family=resource_family,
-                                                     resource_model=resource_model,
-                                                     resource_name=resource_name,
-                                                     attributes=attributes)
-        except CloudShellAPIError:
-            raise ReportableException("Shell '{}' not installed".format(device_os.get_driver_name_2nd_gen(model_type)))
+        resource_name = self._create_cs_resource(cs_session=cs_session,
+                                                 device_ip=device_ip,
+                                                 resource_family=resource_family,
+                                                 resource_model=resource_model,
+                                                 resource_name=resource_name,
+                                                 attributes=attributes,
+                                                 driver_name=device_os.get_driver_name_2nd_gen(model_type))
 
         self._add_resource_driver(cs_session=cs_session,
                                   resource_name=resource_name,
@@ -232,7 +230,7 @@ class AutoDiscoverCommand(object):
         raise ReportableException("SNMP timeout - no resource detected")
 
     def _create_cs_resource(self, cs_session, device_ip, resource_family, resource_model,
-                            resource_name, attributes):
+                            resource_name, attributes, driver_name):
         """Create Resource on CloudShell with appropriate attributes
 
         :param CloudShellAPISession cs_session:
@@ -241,6 +239,7 @@ class AutoDiscoverCommand(object):
         :param str resource_model:
         :param str resource_name:
         :param dict attributes:
+        :param str driver_name:
         :return: name for the created Resource
         :rtype: str
         """
@@ -257,7 +256,7 @@ class AutoDiscoverCommand(object):
                                           resourceName=resource_name,
                                           resourceAddress=device_ip)
             else:
-                raise
+                raise ReportableException("Shell {} is not installed on the CloudShell".format(driver_name))
 
         attributes = [AttributeNameValue(key, value) for key, value in attributes.iteritems()]
         cs_session.SetAttributesValues([ResourceAttributesUpdateRequest(resource_name, attributes)])
