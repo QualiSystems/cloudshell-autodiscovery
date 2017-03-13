@@ -60,7 +60,8 @@ def echo_vendors_config_template(template_format, save_to_file):
                                     '"echo-vendors-configuration-template" command')
 @click.option('--log-file', help='File name for logs')
 @click.option('--report-file', help='File name for generated report')
-def run(input_file, config_file, log_file, report_file):
+@click.option('--offline', is_flag=True, help='Generate report without creation of any Resource on the CloudShell')
+def run(input_file, config_file, log_file, report_file, offline):
     """Run Auto discovery command with given arguments from the input file"""
     parser = get_input_data_parser(input_file)
     input_data_model = parser.parse(input_file)
@@ -75,7 +76,8 @@ def run(input_file, config_file, log_file, report_file):
 
     auto_discover_command = AutoDiscoverCommand(data_processor=JsonDataProcessor(),
                                                 report=FileReport(report_file),
-                                                logger=get_logger(log_file))
+                                                logger=get_logger(log_file),
+                                                offline=offline)
 
     auto_discover_command.execute(devices_ips=input_data_model.devices_ips,
                                   snmp_comunity_strings=input_data_model.snmp_community_strings,

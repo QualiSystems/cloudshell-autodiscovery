@@ -1,6 +1,5 @@
 from textwrap import wrap
 
-import click
 from terminaltables import AsciiTable
 
 from autodiscovery.exceptions import ReportableException
@@ -9,9 +8,11 @@ from autodiscovery.exceptions import ReportableException
 class Entry(object):
     SUCCESS_STATUS = "Success"
     FAILED_STATUS = "Failed"
+    SKIPPED_STATUS = "Skipped"
 
-    def __init__(self, ip):
+    def __init__(self, ip, status):
         self.ip = ip
+        self.status = status
         self.vendor = ""
         self.sys_object_id = ""
         self.snmp_community = ""
@@ -19,7 +20,6 @@ class Entry(object):
         self.password = ""
         self.enable_password = ""
         self.description = ""
-        self.status = self.SUCCESS_STATUS
         self.comment = ""
 
     def __enter__(self):
@@ -36,13 +36,19 @@ class AbstractReport(object):
     def __init__(self):
         self._entries = []
 
-    def add_entry(self, ip):
+    def add_entry(self, ip, offline):
         """Add new Entry for the device with given IP
 
         :param str ip: IP address of the discovered device
+        :param bool offline:
         :rtype: Entry
         """
-        entry = Entry(ip)
+        if offline:
+            status = Entry.SKIPPED_STATUS
+        else:
+            status = Entry.SUCCESS_STATUS
+
+        entry = Entry(ip=ip, status=status)
         self._entries.append(entry)
 
         return entry
