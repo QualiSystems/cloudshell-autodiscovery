@@ -172,12 +172,15 @@ class AutoDiscoverCommand(object):
             if cli_creds.enable_password is not None:
                 attributes[ResourceModelsAttributes.ENABLE_PASSWORD] = cli_creds.enable_password
 
-        resource_name = self._create_cs_resource(cs_session=cs_session,
-                                                 device_ip=device_ip,
-                                                 resource_family=resource_family,
-                                                 resource_model=resource_model,
-                                                 resource_name=resource_name,
-                                                 attributes=attributes)
+        try:
+            resource_name = self._create_cs_resource(cs_session=cs_session,
+                                                     device_ip=device_ip,
+                                                     resource_family=resource_family,
+                                                     resource_model=resource_model,
+                                                     resource_name=resource_name,
+                                                     attributes=attributes)
+        except CloudShellAPIError:
+            raise ReportableException("Shell '{}' not installed".format(device_os.get_driver_name_2nd_gen(model_type)))
 
         self._add_resource_driver(cs_session=cs_session,
                                   resource_name=resource_name,
