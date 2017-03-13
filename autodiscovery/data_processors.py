@@ -96,7 +96,7 @@ class JsonDataProcessor(object):
                 operating_sys = models.OperationSystem(name=os_data["name"],
                                                        aliases=os_data.get("aliases", []),
                                                        default_model=os_data.get("default_model"),
-                                                       models_map=os_data.get("models_map"),
+                                                       models_map=os_data.get("models_map", []),
                                                        families=os_data.get("families"),
                                                        first_gen=os_data.get("first_gen"),
                                                        second_gen=os_data.get("second_gen"))
