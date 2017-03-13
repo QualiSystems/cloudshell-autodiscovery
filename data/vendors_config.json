@@ -32,7 +32,7 @@
                     }
                 },
                 "first_gen": {
-                    "driver_name": "Generic Cisco IOS Driver Version2"
+                    "driver_name": "Generic Cisco IOS Driver Version3"
                 },
                 "second_gen": {
                     "switch": {
@@ -73,7 +73,7 @@
                     }
                 },
                 "first_gen": {
-                    "driver_name": "Generic Cisco NXOS Driver Version3"
+                    "driver_name": "Generic Cisco NXOS Driver Version2"
                 },
                 "second_gen": {
                     "switch": {

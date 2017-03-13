@@ -256,6 +256,9 @@ class AutoDiscoverCommand(object):
                                           resourceName=resource_name,
                                           resourceAddress=device_ip)
             else:
+                self.logger.exception("Unable to locate Shell with Resource Family/Name: {}/{}"
+                                      .format(resource_family, resource_model))
+
                 raise ReportableException("Shell {} is not installed on the CloudShell".format(driver_name))
 
         attributes = [AttributeNameValue(key, value) for key, value in attributes.iteritems()]
