@@ -1,0 +1,257 @@
+[
+    {
+        "name": "Cisco",
+        "aliases": ["[Cc]iscoSystems"],
+        "type": "networking",
+        "default_os": "IOS",
+        "default_prompt": ">\\s*$",
+        "enable_prompt": "(?:(?!\\)).)#\\s*$",
+        "operation_systems": [
+            {
+                "name": "IOS",
+                "aliases": ["CAT[ -]?OS", "IOS[ -]?X?[E]?"],
+                "default_model": "switch",
+                "models_map": [
+                   {
+                      "model": "switch",
+                      "aliases": ["[Cc]atalyst", "C2950"]
+                   },
+                   {
+                      "model": "router",
+                      "aliases": ["IOS[ -]?X?[E]?"]
+                   }
+                ],
+               "families": {
+                    "switch": {
+                        "family_name": "Switch",
+                        "model_name": "Cisco IOS Switch"
+                    },
+                    "router": {
+                        "family_name": "Router",
+                        "model_name": "Cisco IOS Router"
+                    }
+                },
+                "first_gen": {
+                    "driver_name": "Generic Cisco IOS Driver Version3"
+                },
+                "second_gen": {
+                    "switch": {
+                        "driver_name": "CiscoIOSSwitchShellDriver_2Gen"
+                    },
+                    "router": {
+                        "driver_name": "CiscoIOSRouterShellDriver_2Gen"
+                    }
+                }
+            },
+            {
+                "name": "IOSXR",
+                "aliases": ["IOS[ -]?XR", "IOSXR"],
+                "default_model": "router",
+                "families": {
+                    "router": {
+                        "family_name": "Router",
+                        "model_name": "Cisco IOS-XR Router"
+                    }
+                },
+                "first_gen": {
+                    "driver_name": "Generic Cisco IOS-XR Driver Version2"
+                },
+                "second_gen": {
+                    "router": {
+                        "driver_name": "CiscoIOSXRRouterShellDriver_2Gen"
+                    }
+                }
+            },
+            {
+                "name": "NXOS",
+                "aliases": ["NX[ -]?OS", "NXOS"],
+                "default_model": "switch",
+                "families": {
+                    "switch": {
+                        "family_name": "Switch",
+                        "model_name": "Cisco NXOS Switch"
+                    }
+                },
+                "first_gen": {
+                    "driver_name": "Generic Cisco NXOS Driver Version2"
+                },
+                "second_gen": {
+                    "switch": {
+                        "driver_name": "CiscoNXOSSwitchShellDriver_2Gen"
+                    }
+                }
+            },
+            {
+                "name": "ASA",
+                "aliases": ["A(daptive)? ?S(ecurity)? ?A(ppliance)?"],
+                "default_model": "firewall",
+                "families": {
+                    "firewall": {
+                        "family_name": "Firewall",
+                        "model_name": "Cisco ASA Firewall"
+                    }
+                },
+                "first_gen": {
+                    "driver_name": "Generic Cisco ASA Driver"
+                },
+                "second_gen": {
+                    "firewall": {
+                        "driver_name": "CiscoASAFirewallShell_2Gen"
+                    }
+                }
+            },
+            {
+                "name": "AireOS",
+                "aliases": ["Controller"],
+                "default_model": "wireless_controller",
+                "families": {
+                    "wireless_controller": {
+                        "family_name": "Wireless Controller",
+                        "model_name": "Cisco AireOS Wireless Controller"
+                    }
+                },
+                "first_gen": {
+                    "driver_name": "Cisco AireOS Driver"
+                },
+                "second_gen": {
+                    "wireless_controller": {
+                        "driver_name": "Cisco AireOS Driver"
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "name": "Juniper",
+        "aliases": ["[Jj]uniper"],
+        "type": "networking",
+        "default_os": "JunOS",
+        "default_prompt": "%\\s*$",
+        "operation_systems": [
+            {
+                "name": "JunOS",
+                "aliases": ["[Jj]uniper"],
+                "default_model": "switch",
+                "families": {
+                    "switch": {
+                        "family_name": "Switch",
+                        "model_name": "Juniper JunOS Switch"
+                    },
+                    "router": {
+                        "family_name": "Router",
+                        "model_name": "Juniper JunOS Router"
+                    },
+                    "firewall": {
+                        "family_name": "Firewall",
+                        "model_name": "Juniper JunOS Firewall"
+                    }
+                },
+                "first_gen": {
+                    "driver_name": "Generic Juniper JunOS Driver Version3"
+                },
+                "second_gen": {
+                    "switch": {
+                        "driver_name": "JuniperJunOSSwitchShell2GenDriver"
+                    },
+                    "router": {
+                        "driver_name": "JuniperJunOSRouterShell2GenDriver"
+                    },
+                    "firewall": {
+                        "driver_name": "JuniperJunOSFirewallShell2GenDriver"
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "name": "Brocade",
+        "aliases": ["[Bb]rocade"],
+        "type": "networking",
+        "default_os": "FastIron",
+        "default_prompt": "[>$#]\\s*$",
+        "operation_systems": [
+            {
+                "name": "NetIron",
+                "aliases": ["Brocade.+MLX.+IronWare"],
+                "default_model": "router",
+                "families": {
+                    "router": {
+                        "family_name": "Router",
+                        "model_name": "Brocade NetIron Router"
+                    }
+                },
+                "first_gen": {
+                    "driver_name": "Generic Brocade NetIron Driver"
+                },
+                "second_gen": {
+                    "router": {
+                        "driver_name": "Generic Brocade NetIron Driver"
+                    }
+                }
+            },
+            {
+                "name": "FastIron",
+                "aliases": ["Brocade.+ICX.+IronWare"],
+                "default_model": "switch",
+                "families": {
+                    "switch": {
+                        "family_name": "Switch",
+                        "model_name": "Brocade FastIron Switch"
+                    },
+                    "router": {
+                        "family_name": "Router",
+                        "model_name": "Brocade FastIron Router"
+                    }
+                },
+                "first_gen": {
+                    "driver_name": "Generic Brocade FastIron Driver"
+                },
+                "second_gen": {
+                    "switch": {
+                        "driver_name": "Generic Brocade FastIron Driver"
+                    },
+                    "router": {
+                        "driver_name": "Generic Brocade FastIron Driver"
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "name": "Ericsson",
+        "aliases": ["[Ee]ricsson"],
+        "type": "networking",
+        "default_os": "IPOS",
+        "default_prompt": "\\].*[>#]\\s*$",
+        "enable_prompt": "#\\s*$",
+        "operation_systems": [
+            {
+                "name": "IPOS",
+                "aliases": ["IP[ -]?OS"],
+                "default_model": "router",
+                "families": {
+                    "router": {
+                        "family_name": "Router",
+                        "model_name": "Ericsson IPOS Router"
+                    }
+                },
+                "first_gen": {
+                    "driver_name": "Generic Ericsson IPOS Driver"
+                },
+                "second_gen": {
+                    "router": {
+                        "driver_name": "Generic Ericsson IPOS Driver"
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "name": "Raritan",
+        "aliases": ["[Rr]aritan"],
+        "type": "PDU",
+        "family_name": "PDU",
+        "model_name": "Raritan PDU",
+        "driver_name": "Raritan PDU Driver"
+    }
+]
