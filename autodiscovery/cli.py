@@ -69,6 +69,8 @@ def run(input_file, config_file, log_file):
         import json
         with open(config_file) as of:
             additional_vendors_data = json.load(of)
+    else:
+        additional_vendors_data = []
 
     auto_discover_command = AutoDiscoverCommand(data_processor=JsonDataProcessor(),
                                                 report=ConsoleReport(),

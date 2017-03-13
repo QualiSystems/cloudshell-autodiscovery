@@ -24,8 +24,8 @@ class AbstractInputDataParser(object):
     def _find_ips(self, start_ip, last_ip):
         """Find all IPs in the given range
 
-        :param str start_ip: first IP address in the range
-        :param str last_ip:  last IP address in the range
+        :param unicode start_ip: first IP address in the range
+        :param unicode last_ip:  last IP address in the range
         :return: list of all IPs from the given range
         """
         start_ip = ip_address(start_ip)
@@ -52,7 +52,7 @@ class AbstractInputDataParser(object):
                 first_ip_octets = first_ip.split(".")
                 last_ip_octets = last_ip.split(".")
                 last_ip = first_ip_octets[:4-len(last_ip_octets)] + last_ip_octets[:4-len(last_ip_octets)]
-                ips = self._find_ips(start_ip=first_ip, last_ip=".".join(last_ip))
+                ips = self._find_ips(start_ip=unicode(first_ip), last_ip=unicode(".".join(last_ip)))
                 parsed_ips.extend(ips)
             else:
                 parsed_ips.append(device_range)
