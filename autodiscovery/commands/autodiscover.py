@@ -15,7 +15,7 @@ from autodiscovery.cli_sessions import SSHDiscoverySession
 
 class ResourceModelsAttributes(object):
     """Container for the CloudShell Resource Model Attributes names"""
-    ENABLE_SNMP = "Enable SNMP"
+    ENABLE_SNMP = "Enable SNMP"  # 2 Generation shells contains model name prefix for all attributes
     SNMP_READ_COMMUNITY = "SNMP Read Community"
     USER = "User"
     PASSWORD = "Password"
@@ -24,10 +24,11 @@ class ResourceModelsAttributes(object):
 
 class CloudshellAPIErrorCodes(object):
     """Container for the CloudShell API error codes"""
-    RESOURCE_ALREADY_EXISTS = "114"
-    UNABLE_TO_LOCATE_DRIVER = "129"
     INCORRECT_LOGIN = "100"
     INCORRECT_PASSWORD = "118"
+    RESOURCE_ALREADY_EXISTS = "114"
+    UNABLE_TO_LOCATE_DRIVER = "129"
+    UNABLE_TO_LOCATE_FAMILY_OR_MODEL = "100"  # not a typo, same code as for incorrect login
 
 
 class AutoDiscoverCommand(object):
@@ -150,9 +151,6 @@ class AutoDiscoverCommand(object):
         if model_type is None:
             raise ReportableException("Unable to determine device model type")
 
-        resource_family = device_os.get_resource_family(model_type)
-        resource_model = device_os.get_resource_model(model_type)
-
         attributes = {
             ResourceModelsAttributes.SNMP_READ_COMMUNITY: snmp_community_string,
             ResourceModelsAttributes.ENABLE_SNMP: "False"
@@ -177,40 +175,44 @@ class AutoDiscoverCommand(object):
                 attributes[ResourceModelsAttributes.ENABLE_PASSWORD] = cli_creds.enable_password
                 current_entry.enable_password = cli_creds.enable_password
 
-        if not self.offline:
-            resource_name = self._create_cs_resource(device_ip=device_ip,
-                                                     resource_family=resource_family,
-                                                     resource_model=resource_model,
-                                                     resource_name=resource_name,
-                                                     attributes=attributes,
-                                                     driver_name=device_os.get_driver_name_2nd_gen(model_type))
+        familes_data = device_os.families.get(model_type)
 
-            self._add_resource_driver(resource_name=resource_name,
-                                      device_os=device_os,
-                                      model_type=model_type)
-
-            self.cs_session.AutoLoad(resource_name)
-
-    def _add_resource_driver(self, resource_name, device_os, model_type):
-        """Add appropriate driver to the created CloudShell resource
-
-        :param str resource_name:
-        :param autodiscovery.models.OperationSystem device_os:
-        :param str model_type:
-        :return:
-        """
-        for driver_name in (device_os.get_driver_name_2nd_gen(model_type), device_os.get_driver_name_1st_gen()):
+        if "second_gen" in familes_data:
+            second_gen = familes_data["second_gen"]
             try:
-                self.cs_session.UpdateResourceDriver(resourceFullPath=resource_name,
-                                                     driverName=driver_name)
+                resource_name = self._create_cs_resource(resource_name=resource_name,
+                                                         resource_family=second_gen["family_name"],
+                                                         resource_model=second_gen["model_name"],
+                                                         driver_name=second_gen["driver_name"],
+                                                         device_ip=device_ip,
+                                                         attributes=attributes,
+                                                         attribute_prefix="{}.".format(second_gen["model_name"]))
             except CloudShellAPIError as e:
-                if e.code == CloudshellAPIErrorCodes.UNABLE_TO_LOCATE_DRIVER:
-                    continue
-            else:
-                return
+                if e.code == CloudshellAPIErrorCodes.UNABLE_TO_LOCATE_FAMILY_OR_MODEL:
+                    if "first_gen" in familes_data:
+                        first_gen = familes_data["first_gen"]
+                        resource_name = self._create_cs_resource(resource_name=resource_name,
+                                                                 resource_family=first_gen["family_name"],
+                                                                 resource_model=first_gen["model_name"],
+                                                                 driver_name=first_gen["driver_name"],
+                                                                 device_ip=device_ip,
+                                                                 attributes=attributes,
+                                                                 attribute_prefix="")
+                    else:
+                        raise
+                else:
+                    raise
+        else:
+            first_gen = familes_data["first_gen"]
+            resource_name = self._create_cs_resource(resource_name=resource_name,
+                                                     resource_family=first_gen["family_name"],
+                                                     resource_model=first_gen["model_name"],
+                                                     driver_name=first_gen["driver_name"],
+                                                     device_ip=device_ip,
+                                                     attributes=attributes,
+                                                     attribute_prefix="")
 
-        raise ReportableException("Shell {} is not installed on the CloudShell".format(
-            device_os.get_driver_name_2nd_gen(model_type)))
+        self.cs_session.AutoLoad(resource_name)
 
     def _get_snmp_handler(self, device_ip, snmp_comunity_strings):
         """Get SNMP Handler and valid community string for the device
@@ -232,15 +234,33 @@ class AutoDiscoverCommand(object):
 
         raise ReportableException("SNMP timeout - no resource detected")
 
-    def _create_cs_resource(self, device_ip, resource_family, resource_model, resource_name, attributes, driver_name):
+    def _add_resource_driver(self, resource_name, driver_name):
+        """Add appropriate driver to the created CloudShell resource
+
+        :param str resource_name:
+        :param str driver_name:
+        :return:
+        """
+        try:
+            self.cs_session.UpdateResourceDriver(resourceFullPath=resource_name,
+                                                 driverName=driver_name)
+        except CloudShellAPIError as e:
+            if e.code == CloudshellAPIErrorCodes.UNABLE_TO_LOCATE_DRIVER:
+                self.logger.exception("Unable to locate driver {}".format(driver_name))
+                raise ReportableException("Shell {} is not installed on the CloudShell".format(driver_name))
+            raise
+
+    def _create_cs_resource(self, resource_name, resource_family, resource_model, driver_name, device_ip,
+                            attributes, attribute_prefix):
         """Create Resource on CloudShell with appropriate attributes
 
-        :param str device_ip:
+        :param str resource_name:
         :param str resource_family:
         :param str resource_model:
-        :param str resource_name:
-        :param dict attributes:
         :param str driver_name:
+        :param str device_ip:
+        :param dict attributes:
+        :param str attribute_prefix:
         :return: name for the created Resource
         :rtype: str
         """
@@ -259,11 +279,15 @@ class AutoDiscoverCommand(object):
             else:
                 self.logger.exception("Unable to locate Shell with Resource Family/Name: {}/{}"
                                       .format(resource_family, resource_model))
+                raise
 
-                raise ReportableException("Shell {} is not installed on the CloudShell".format(driver_name))
+        attributes = [AttributeNameValue("{}{}".format(attribute_prefix, key), value)
+                      for key, value in attributes.iteritems()]
 
-        attributes = [AttributeNameValue(key, value) for key, value in attributes.iteritems()]
         self.cs_session.SetAttributesValues([ResourceAttributesUpdateRequest(resource_name, attributes)])
+
+        self._add_resource_driver(resource_name=resource_name,
+                                  driver_name=driver_name)
 
         return resource_name
 

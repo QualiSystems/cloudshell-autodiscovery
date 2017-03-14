@@ -97,9 +97,7 @@ class JsonDataProcessor(object):
                                                        aliases=os_data.get("aliases", []),
                                                        default_model=os_data.get("default_model"),
                                                        models_map=os_data.get("models_map", []),
-                                                       families=os_data.get("families"),
-                                                       first_gen=os_data.get("first_gen"),
-                                                       second_gen=os_data.get("second_gen"))
+                                                       families=os_data.get("families"))
                 operation_systems.append(operating_sys)
 
             vendor = models.VendorDefinition(name=vendor_data["name"],
