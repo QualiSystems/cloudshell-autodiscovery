@@ -7,6 +7,7 @@ from autodiscovery.reports.base import AbstractReport
 
 class ExcelReport(AbstractReport):
     DEFAULT_REPORT_FILE = "report.xlsx"
+    COMMENT_COLUMN = "J:J"  # todo: for all columns
 
     def __init__(self, file_name=None):
         """
@@ -28,7 +29,8 @@ class ExcelReport(AbstractReport):
         for entry in self._entries:
             description = re.sub("\s+", " ", entry.description)
             table_data.append((entry.ip, entry.vendor, entry.sys_object_id, description, entry.snmp_community,
-                               entry.user, entry.password, entry.enable_password, entry.status, entry.comment))
+                               entry.user, entry.password, entry.enable_password, entry.model_type, entry.device_name,
+                               entry.status, entry.comment))
 
         for row_num, row in enumerate(table_data):
             for col_num, col in enumerate(row):
@@ -43,6 +45,6 @@ class ExcelReport(AbstractReport):
         worksheet.set_column("E:E", 30)
         worksheet.set_column("F:H", 20)
         worksheet.set_column("I:I", 30)
-        worksheet.set_column("J:J", 40)
+        worksheet.set_column(self.COMMENT_COLUMN, 40)
 
         workbook.close()

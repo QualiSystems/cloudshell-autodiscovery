@@ -1,11 +1,10 @@
 import json
-import os
 
 import click
 import yaml
 
 from autodiscovery import config
-from autodiscovery import utils
+from autodiscovery.common import utils
 
 
 class EchoUserInputTemplateCommand(object):

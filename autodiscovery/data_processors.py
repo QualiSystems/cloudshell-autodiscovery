@@ -2,7 +2,7 @@ import json
 
 from autodiscovery import config
 from autodiscovery import models
-from autodiscovery import utils
+from autodiscovery.common import utils
 
 
 class JsonDataProcessor(object):

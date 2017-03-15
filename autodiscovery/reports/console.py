@@ -30,7 +30,8 @@ class ConsoleReport(AbstractReport):
             description = '\n'.join(wrap(str(entry.description), self.DESCRIPTION_COLUMN_WIDTH))
             comment = '\n'.join(wrap(str(entry.comment), self.COMMENT_COLUMN_WIDTH))
             table_data.extend([(entry.ip, entry.vendor, entry.sys_object_id, description, entry.snmp_community,
-                                entry.user, entry.password, entry.enable_password, entry.status, comment),
+                                entry.user, entry.password, entry.enable_password, entry.model_type, entry.device_name,
+                                entry.status, comment),
                                empty_row])  # add an empty row between records
 
         table = AsciiTable(table_data)

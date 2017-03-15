@@ -3,7 +3,7 @@ from autodiscovery.exceptions import ReportableException
 
 class AbstractReport(object):
     HEADER = ("IP", "VENDOR", "sysObjectID", "DESCRIPTION", "SNMP READ COMMUNITY", "USER", "PASSWORD",
-              "ENABLE PASSWORD", "ADDED TO CLOUDSHELL", "COMMENT")
+              "ENABLE PASSWORD", "MODEL_TYPE", "DEVICE_NAME", "ADDED TO CLOUDSHELL", "COMMENT")
 
     def __init__(self):
         self._entries = []
@@ -25,6 +25,15 @@ class AbstractReport(object):
 
         return entry
 
+    def edit_entry(self, entry):
+        """Add new Entry for the device with given IP
+
+        :param Entry entry:
+        :rtype: Entry
+        """
+        self._entries.append(entry)
+        return entry
+
     def get_current_entry(self):
         """Get last added entry to the report"""
         if self._entries:
@@ -43,17 +52,20 @@ class Entry(object):
     FAILED_STATUS = "Failed"
     SKIPPED_STATUS = "Skipped"
 
-    def __init__(self, ip, status):
+    def __init__(self, ip, status, vendor="", device_name="", model_type="", sys_object_id="", snmp_community="",
+                 user="", password="", enable_password="", description="", comment=""):
         self.ip = ip
         self.status = status
-        self.vendor = ""
-        self.sys_object_id = ""
-        self.snmp_community = ""
-        self.user = ""
-        self.password = ""
-        self.enable_password = ""
-        self.description = ""
-        self.comment = ""
+        self.vendor = vendor
+        self.device_name = device_name
+        self.model_type = model_type
+        self.sys_object_id = sys_object_id
+        self.snmp_community = snmp_community
+        self.user = user
+        self.password = password
+        self.enable_password = enable_password
+        self.description = description
+        self.comment = comment
 
     def __enter__(self):
         return self
