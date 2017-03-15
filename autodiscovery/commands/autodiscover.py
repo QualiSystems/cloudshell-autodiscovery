@@ -15,7 +15,7 @@ from autodiscovery.cli_sessions import SSHDiscoverySession
 
 class ResourceModelsAttributes(object):
     """Container for the CloudShell Resource Model Attributes names"""
-    ENABLE_SNMP = "Enable SNMP"  # 2 Generation shells contains model name prefix for all attributes
+    ENABLE_SNMP = "Enable SNMP"
     SNMP_READ_COMMUNITY = "SNMP Read Community"
     USER = "User"
     PASSWORD = "Password"
@@ -177,42 +177,43 @@ class AutoDiscoverCommand(object):
 
         familes_data = device_os.families.get(model_type)
 
-        if "second_gen" in familes_data:
-            second_gen = familes_data["second_gen"]
-            try:
-                resource_name = self._create_cs_resource(resource_name=resource_name,
-                                                         resource_family=second_gen["family_name"],
-                                                         resource_model=second_gen["model_name"],
-                                                         driver_name=second_gen["driver_name"],
-                                                         device_ip=device_ip,
-                                                         attributes=attributes,
-                                                         attribute_prefix="{}.".format(second_gen["model_name"]))
-            except CloudShellAPIError as e:
-                if e.code == CloudshellAPIErrorCodes.UNABLE_TO_LOCATE_FAMILY_OR_MODEL:
-                    if "first_gen" in familes_data:
-                        first_gen = familes_data["first_gen"]
-                        resource_name = self._create_cs_resource(resource_name=resource_name,
-                                                                 resource_family=first_gen["family_name"],
-                                                                 resource_model=first_gen["model_name"],
-                                                                 driver_name=first_gen["driver_name"],
-                                                                 device_ip=device_ip,
-                                                                 attributes=attributes,
-                                                                 attribute_prefix="")
+        if not self.offline:
+            if "second_gen" in familes_data:
+                second_gen = familes_data["second_gen"]
+                try:
+                    resource_name = self._create_cs_resource(resource_name=resource_name,
+                                                             resource_family=second_gen["family_name"],
+                                                             resource_model=second_gen["model_name"],
+                                                             driver_name=second_gen["driver_name"],
+                                                             device_ip=device_ip,
+                                                             attributes=attributes,
+                                                             attribute_prefix="{}.".format(second_gen["model_name"]))
+                except CloudShellAPIError as e:
+                    if e.code == CloudshellAPIErrorCodes.UNABLE_TO_LOCATE_FAMILY_OR_MODEL:
+                        if "first_gen" in familes_data:
+                            first_gen = familes_data["first_gen"]
+                            resource_name = self._create_cs_resource(resource_name=resource_name,
+                                                                     resource_family=first_gen["family_name"],
+                                                                     resource_model=first_gen["model_name"],
+                                                                     driver_name=first_gen["driver_name"],
+                                                                     device_ip=device_ip,
+                                                                     attributes=attributes,
+                                                                     attribute_prefix="")
+                        else:
+                            raise
                     else:
                         raise
-                else:
-                    raise
-        else:
-            first_gen = familes_data["first_gen"]
-            resource_name = self._create_cs_resource(resource_name=resource_name,
-                                                     resource_family=first_gen["family_name"],
-                                                     resource_model=first_gen["model_name"],
-                                                     driver_name=first_gen["driver_name"],
-                                                     device_ip=device_ip,
-                                                     attributes=attributes,
-                                                     attribute_prefix="")
+            else:
+                first_gen = familes_data["first_gen"]
+                resource_name = self._create_cs_resource(resource_name=resource_name,
+                                                         resource_family=first_gen["family_name"],
+                                                         resource_model=first_gen["model_name"],
+                                                         driver_name=first_gen["driver_name"],
+                                                         device_ip=device_ip,
+                                                         attributes=attributes,
+                                                         attribute_prefix="")
 
-        self.cs_session.AutoLoad(resource_name)
+            self.cs_session.AutoLoad(resource_name)
 
     def _get_snmp_handler(self, device_ip, snmp_comunity_strings):
         """Get SNMP Handler and valid community string for the device
