@@ -51,7 +51,7 @@ class AbstractInputDataParser(object):
                 first_ip, last_ip = device_range.split("-")
                 first_ip_octets = first_ip.split(".")
                 last_ip_octets = last_ip.split(".")
-                last_ip = first_ip_octets[:4-len(last_ip_octets)] + last_ip_octets[:4-len(last_ip_octets)]
+                last_ip = first_ip_octets[:4-len(last_ip_octets)] + last_ip_octets
                 ips = self._find_ips(start_ip=unicode(first_ip), last_ip=unicode(".".join(last_ip)))
                 parsed_ips.extend(ips)
             else:
@@ -83,11 +83,12 @@ class YAMLInputDataParser(AbstractInputDataParser):
         data = yaml.load(file_data)
         devices_ips = self._parse_devices_ips(data["devices-ips"])
         cli_creds = models.CLICredentialsCollection(data.get("cli-credentials", {}))
+        cs_data = data.get("cloudshell", {})
 
         return models.InputDataModel(devices_ips=devices_ips,
-                                     cs_ip=data["cloudshell"]["ip"],
-                                     cs_user=data["cloudshell"]["user"],
-                                     cs_password=data["cloudshell"]["password"],
+                                     cs_ip=cs_data.get("ip"),
+                                     cs_user=cs_data.get("user"),
+                                     cs_password=cs_data.get("password"),
                                      snmp_community_strings=data["community-strings"],
                                      cli_credentials=cli_creds)
 

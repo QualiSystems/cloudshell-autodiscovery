@@ -84,7 +84,7 @@ class VendorDefinition(object):
 
 
 class OperationSystem(object):
-    def __init__(self, name, aliases, default_model, models_map, families, first_gen, second_gen):
+    def __init__(self, name, aliases, default_model, models_map, families):
         """
 
         :param str name:
@@ -92,16 +92,12 @@ class OperationSystem(object):
         :param str default_model:
         :param list[dict] models_map:
         :param dict families:
-        :param dict first_gen:
-        :param dict second_gen:
         """
         self.name = name
         self.aliases = aliases
         self.default_model = default_model
         self.models_map = models_map
         self.families = families
-        self.first_gen = first_gen
-        self.second_gen = second_gen
 
     def get_device_model_type(self, system_description):
         """Find device model (switch, router, etc.) by device system description
@@ -131,21 +127,6 @@ class OperationSystem(object):
         :rtype: str
         """
         return self.families[model_type]["model_name"]
-
-    def get_driver_name_1st_gen(self):
-        """Get Driver Name for the 1-st generation shells (CloudShell version < 8.0)
-
-        :rtype: str
-        """
-        return self.first_gen["driver_name"]
-
-    def get_driver_name_2nd_gen(self, model_type):
-        """Get Driver Name for the 2-nd generation shells (CloudShell version > 8.0)
-
-        :param str model_type:
-        :rtype: str
-        """
-        return self.second_gen[model_type]["driver_name"]
 
 
 class CLICredentials(object):
