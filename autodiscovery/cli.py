@@ -70,7 +70,7 @@ def run(input_file, config_file, log_file, report_file, report_type, offline):
         additional_vendors_data = []
     else:
         config_data_parser = get_config_data_parser(config_file)
-        additional_vendors_data = config_data_parser.parse(input_file)
+        additional_vendors_data = config_data_parser.parse(config_file)
 
     report = reports.get_report(report_file=report_file, report_type=report_type)
 
