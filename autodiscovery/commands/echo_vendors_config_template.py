@@ -1,7 +1,7 @@
 import click
 
 from autodiscovery import config
-from autodiscovery import utils
+from autodiscovery.common import utils
 
 
 class EchoVendorsConfigTemplateCommand(object):

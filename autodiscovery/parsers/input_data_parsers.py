@@ -107,10 +107,11 @@ class JSONInputDataParser(AbstractInputDataParser):
 
         devices_ips = self._parse_devices_ips(data["devices-ips"])
         cli_creds = models.CLICredentialsCollection(data.get("cli-credentials", {}))
+        cs_data = data.get("cloudshell", {})
 
         return models.InputDataModel(devices_ips=devices_ips,
-                                     cs_ip=data["cloudshell"]["ip"],
-                                     cs_user=data["cloudshell"]["user"],
-                                     cs_password=data["cloudshell"]["password"],
+                                     cs_ip=cs_data.get("ip"),
+                                     cs_user=cs_data.get("user"),
+                                     cs_password=cs_data.get("password"),
                                      snmp_community_strings=data["community-strings"],
                                      cli_credentials=cli_creds)

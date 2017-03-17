@@ -15,7 +15,7 @@ def get_report(report_file, report_type):
 
     :param str report_file:
     :param str report_type:
-    :rtype: AbstractReport
+    :rtype: autodiscovery.reports.base.AbstractReport
     """
     report_class = REPORTS_MAP.get(report_type)
     return report_class(report_file)
