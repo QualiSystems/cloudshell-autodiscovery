@@ -28,4 +28,4 @@ def get_full_path(*args):
     :return:
     """
     dir_name = os.path.split(os.path.abspath(__file__))[0]
-    return os.path.join(dir_name, os.pardir, *args)
+    return os.path.join(dir_name, os.pardir, os.pardir, *args)

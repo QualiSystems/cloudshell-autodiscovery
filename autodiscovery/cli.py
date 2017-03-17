@@ -1,15 +1,13 @@
-import json
 import pkg_resources
 
 import click
-from openpyxl import load_workbook
 
 from autodiscovery import commands
 from autodiscovery import reports
 from autodiscovery.common.utils import get_logger
 from autodiscovery.data_processors import JsonDataProcessor
-from autodiscovery.input_data_parsers import get_input_data_parser
-from autodiscovery.reports.base import Entry
+from autodiscovery.parsers.input_data_parsers import get_input_data_parser
+from autodiscovery.parsers.config_data_parsers import get_config_data_parser
 
 
 @click.group()
@@ -59,21 +57,27 @@ def echo_vendors_config_template(template_format, save_to_file):
 @click.option("--config-file", help="Vendors configuration file with additional data. Can be generated with a "
                                     "'echo-vendors-configuration-template' command")
 @click.option("--log-file", help="File name for logs")
-@click.option("--report-file", help="Type for generated report")
+@click.option("--report-file", help="File name for generated report")
 @click.option("--report-type", type=click.Choice(reports.REPORT_TYPES), default=reports.DEFAULT_REPORT_TYPE,
-              help="File name for generated report")
+              help="Type for generated report")
 @click.option("--offline", is_flag=True, help="Generate report without creation of any Resource on the CloudShell")
 def run(input_file, config_file, log_file, report_file, report_type, offline):
     """Run Auto discovery command with given arguments from the input file"""
-    parser = get_input_data_parser(input_file)
-    input_data_model = parser.parse(input_file)
-    additional_vendors_data = parse_config(config_file)
+    input_data_parser = get_input_data_parser(input_file)
+    input_data_model = input_data_parser.parse(input_file)
+
+    if config_file is None:
+        additional_vendors_data = []
+    else:
+        config_data_parser = get_config_data_parser(config_file)
+        additional_vendors_data = config_data_parser.parse(input_file)
+
     report = reports.get_report(report_file=report_file, report_type=report_type)
 
     auto_discover_command = commands.RunCommand(data_processor=JsonDataProcessor(),
-                                                         report=report,
-                                                         logger=get_logger(log_file),
-                                                         offline=offline)
+                                                report=report,
+                                                logger=get_logger(log_file),
+                                                offline=offline)
 
     auto_discover_command.execute(devices_ips=input_data_model.devices_ips,
                                   snmp_comunity_strings=input_data_model.snmp_community_strings,
@@ -90,62 +94,28 @@ def run(input_file, config_file, log_file, report_file, report_type, offline):
 @click.option("--config-file", help="Vendors configuration file with additional data. Can be generated with a "
                                     "'echo-vendors-configuration-template' command")
 @click.option("--log-file", help="File name for logs")
-@click.option("--report-file", required=True, help="Type for generated report")
+@click.option("--report-file", required=True, help="File name of the report to run from")
 def run_from_report(input_file, config_file, log_file, report_file):
     """Create and autoload CloudShell resources from the generated report"""
-    parser = get_input_data_parser(input_file)
-    input_data_model = parser.parse(input_file)
-    additional_vendors_data = parse_config(config_file)
-    devices_data = parse_report(report_file)
+    input_data_parser = get_input_data_parser(input_file)
+    input_data_model = input_data_parser.parse(input_file)
 
-    # ??????
-    # report = reports.get_report(report_file=report_file)
-    # devices_data = report.load_from_file()
+    if config_file is None:
+        additional_vendors_data = []
+    else:
+        config_data_parser = get_config_data_parser(config_file)
+        additional_vendors_data = config_data_parser.parse(input_file)
 
-    command = commands.RunFromReportCommand(
-        data_processor=JsonDataProcessor(),
-        report=reports.get_report(report_file=report_file, report_type=reports.DEFAULT_REPORT_TYPE),
-        logger=get_logger(log_file),
-        offline=False)
+    report = reports.get_report(report_file=report_file, report_type=reports.DEFAULT_REPORT_TYPE)
+    parsed_entries = report.parse_entries_from_file(report_file)
 
-    command.execute(device_models=devices_data,
+    command = commands.RunFromReportCommand(data_processor=JsonDataProcessor(),
+                                            report=reports.get_report(report_file=report_file,
+                                                                      report_type=reports.DEFAULT_REPORT_TYPE),
+                                            logger=get_logger(log_file))
+
+    command.execute(parsed_entries=parsed_entries,
                     cs_ip=input_data_model.cs_ip,
                     cs_user=input_data_model.cs_user,
                     cs_password=input_data_model.cs_password,
                     additional_vendors_data=additional_vendors_data)
-
-
-def parse_config(config_file):
-    # todo: rework this
-    if config_file is not None:
-        with open(config_file) as f:
-            return json.load(f)
-
-    return []
-
-
-def parse_report(report_file):
-    # todo: use same lib for read/write excel, rework this
-    entries = []
-    wb = load_workbook(report_file)
-    wb_sheet = wb.active
-
-    for row in wb_sheet.rows:
-        args = [cell.value for cell in row]  # todo: get arguments by their name somehow
-
-        entry = reports.base.Entry(ip=args[0],
-                                   vendor=args[1],
-                                   sys_object_id=args[2],
-                                   description=args[3],
-                                   snmp_community=args[4],
-                                   user=args[5],
-                                   password=args[6],
-                                   enable_password=args[7],
-                                   model_type=args[8],
-                                   device_name=args[9],
-                                   status=args[10],
-                                   comment=args[11])
-
-        entries.append(entry)
-
-    return entries[1:]  # first row is a header

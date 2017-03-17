@@ -46,6 +46,14 @@ class AbstractReport(object):
         """
         raise NotImplementedError("Class {} must implement method 'generate'".format(type(self)))
 
+    def parse_entries_from_file(self, report_file):
+        """Parse all discovered devices (entries) from a given file
+
+        :param str report_file: file path to the generated report
+        :rtype: list[Entry]
+        """
+        raise NotImplementedError("Class {} must implement method 'parse_entries_from_file'".format(type(self)))
+
 
 class Entry(object):
     SUCCESS_STATUS = "Success"
