@@ -1,4 +1,5 @@
 from setuptools import setup
+from setuptools import find_packages
 
 
 def get_file_content(file_name):
@@ -11,7 +12,7 @@ setup(name='cloudshell-autodiscovery',
       long_description=get_file_content('README.md'),
       author='Quali',
       author_email='anton.p@qualisystems.com',
-      packages=['autodiscovery'],
+      packages=find_packages() + ['examples'],
       install_requires=get_file_content('requirements.txt'),
       license="Apache Software License 2.0",
       entry_points={
