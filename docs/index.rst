@@ -13,6 +13,8 @@ Welcome to cloudshell-autodiscovery's documentation!
    basic-usage
    advanced-usage
    commands
+   data-schemes
+   data-examples
 
 
 Indices and tables
