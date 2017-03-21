@@ -1,0 +1,91 @@
+{
+   "$schema": "http://json-schema.org/draft-04/schema#",
+   "definitions": {
+      "cli_creds": {
+         "type": "object",
+         "properties": {
+            "enable password": {
+               "description": "CLI enable password on the device",
+               "type": "string"
+            },
+            "password": {
+               "description": "CLI password on the device",
+               "type": "string"
+            },
+            "user": {
+               "description": "CLI user on the device",
+               "type": "string"
+            }
+         }
+      }
+   },
+   "type": "object",
+   "description": "schema for input data with devices information",
+   "required": [
+      "cloudshell",
+      "community-strings",
+      "devices-ips"
+   ],
+   "properties": {
+      "cli-credentials": {
+         "type": "object",
+         "additionalProperties": {
+            "type": "array",
+            "description": "array of possible CLI credentials for the devices by the specific vendor",
+            "items": {
+               "$ref": "#/definitions/cli_creds"
+            }
+         },
+         "properties": {
+            "default": {
+               "type": "array",
+               "description": "array of default possible CLI credentials for the devices",
+               "items": {
+                  "$ref": "#/definitions/cli_creds"
+               }
+            }
+         }
+      },
+      "cloudshell": {
+         "type": "object",
+         "description": "schema for CloudShell API credentials",
+         "required": [
+            "ip",
+            "user",
+            "password"
+         ],
+         "properties": {
+            "ip": {
+               "description": "IP address for the CloudShell API",
+               "type": "string"
+            },
+            "password": {
+               "description": "password for the CloudShell API",
+               "type": "string"
+            },
+            "user": {
+               "description": "user for the CloudShell API",
+               "type": "string"
+            }
+         }
+      },
+      "community-strings": {
+         "type": "array",
+         "minItems": 1,
+         "uniqueItems": true,
+         "items": {
+            "type": "string",
+            "description": "Possible SNMP read community string for the devices"
+         }
+      },
+      "devices-ips": {
+         "type": "array",
+         "minItems": 1,
+         "uniqueItems": true,
+         "items": {
+            "type": "string",
+            "description": "Device IP (10.10.10.10) or a range of device IPs (10.10.10.10-45)"
+         }
+      }
+   }
+}

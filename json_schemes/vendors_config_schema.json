@@ -1,0 +1,192 @@
+{
+   "$schema": "http://json-schema.org/draft-04/schema#",
+   "definitions": {
+      "name": {
+         "type": "string",
+         "description": "name for the vendor"
+      },
+      "family_name": {
+         "type": "string",
+         "description": "resource family name for the device on the CloudShell"
+      },
+      "model_name": {
+         "type": "string",
+         "description": "resource model name for the device on the CloudShell"
+      },
+      "driver_name": {
+         "type": "string",
+         "description": "driver name for the device on the CloudShell"
+      },
+      "aliases": {
+         "type": "array",
+         "items": {
+            "type": "string",
+            "description": "regex string which can be an alias for the vendor name"
+         }
+      },
+      "networking_device": {
+         "type": "object",
+         "required": [
+            "name",
+            "type",
+            "operation_systems"
+         ],
+         "properties": {
+            "name": {
+               "$ref": "#/definitions/name"
+            },
+            "aliases": {
+               "$ref": "#/definitions/aliases"
+            },
+            "type": {
+               "enum": [
+                  "networking"
+               ]
+            },
+            "default_os": {
+               "type": "string",
+               "description": "default operation system name for the vendor"
+            },
+            "default_prompt": {
+               "type": "string",
+               "description": "regexp string for the default prompt"
+            },
+            "enable_prompt": {
+               "type": "string",
+               "description": "regexp string for the enable prompt"
+            },
+            "operation_systems": {
+               "type": "array",
+               "items": {
+                  "type": "object",
+                  "description": "operation system data within specific vendor",
+                  "required": [
+                     "name",
+                     "families"
+                  ],
+                  "properties": {
+                     "name": {
+                        "$ref": "#/definitions/name"
+                     },
+                     "aliases": {
+                        "$ref": "#/definitions/aliases"
+                     },
+                     "default_model": {
+                        "type": "string",
+                        "description": "model type of the device (switch/router/ect.)"
+                     },
+                     "models_map": {
+                        "type": "array",
+                        "items": {
+                           "type": "object",
+                           "required": [
+                              "model",
+                              "aliases"
+                           ],
+                           "properties": {
+                              "model": {
+                                 "type": "string",
+                                 "description": "model type of the device (switch/router/ect.)"
+                              },
+                              "aliases": {
+                                 "$ref": "#/definitions/aliases"
+                              }
+                           }
+                        }
+                     },
+                     "families": {
+                        "type": "object",
+                        "additionalProperties": {
+                           "type": "object",
+                           "description": "family/model name info by the device model type",
+                           "properties": {
+                              "first_gen": {
+                                 "type": "object",
+                                 "required": [
+                                    "family_name",
+                                    "model_name",
+                                    "driver_name"
+                                 ],
+                                 "properties": {
+                                    "family_name": {
+                                       "$ref": "#/definitions/family_name"
+                                    },
+                                    "model_name": {
+                                       "$ref": "#/definitions/model_name"
+                                    },
+                                    "driver_name": {
+                                       "$ref": "#/definitions/driver_name"
+                                    }
+                                 }
+                              },
+                              "second_gen": {
+                                 "type": "object",
+                                 "required": [
+                                    "family_name",
+                                    "model_name",
+                                    "driver_name"
+                                 ],
+                                 "properties": {
+                                    "family_name": {
+                                       "$ref": "#/definitions/family_name"
+                                    },
+                                    "model_name": {
+                                       "$ref": "#/definitions/model_name"
+                                    },
+                                    "driver_name": {
+                                       "$ref": "#/definitions/driver_name"
+                                    }
+                                 }
+                              }
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      },
+      "pdu_device": {
+         "type": "object",
+         "required": [
+            "name",
+            "type",
+            "family_name",
+            "model_name",
+            "driver_name"
+         ],
+         "properties": {
+            "name": {
+               "$ref": "#/definitions/name"
+            },
+            "type": {
+               "enum": [
+                  "PDU"
+               ]
+            },
+            "family_name": {
+               "$ref": "#/definitions/family_name"
+            },
+            "model_name": {
+               "$ref": "#/definitions/model_name"
+            },
+            "driver_name": {
+               "$ref": "#/definitions/driver_name"
+            }
+         }
+      }
+   },
+   "type": "array",
+   "description": "schema for the additional vendors configuration",
+   "items": {
+      "type": "object",
+      "oneOf": [
+         {
+            "$ref": "#/definitions/networking_device"
+         },
+         {
+            "$ref": "#/definitions/pdu_device"
+         }
+      ]
+   }
+}
