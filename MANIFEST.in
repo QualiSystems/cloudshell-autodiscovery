@@ -1,0 +1,4 @@
+include *.txt
+recursive-include examples *.txt *.py *.yml *.json
+recursive-include data *.txt *.py *.yml *.json
+recursive-include json_schemes *.json
