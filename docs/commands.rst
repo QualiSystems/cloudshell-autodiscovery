@@ -1,9 +1,6 @@
 Commands
 ===============
 
-.. automodule:: autodiscovery.cli
-.. autoclass:: run_from_report
-
 Generate input data template command
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. command-output:: autodiscovery echo-input-template --help
