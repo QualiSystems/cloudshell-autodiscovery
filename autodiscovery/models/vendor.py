@@ -20,25 +20,21 @@ class VendorDefinitionCollection(object):
                 return vendor
 
 
-class VendorDefinition(object):
-    def __init__(self, name, aliases, vendor_type, default_os, default_prompt, enable_prompt, operation_systems):
+class BaseVendorDefinition(object):
+    def __init__(self, name, aliases, vendor_type, default_prompt, enable_prompt, *args, **kwargs):
         """
 
         :param str name:
         :param list aliases:
         :param str vendor_type:
-        :param str default_os:
         :param str default_prompt:
         :param str enable_prompt:
-        :param list[OperationSystem] operation_systems:
         """
         self.name = name
         self.aliases = aliases
         self.vendor_type = vendor_type
-        self.default_os = default_os
         self.default_prompt = default_prompt
         self.enable_prompt = enable_prompt
-        self.operation_systems = operation_systems
 
     def check_in_aliases(self, vendor_name):
         """Check in given vendor name is in aliases for current Vendor
@@ -56,6 +52,23 @@ class VendorDefinition(object):
         :rtype: bool
         """
         return self.name.lower() == vendor_name.lower() or self.check_in_aliases(vendor_name)
+
+
+class NetworkingVendorDefinition(BaseVendorDefinition):
+    def __init__(self, name, aliases, vendor_type, default_prompt, enable_prompt, default_os, operation_systems):
+        """
+
+        :param str name:
+        :param list aliases:
+        :param str vendor_type:
+        :param str default_prompt:
+        :param str enable_prompt:
+        :param str default_os:
+        :param list[OperationSystem] operation_systems:
+        """
+        super(NetworkingVendorDefinition, self).__init__(name, aliases, vendor_type, default_prompt, enable_prompt)
+        self.default_os = default_os
+        self.operation_systems = operation_systems
 
     def get_device_os(self, system_description):
         """Find device Operation System by its system description
@@ -81,6 +94,25 @@ class VendorDefinition(object):
         for os in self.operation_systems:
             if os.name == self.default_os:
                 return os
+
+
+class PDUVendorDefinition(BaseVendorDefinition):
+    def __init__(self, name, aliases, vendor_type, default_prompt, enable_prompt, family_name, model_name, driver_name):
+        """
+
+        :param str name:
+        :param list aliases:
+        :param str vendor_type:
+        :param str default_prompt:
+        :param str enable_prompt:
+        :param str family_name:
+        :param str model_name:
+        :param str driver_name:
+        """
+        super(PDUVendorDefinition, self).__init__(name, aliases, vendor_type, default_prompt, enable_prompt)
+        self.family_name = family_name
+        self.model_name = model_name
+        self.driver_name = driver_name
 
 
 class OperationSystem(object):

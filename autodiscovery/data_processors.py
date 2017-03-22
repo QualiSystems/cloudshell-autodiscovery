@@ -6,6 +6,14 @@ from autodiscovery.common import utils
 
 
 class JsonDataProcessor(object):
+
+    def __init__(self, logger):
+        """
+
+        :param logging.Logger logger:
+        """
+        self.logger = logger
+
     def _prepare_file_path(self, filename):
         """Add full path to the filename
 
@@ -91,22 +99,41 @@ class JsonDataProcessor(object):
 
         for vendor_data in self._merge_vendors_data(conf_data=vendors_data,
                                                     additional_data=additional_vendors_data):
-            operation_systems = []
-            for os_data in vendor_data.get("operation_systems", []):
-                operating_sys = models.OperationSystem(name=os_data["name"],
-                                                       aliases=os_data.get("aliases", []),
-                                                       default_model=os_data.get("default_model"),
-                                                       models_map=os_data.get("models_map", []),
-                                                       families=os_data.get("families"))
-                operation_systems.append(operating_sys)
 
-            vendor = models.VendorDefinition(name=vendor_data["name"],
-                                             aliases=vendor_data.get("aliases", []),
-                                             vendor_type=vendor_data["type"],
-                                             default_os=vendor_data.get("default_os"),
-                                             default_prompt=vendor_data.get("default_prompt"),
-                                             enable_prompt=vendor_data.get("enable_prompt"),
-                                             operation_systems=operation_systems)
+            if vendor_data["type"].lower() == "networking":
+                operation_systems = []
+                for os_data in vendor_data.get("operation_systems", []):
+                    operating_sys = models.OperationSystem(name=os_data["name"],
+                                                           aliases=os_data.get("aliases", []),
+                                                           default_model=os_data.get("default_model"),
+                                                           models_map=os_data.get("models_map", []),
+                                                           families=os_data.get("families"))
+                    operation_systems.append(operating_sys)
+
+                vendor = models.NetworkingVendorDefinition(name=vendor_data["name"],
+                                                           aliases=vendor_data.get("aliases", []),
+                                                           vendor_type=vendor_data["type"],
+                                                           default_os=vendor_data.get("default_os"),
+                                                           default_prompt=vendor_data.get("default_prompt"),
+                                                           enable_prompt=vendor_data.get("enable_prompt"),
+                                                           operation_systems=operation_systems)
+
+            elif vendor_data["type"].upper() == "PDU":
+                vendor = models.PDUVendorDefinition(name=vendor_data["name"],
+                                                    aliases=vendor_data.get("aliases", []),
+                                                    vendor_type=vendor_data["type"],
+                                                    default_prompt=vendor_data.get("default_prompt"),
+                                                    enable_prompt=vendor_data.get("enable_prompt"),
+                                                    family_name=vendor_data["family_name"],
+                                                    model_name=vendor_data["model_name"],
+                                                    driver_name=vendor_data["driver_name"])
+            else:
+                self.logger.warning("Unable to parse vendor '{}'. Vendor type '{}' is not supported".format(
+                    vendor_data["name"],
+                    vendor_data["type"]
+                ))
+                continue
+
             vendors.append(vendor)
 
         return models.VendorDefinitionCollection(vendors=vendors)

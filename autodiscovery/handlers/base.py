@@ -2,6 +2,8 @@ from cloudshell.api.cloudshell_api import AttributeNameValue
 from cloudshell.api.cloudshell_api import ResourceAttributesUpdateRequest
 from cloudshell.api.common_cloudshell_api import CloudShellAPIError
 
+from autodiscovery.cli_sessions import SSHDiscoverySession
+from autodiscovery.cli_sessions import TelnetDiscoverySession
 from autodiscovery.common.consts import CloudshellAPIErrorCodes
 from autodiscovery.exceptions import ReportableException
 
@@ -14,10 +16,24 @@ class AbstractHandler(object):
         """
         self.logger = logger
 
-    def discover(self, entry, vendor, cli_creds):
+    def discover(self, entry, vendor, cli_credentials):
+        """Discover device attributes
+
+        :param autodiscovery.reports.base.Entry entry:
+        :param autodiscovery.models.vendor.BaseVendorDefinition vendor:
+        :param autodiscovery.models.CLICredentialsCollection cli_credentials:
+        :rtype: autodiscovery.reports.base.Entry
+        """
         raise NotImplementedError("Class {} must implement method 'discover'".format(type(self)))
 
     def upload(self, entry, vendor, cs_session):
+        """Upload discovered device on the CloudShell
+
+        :param autodiscovery.reports.base.Entry entry:
+        :param autodiscovery.models.vendor.BaseVendorDefinition vendor:
+        :param cloudshell.api.cloudshell_api.CloudShellAPISession cs_session:
+        :return:
+        """
         raise NotImplementedError("Class {} must implement method 'upload'".format(type(self)))
 
     def _add_resource_driver(self, cs_session, resource_name, driver_name):
@@ -38,7 +54,7 @@ class AbstractHandler(object):
             raise
 
     def _create_cs_resource(self, cs_session, resource_name, resource_family, resource_model, driver_name, device_ip,
-                            attributes, attribute_prefix):
+                            attributes, attribute_prefix=""):
         """Create Resource on CloudShell with appropriate attributes
 
         :param cloudshell.api.cloudshell_api.CloudShellAPISession cs_session:
@@ -80,3 +96,26 @@ class AbstractHandler(object):
 
         return resource_name
 
+    def _get_cli_credentials(self, vendor, cli_credentials, device_ip):
+        """
+
+        :param autodiscovery.models.VendorDefinition vendor:
+        :param autodiscovery.models.CLICredentialsCollection cli_credentials:
+        :param str device_ip:
+        :return:
+        """
+        vendor_cli_creds = cli_credentials.get_creds_by_vendor(vendor)
+
+        if vendor_cli_creds:
+            for session in (SSHDiscoverySession(device_ip), TelnetDiscoverySession(device_ip)):
+                try:
+                    valid_creds = session.check_credentials(cli_credentials=vendor_cli_creds,
+                                                            default_prompt=vendor.default_prompt,
+                                                            enable_prompt=vendor.enable_prompt,
+                                                            logger=self.logger)
+                except Exception:
+                    self.logger.warning("{} Credentials aren't valid for the device with IP {}"
+                                        .format(session.SESSION_TYPE, device_ip), exc_info=True)
+                else:
+                    vendor_cli_creds.update_valid_creds(valid_creds)
+                    return valid_creds
