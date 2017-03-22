@@ -142,6 +142,7 @@ class RunCommand(AbstractRunCommand):
             self._init_cs_session(cs_ip=cs_ip, cs_user=cs_user, cs_password=cs_password)
 
         for device_ip in devices_ips:
+            self.logger.info("Discovering device with IP {}".format(device_ip))
             try:
                 with self.report.add_entry(ip=device_ip, offline=self.offline) as entry:
                     entry = self._discover_device(entry=entry, snmp_comunity_strings=snmp_comunity_strings)
@@ -164,5 +165,7 @@ class RunCommand(AbstractRunCommand):
 
             except Exception:
                 self.logger.exception("Failed to discover {} device due to:".format(device_ip))
+            else:
+                self.logger.info("Device with IP {} was successfully discovered".format(device_ip))
 
         self.report.generate()
