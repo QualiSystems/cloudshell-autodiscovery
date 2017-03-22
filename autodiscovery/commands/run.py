@@ -1,4 +1,5 @@
 import re
+import uuid
 
 from cloudshell.api.cloudshell_api import CloudShellAPISession
 from cloudshell.api.common_cloudshell_api import CloudShellAPIError
@@ -100,6 +101,14 @@ class RunCommand(AbstractRunCommand):
 
         raise ReportableException("SNMP timeout - no resource detected")
 
+    def _generate_device_name(self, vendor_name):
+        """Generate name for the device model on CloudShell based on vendor name
+
+        :param str vendor_name:
+        :rtype: str
+        """
+        return "{}-{}".format(vendor_name, uuid.uuid4())
+
     def _discover_device(self, entry, snmp_comunity_strings):
         """Discover device attributes via SNMP
 
@@ -116,11 +125,15 @@ class RunCommand(AbstractRunCommand):
         vendor_enterprise_numbers = self.data_processor.load_vendor_enterprise_numbers()
         entry.snmp_community = snmp_community
         entry.sys_object_id = snmp_handler.get_property('SNMPv2-MIB', 'sysObjectID', '0')
-        entry.description = snmp_handler.get_property('SNMPv2-MIB', 'sysDescr', '0')
-        entry.device_name = snmp_handler.get_property('SNMPv2-MIB', 'sysName', '0')
         vendor_number = self._parse_vendor_number(entry.sys_object_id)
         entry.vendor = vendor_enterprise_numbers[vendor_number]
+        entry.description = snmp_handler.get_property('SNMPv2-MIB', 'sysDescr', '0')
+        sys_name = snmp_handler.get_property('SNMPv2-MIB', 'sysName', '0')
 
+        if not sys_name:
+            sys_name = self._generate_device_name(vendor_name=entry.vendor)
+
+        entry.device_name = sys_name
         return entry
 
     def execute(self, devices_ips, snmp_comunity_strings, cli_credentials, cs_ip, cs_user, cs_password,
