@@ -107,6 +107,7 @@ class RunCommand(AbstractRunCommand):
         :param str vendor_name:
         :rtype: str
         """
+        vendor_name = re.sub("[^a-zA-Z0-9 .-]", "", vendor_name)
         return "{}-{}".format(vendor_name, uuid.uuid4())
 
     def _discover_device(self, entry, snmp_comunity_strings):
