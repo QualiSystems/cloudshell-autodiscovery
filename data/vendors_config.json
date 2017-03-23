@@ -321,6 +321,7 @@
          "[Rr]aritan"
       ],
       "type": "PDU",
+      "default_prompt": "#",
       "family_name": "PDU",
       "model_name": "Raritan PDU",
       "driver_name": "Raritan PDU Driver"

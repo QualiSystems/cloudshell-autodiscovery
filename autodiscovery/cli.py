@@ -26,8 +26,10 @@ def version():
 @click.option("--log-file", help="File name for logs")
 def update_vendor_data(url, log_file):
     """Update file with vendor enterprise numbers data"""
-    update_vendor_data_command = commands.UpdateVendorsCommand(data_processor=JsonDataProcessor(),
-                                                               logger=get_logger(log_file))
+    logger = get_logger(log_file)
+
+    update_vendor_data_command = commands.UpdateVendorsCommand(data_processor=JsonDataProcessor(logger=logger),
+                                                               logger=logger)
     update_vendor_data_command.execute(url=url)
 
 
@@ -65,6 +67,7 @@ def run(input_file, config_file, log_file, report_file, report_type, offline):
     """Run Auto discovery command with given arguments from the input file"""
     input_data_parser = get_input_data_parser(input_file)
     input_data_model = input_data_parser.parse(input_file)
+    logger = get_logger(log_file)
 
     if config_file is None:
         additional_vendors_data = []
@@ -74,9 +77,9 @@ def run(input_file, config_file, log_file, report_file, report_type, offline):
 
     report = reports.get_report(report_file=report_file, report_type=report_type)
 
-    auto_discover_command = commands.RunCommand(data_processor=JsonDataProcessor(),
+    auto_discover_command = commands.RunCommand(data_processor=JsonDataProcessor(logger=logger),
                                                 report=report,
-                                                logger=get_logger(log_file),
+                                                logger=logger,
                                                 offline=offline)
 
     auto_discover_command.execute(devices_ips=input_data_model.devices_ips,
@@ -99,6 +102,7 @@ def run_from_report(input_file, config_file, log_file, report_file):
     """Create and autoload CloudShell resources from the generated report"""
     input_data_parser = get_input_data_parser(input_file)
     input_data_model = input_data_parser.parse(input_file)
+    logger = get_logger(log_file)
 
     if config_file is None:
         additional_vendors_data = []
@@ -109,10 +113,10 @@ def run_from_report(input_file, config_file, log_file, report_file):
     report = reports.get_report(report_file=report_file, report_type=reports.DEFAULT_REPORT_TYPE)
     parsed_entries = report.parse_entries_from_file(report_file)
 
-    command = commands.RunFromReportCommand(data_processor=JsonDataProcessor(),
+    command = commands.RunFromReportCommand(data_processor=JsonDataProcessor(logger=logger),
                                             report=reports.get_report(report_file=report_file,
                                                                       report_type=reports.DEFAULT_REPORT_TYPE),
-                                            logger=get_logger(log_file))
+                                            logger=logger)
 
     command.execute(parsed_entries=parsed_entries,
                     cs_ip=input_data_model.cs_ip,

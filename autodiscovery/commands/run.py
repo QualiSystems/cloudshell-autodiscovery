@@ -1,4 +1,5 @@
 import re
+import uuid
 
 from cloudshell.api.cloudshell_api import CloudShellAPISession
 from cloudshell.api.common_cloudshell_api import CloudShellAPIError
@@ -100,6 +101,15 @@ class RunCommand(AbstractRunCommand):
 
         raise ReportableException("SNMP timeout - no resource detected")
 
+    def _generate_device_name(self, vendor_name):
+        """Generate name for the device model on CloudShell based on vendor name
+
+        :param str vendor_name:
+        :rtype: str
+        """
+        vendor_name = re.sub("[^a-zA-Z0-9 .-]", "", vendor_name)
+        return "{}-{}".format(vendor_name, uuid.uuid4())
+
     def _discover_device(self, entry, snmp_comunity_strings):
         """Discover device attributes via SNMP
 
@@ -116,11 +126,15 @@ class RunCommand(AbstractRunCommand):
         vendor_enterprise_numbers = self.data_processor.load_vendor_enterprise_numbers()
         entry.snmp_community = snmp_community
         entry.sys_object_id = snmp_handler.get_property('SNMPv2-MIB', 'sysObjectID', '0')
-        entry.description = snmp_handler.get_property('SNMPv2-MIB', 'sysDescr', '0')
-        entry.device_name = snmp_handler.get_property('SNMPv2-MIB', 'sysName', '0')
         vendor_number = self._parse_vendor_number(entry.sys_object_id)
         entry.vendor = vendor_enterprise_numbers[vendor_number]
+        entry.description = snmp_handler.get_property('SNMPv2-MIB', 'sysDescr', '0')
+        sys_name = snmp_handler.get_property('SNMPv2-MIB', 'sysName', '0')
 
+        if not sys_name:
+            sys_name = self._generate_device_name(vendor_name=entry.vendor)
+
+        entry.device_name = sys_name
         return entry
 
     def execute(self, devices_ips, snmp_comunity_strings, cli_credentials, cs_ip, cs_user, cs_password,
@@ -142,6 +156,7 @@ class RunCommand(AbstractRunCommand):
             self._init_cs_session(cs_ip=cs_ip, cs_user=cs_user, cs_password=cs_password)
 
         for device_ip in devices_ips:
+            self.logger.info("Discovering device with IP {}".format(device_ip))
             try:
                 with self.report.add_entry(ip=device_ip, offline=self.offline) as entry:
                     entry = self._discover_device(entry=entry, snmp_comunity_strings=snmp_comunity_strings)
@@ -164,5 +179,7 @@ class RunCommand(AbstractRunCommand):
 
             except Exception:
                 self.logger.exception("Failed to discover {} device due to:".format(device_ip))
+            else:
+                self.logger.info("Device with IP {} was successfully discovered".format(device_ip))
 
         self.report.generate()

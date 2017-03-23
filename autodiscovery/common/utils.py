@@ -1,5 +1,6 @@
 import logging
 import os
+import sys
 
 
 def get_logger(file_path=None):
@@ -11,13 +12,22 @@ def get_logger(file_path=None):
     if file_path is None:
         file_path = "autodiscovery.log"
 
+    # full log messages
     logger = logging.getLogger('autodiscovery')
     handler = logging.FileHandler(file_path)
     formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
     handler.setFormatter(formatter)
+    handler.setLevel(logging.DEBUG)
     logger.addHandler(handler)
-    logger.setLevel(logging.INFO)
 
+    # console messages
+    handler = logging.StreamHandler(sys.stdout)
+    formatter = logging.Formatter('%(asctime)s %(message)s', "%Y-%m-%d %H:%M:%S")
+    handler.setFormatter(formatter)
+    handler.setLevel(logging.INFO)
+    logger.addHandler(handler)
+
+    logger.setLevel(logging.INFO)
     return logger
 
 

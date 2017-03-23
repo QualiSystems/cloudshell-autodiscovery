@@ -1,7 +1,5 @@
 from cloudshell.api.common_cloudshell_api import CloudShellAPIError
 
-from autodiscovery.cli_sessions import SSHDiscoverySession
-from autodiscovery.cli_sessions import TelnetDiscoverySession
 from autodiscovery.common.consts import CloudshellAPIErrorCodes
 from autodiscovery.common.consts import ResourceModelsAttributes
 from autodiscovery.exceptions import ReportableException
@@ -10,37 +8,13 @@ from autodiscovery.handlers.base import AbstractHandler
 
 class NetworkingTypeHandler(AbstractHandler):
 
-    def _get_cli_credentials(self, vendor, cli_credentials, device_ip):
-        """
-
-        :param autodiscovery.models.VendorDefinition vendor:
-        :param autodiscovery.models.CLICredentialsCollection cli_credentials:
-        :param str device_ip:
-        :return:
-        """
-        vendor_cli_creds = cli_credentials.get_creds_by_vendor(vendor)
-
-        if vendor_cli_creds:
-            for session in (SSHDiscoverySession(device_ip), TelnetDiscoverySession(device_ip)):
-                try:
-                    valid_creds = session.check_credentials(cli_credentials=vendor_cli_creds,
-                                                            default_prompt=vendor.default_prompt,
-                                                            enable_prompt=vendor.enable_prompt,
-                                                            logger=self.logger)
-                except Exception:
-                    self.logger.warning("{} Credentials aren't valid for the device with IP {}"
-                                        .format(session.SESSION_TYPE, device_ip), exc_info=True)
-                else:
-                    vendor_cli_creds.update_valid_creds(valid_creds)
-                    return valid_creds
-
     def discover(self, entry, vendor, cli_credentials):
-        """
+        """Discover device attributes
 
-        :param entry:
-        :param vendor:
-        :param cli_credentials:
-        :return:
+        :param autodiscovery.reports.base.Entry entry:
+        :param autodiscovery.models.vendor.NetworkingVendorDefinition vendor:
+        :param autodiscovery.models.CLICredentialsCollection cli_credentials:
+        :rtype: autodiscovery.reports.base.Entry
         """
         device_os = vendor.get_device_os(entry.description)
         if device_os is None:
@@ -56,7 +30,7 @@ class NetworkingTypeHandler(AbstractHandler):
                                               cli_credentials=cli_credentials,
                                               device_ip=entry.ip)
         if cli_creds is None:
-            entry.comment = "Unable to discover device user/password"
+            entry.comment = "Unable to discover device user/password/enable password"
         else:
             entry.user = cli_creds.user
             entry.password = cli_creds.password
@@ -65,11 +39,11 @@ class NetworkingTypeHandler(AbstractHandler):
         return entry
 
     def upload(self, entry, vendor, cs_session):
-        """
+        """Upload discovered device on the CloudShell
 
-        :param entry:
-        :param vendor:
-        :param cs_session:
+        :param autodiscovery.reports.base.Entry entry:
+        :param autodiscovery.models.vendor.NetworkingVendorDefinition vendor:
+        :param cloudshell.api.cloudshell_api.CloudShellAPISession cs_session:
         :return:
         """
         attributes = {
