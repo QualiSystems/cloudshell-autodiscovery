@@ -92,6 +92,7 @@ class ExcelReport(AbstractReport):
             cell = wb_sheet["{}{}".format(column, row)]
             return cell.value
 
+        print wb_sheet.max_row
         for row_num in xrange(2, wb_sheet.max_row+1):  # first row is a header
 
             entry = Entry(ip=get_cell_value(ExcelReport.IP_COLUMN, row_num),
