@@ -77,9 +77,10 @@ class NetworkingVendorDefinition(BaseVendorDefinition):
         :rtype: OperationSystem
         """
         for os in self.operation_systems:
-            aliases_regexp = r"({})".format("|".join(os.aliases))
-            if re.search(aliases_regexp, system_description, flags=re.DOTALL):
-                return os
+            if os.aliases:
+                aliases_regexp = r"({})".format("|".join(os.aliases))
+                if re.search(aliases_regexp, system_description, flags=re.DOTALL):
+                    return os
 
         return self.get_default_device_os()
 
