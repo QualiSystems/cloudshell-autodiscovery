@@ -42,7 +42,7 @@ class TestSSHDiscoverySession(unittest.TestCase):
                                                                         output_str=output_str,
                                                                         logger=self.logger)
 
-    def test_check_credentials(self):
+    def test_check_credentials_no_valid_credentials(self):
         """Check that method will raise AutoDiscoveryException if any credentials aren't valid"""
         cli_credentials = mock.MagicMock(cli_credentials=[])
         default_prompt = "#"
