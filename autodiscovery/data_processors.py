@@ -17,8 +17,8 @@ class JsonDataProcessor(object):
     def _prepare_file_path(self, filename):
         """Add full path to the filename
 
-        :param str filename: Name of the file to save ("example.com")
-        :return: Full path to the file ("/var/projects/cloudshell-autodiscovery-tool/example.com")
+        :param str filename: Name of the file to save ("example.json")
+        :return: Full path to the file ("/var/projects/cloudshell-autodiscovery-tool/example.json")
         :rtype: str
         """
         return utils.get_full_path(config.DATA_FOLDER, filename)
