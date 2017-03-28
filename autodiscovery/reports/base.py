@@ -3,15 +3,16 @@ from autodiscovery.exceptions import ReportableException
 
 class AbstractReport(object):
     HEADER = ("IP", "VENDOR", "sysObjectID", "DESCRIPTION", "SNMP READ COMMUNITY", "USER", "PASSWORD",
-              "ENABLE PASSWORD", "MODEL_TYPE", "DEVICE_NAME", "ADDED TO CLOUDSHELL", "COMMENT")
+              "ENABLE PASSWORD", "MODEL_TYPE", "DEVICE_NAME", "DOMAIN", "ADDED TO CLOUDSHELL", "COMMENT")
 
     def __init__(self):
         self._entries = []
 
-    def add_entry(self, ip, offline):
+    def add_entry(self, ip, domain, offline):
         """Add new Entry for the device with given IP
 
         :param str ip: IP address of the discovered device
+        :param str domain: domain on the CloudShell
         :param bool offline:
         :rtype: Entry
         """
@@ -20,7 +21,7 @@ class AbstractReport(object):
         else:
             status = Entry.SUCCESS_STATUS
 
-        entry = Entry(ip=ip, status=status)
+        entry = Entry(ip=ip, status=status, domain=domain)
         self._entries.append(entry)
 
         return entry
@@ -60,10 +61,11 @@ class Entry(object):
     FAILED_STATUS = "Failed"
     SKIPPED_STATUS = "Skipped"
 
-    def __init__(self, ip, status, vendor="", device_name="", model_type="", sys_object_id="", snmp_community="",
-                 user="", password="", enable_password="", description="", comment=""):
+    def __init__(self, ip, status, domain, vendor="", device_name="", model_type="", sys_object_id="",
+                 snmp_community="", user="", password="", enable_password="", description="", comment=""):
         self.ip = ip
         self.status = status
+        self.domain = domain
         self.vendor = vendor
         self.device_name = device_name
         self.model_type = model_type

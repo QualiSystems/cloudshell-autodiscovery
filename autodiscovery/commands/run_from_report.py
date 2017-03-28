@@ -14,7 +14,6 @@ class RunFromReportCommand(AbstractRunCommand):
         :return:
         """
         vendor_config = self.data_processor.load_vendor_config(additional_vendors_data=additional_vendors_data)
-        self._init_cs_session(cs_ip=cs_ip, cs_user=cs_user, cs_password=cs_password)
 
         for parsed_entry in parsed_entries:
             self.logger.info("Uploading device with IP {}".format(parsed_entry.ip))
@@ -37,7 +36,12 @@ class RunFromReportCommand(AbstractRunCommand):
                         raise ReportableException("Invalid vendor type '{}'. Possible values are: {}"
                                                   .format(vendor.vendor_type, self.vendor_type_handlers_map.keys()))
 
-                    handler.upload(entry=entry,  vendor=vendor, cs_session=self.cs_session)
+                    cs_session = self._get_cs_session(cs_ip=cs_ip,
+                                                      cs_user=cs_user,
+                                                      cs_password=cs_password,
+                                                      cs_domain=entry.domain)
+
+                    handler.upload(entry=entry,  vendor=vendor, cs_session=cs_session)
 
             except Exception:
                 self.logger.exception("Failed to upload {} device due to:".format(parsed_entry.ip))

@@ -1,6 +1,8 @@
-from autodiscovery.handlers.base import AbstractHandler
+from cloudshell.api.common_cloudshell_api import CloudShellAPIError
 
+from autodiscovery.handlers.base import AbstractHandler
 from autodiscovery.common.consts import ResourceModelsAttributes
+from autodiscovery.common.consts import CloudshellAPIErrorCodes
 
 
 class PDUTypeHandler(AbstractHandler):
@@ -37,12 +39,19 @@ class PDUTypeHandler(AbstractHandler):
             ResourceModelsAttributes.PASSWORD: entry.password,
         }
 
-        resource_name = self._create_cs_resource(cs_session=cs_session,
-                                                 resource_name=entry.device_name,
-                                                 resource_family=vendor.family_name,
-                                                 resource_model=vendor.model_name,
-                                                 driver_name=vendor.driver_name,
-                                                 device_ip=entry.ip,
-                                                 attributes=attributes)
-
-        cs_session.AutoLoad(resource_name)
+        try:
+            resource_name = self._create_cs_resource(cs_session=cs_session,
+                                                     resource_name=entry.device_name,
+                                                     resource_family=vendor.family_name,
+                                                     resource_model=vendor.model_name,
+                                                     driver_name=vendor.driver_name,
+                                                     device_ip=entry.ip,
+                                                     attributes=attributes)
+        except CloudShellAPIError as e:
+            if e.code == CloudshellAPIErrorCodes.UNABLE_TO_LOCATE_FAMILY_OR_MODEL:
+                # todo: store all error comments in some specific module
+                entry.comment = "Shell {} is not installed".format(vendor.driver_name)
+            else:
+                raise
+        else:
+            cs_session.AutoLoad(resource_name)

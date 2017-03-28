@@ -20,8 +20,9 @@ class ExcelReport(AbstractReport):
     ENABLE_PASSWORD_COLUMN = "H"
     MODEL_TYPE_COLUMN = "I"
     DEVICE_NAME_COLUMN = "J"
-    STATUS_COLUMN = "K"
-    COMMENT_COLUMN = "L"
+    DOMAIN_COLUMN = "K"
+    STATUS_COLUMN = "L"
+    COMMENT_COLUMN = "M"
 
     def __init__(self, file_name=None):
         """
@@ -45,7 +46,7 @@ class ExcelReport(AbstractReport):
             description = re.sub("\s+", " ", entry.description)  # replace all \n \r \t symbols
             table_data.append((entry.ip, entry.vendor, entry.sys_object_id, description, entry.snmp_community,
                                entry.user, entry.password, entry.enable_password, entry.model_type, entry.device_name,
-                               entry.status, entry.comment))
+                               entry.domain, entry.status, entry.comment))
 
         for row_num, row in enumerate(table_data):
             for col_num, col in enumerate(row):
@@ -73,6 +74,7 @@ class ExcelReport(AbstractReport):
         worksheet.set_column(prepare_column(self.SNMP_COMMUNITY_COLUMN), 30)
         worksheet.set_column(prepare_column(self.USER_COLUMN, self.ENABLE_PASSWORD_COLUMN), 20)
         worksheet.set_column(prepare_column(self.MODEL_TYPE_COLUMN, self.DEVICE_NAME_COLUMN), 20)
+        worksheet.set_column(prepare_column(self.DOMAIN_COLUMN), 20)
         worksheet.set_column(prepare_column(self.STATUS_COLUMN), 25)
         worksheet.set_column(prepare_column(self.COMMENT_COLUMN), 40)
 
@@ -92,7 +94,6 @@ class ExcelReport(AbstractReport):
             cell = wb_sheet["{}{}".format(column, row)]
             return cell.value
 
-        print wb_sheet.max_row
         for row_num in xrange(2, wb_sheet.max_row+1):  # first row is a header
 
             entry = Entry(ip=get_cell_value(ExcelReport.IP_COLUMN, row_num),
@@ -105,6 +106,7 @@ class ExcelReport(AbstractReport):
                           enable_password=get_cell_value(ExcelReport.ENABLE_PASSWORD_COLUMN, row_num),
                           model_type=get_cell_value(ExcelReport.MODEL_TYPE_COLUMN, row_num),
                           device_name=get_cell_value(ExcelReport.DEVICE_NAME_COLUMN, row_num),
+                          domain=get_cell_value(ExcelReport.DOMAIN_COLUMN, row_num),
                           status=get_cell_value(ExcelReport.STATUS_COLUMN, row_num),
                           comment=get_cell_value(ExcelReport.COMMENT_COLUMN, row_num))
 
