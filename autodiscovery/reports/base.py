@@ -3,7 +3,7 @@ from autodiscovery.exceptions import ReportableException
 
 class AbstractReport(object):
     HEADER = ("IP", "VENDOR", "sysObjectID", "DESCRIPTION", "SNMP READ COMMUNITY", "USER", "PASSWORD",
-              "ENABLE PASSWORD", "MODEL_TYPE", "DEVICE_NAME", "DOMAIN", "ADDED TO CLOUDSHELL", "COMMENT")
+              "ENABLE PASSWORD", "MODEL_TYPE", "DEVICE_NAME", "DOMAIN", "FOLDER", "ADDED TO CLOUDSHELL", "COMMENT")
 
     def __init__(self):
         self._entries = []
@@ -23,7 +23,6 @@ class AbstractReport(object):
 
         entry = Entry(ip=ip, status=status, domain=domain)
         self._entries.append(entry)
-
         return entry
 
     def edit_entry(self, entry):
@@ -62,7 +61,8 @@ class Entry(object):
     SKIPPED_STATUS = "Skipped"
 
     def __init__(self, ip, status, domain, vendor="", device_name="", model_type="", sys_object_id="",
-                 snmp_community="", user="", password="", enable_password="", description="", comment=""):
+                 snmp_community="", user="", password="", enable_password="", description="", comment="",
+                 folder_path=""):
         self.ip = ip
         self.status = status
         self.domain = domain
@@ -76,6 +76,7 @@ class Entry(object):
         self.enable_password = enable_password
         self.description = description
         self.comment = comment
+        self.folder_path = folder_path
 
     def __enter__(self):
         return self

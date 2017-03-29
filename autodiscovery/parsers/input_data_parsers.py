@@ -90,7 +90,7 @@ class YAMLInputDataParser(AbstractInputDataParser):
 
         data = yaml.load(file_data)
         devices_ips = self._parse_devices_ips(data["devices-ips"])
-        cli_creds = models.CLICredentialsCollection(data.get("cli-credentials", {}))
+        vendor_settings = models.VendorSettingsCollection(data.get("vendor-settings", {}))
         cs_data = data.get("cloudshell", {})
 
         return models.InputDataModel(devices_ips=devices_ips,
@@ -98,7 +98,7 @@ class YAMLInputDataParser(AbstractInputDataParser):
                                      cs_user=cs_data.get("user"),
                                      cs_password=cs_data.get("password"),
                                      snmp_community_strings=data["community-strings"],
-                                     cli_credentials=cli_creds)
+                                     vendor_settings=vendor_settings)
 
 
 class JSONInputDataParser(AbstractInputDataParser):
@@ -113,8 +113,8 @@ class JSONInputDataParser(AbstractInputDataParser):
         with open(input_file) as input_f:
             data = json.load(input_f)
 
-            devices_ips = self._parse_devices_ips(data["devices-ips"])
-        cli_creds = models.CLICredentialsCollection(data.get("cli-credentials", {}))
+        devices_ips = self._parse_devices_ips(data["devices-ips"])
+        vendor_settings = models.VendorSettingsCollection(data.get("vendor-settings", {}))
         cs_data = data.get("cloudshell", {})
 
         return models.InputDataModel(devices_ips=devices_ips,
@@ -122,4 +122,4 @@ class JSONInputDataParser(AbstractInputDataParser):
                                      cs_user=cs_data.get("user"),
                                      cs_password=cs_data.get("password"),
                                      snmp_community_strings=data["community-strings"],
-                                     cli_credentials=cli_creds)
+                                     vendor_settings=vendor_settings)

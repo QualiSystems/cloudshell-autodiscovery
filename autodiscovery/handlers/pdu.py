@@ -7,16 +7,16 @@ from autodiscovery.common.consts import CloudshellAPIErrorCodes
 
 class PDUTypeHandler(AbstractHandler):
 
-    def discover(self, entry, vendor, cli_credentials):
+    def discover(self, entry, vendor, vendor_settings):
         """Discover device attributes
 
         :param autodiscovery.reports.base.Entry entry:
         :param autodiscovery.models.vendor.PDUVendorDefinition vendor:
-        :param autodiscovery.models.CLICredentialsCollection cli_credentials:
+        :param autodiscovery.models.VendorSettingsCollection vendor_settings:
         :rtype: autodiscovery.reports.base.Entry
         """
         cli_creds = self._get_cli_credentials(vendor=vendor,
-                                              cli_credentials=cli_credentials,
+                                              vendor_settings=vendor_settings,
                                               device_ip=entry.ip)
         if cli_creds is None:
             entry.comment = "Unable to discover device user/password"

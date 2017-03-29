@@ -16,12 +16,12 @@ class AbstractHandler(object):
         """
         self.logger = logger
 
-    def discover(self, entry, vendor, cli_credentials):
+    def discover(self, entry, vendor, vendor_settings):
         """Discover device attributes
 
         :param autodiscovery.reports.base.Entry entry:
         :param autodiscovery.models.vendor.BaseVendorDefinition vendor:
-        :param autodiscovery.models.CLICredentialsCollection cli_credentials:
+        :param autodiscovery.models.VendorSettingsCollection vendor_settings:
         :rtype: autodiscovery.reports.base.Entry
         """
         raise NotImplementedError("Class {} must implement method 'discover'".format(type(self)))
@@ -54,7 +54,7 @@ class AbstractHandler(object):
             raise
 
     def _create_cs_resource(self, cs_session, resource_name, resource_family, resource_model, driver_name, device_ip,
-                            attributes, attribute_prefix=""):
+                            folder_path, attributes, attribute_prefix=""):
         """Create Resource on CloudShell with appropriate attributes
 
         :param cloudshell.api.cloudshell_api.CloudShellAPISession cs_session:
@@ -63,6 +63,7 @@ class AbstractHandler(object):
         :param str resource_model:
         :param str driver_name:
         :param str device_ip:
+        :param str folder_path:
         :param dict attributes:
         :param str attribute_prefix:
         :return: name for the created Resource
@@ -72,14 +73,16 @@ class AbstractHandler(object):
             cs_session.CreateResource(resourceFamily=resource_family,
                                       resourceModel=resource_model,
                                       resourceName=resource_name,
-                                      resourceAddress=device_ip)
+                                      resourceAddress=device_ip,
+                                      folderFullPath=folder_path)
         except CloudShellAPIError as e:
             if e.code == CloudshellAPIErrorCodes.RESOURCE_ALREADY_EXISTS:
                 resource_name = "{}-1".format(resource_name)
                 cs_session.CreateResource(resourceFamily=resource_family,
                                           resourceModel=resource_model,
                                           resourceName=resource_name,
-                                          resourceAddress=device_ip)
+                                          resourceAddress=device_ip,
+                                          folderFullPath=folder_path)
             else:
                 self.logger.exception("Unable to locate Shell with Resource Family/Name: {}/{}"
                                       .format(resource_family, resource_model))
@@ -96,15 +99,15 @@ class AbstractHandler(object):
 
         return resource_name
 
-    def _get_cli_credentials(self, vendor, cli_credentials, device_ip):
+    def _get_cli_credentials(self, vendor, vendor_settings, device_ip):
         """
 
         :param autodiscovery.models.VendorDefinition vendor:
-        :param autodiscovery.models.CLICredentialsCollection cli_credentials:
+        :param autodiscovery.models.VendorSettingsCollection vendor_settings:
         :param str device_ip:
         :return:
         """
-        vendor_cli_creds = cli_credentials.get_creds_by_vendor(vendor)
+        vendor_cli_creds = vendor_settings.get_creds_by_vendor(vendor)
 
         if vendor_cli_creds:
             for session in (SSHDiscoverySession(device_ip), TelnetDiscoverySession(device_ip)):

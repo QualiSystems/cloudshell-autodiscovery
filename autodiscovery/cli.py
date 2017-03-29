@@ -84,7 +84,7 @@ def run(input_file, config_file, log_file, report_file, report_type, offline):
 
     auto_discover_command.execute(devices_ips=input_data_model.devices_ips,
                                   snmp_comunity_strings=input_data_model.snmp_community_strings,
-                                  cli_credentials=input_data_model.cli_credentials,
+                                  vendor_settings=input_data_model.vendor_settings,
                                   cs_ip=input_data_model.cs_ip,
                                   cs_user=input_data_model.cs_user,
                                   cs_password=input_data_model.cs_password,

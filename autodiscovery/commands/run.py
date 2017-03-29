@@ -159,13 +159,13 @@ class RunCommand(AbstractRunCommand):
         entry.device_name = sys_name
         return entry
 
-    def execute(self, devices_ips, snmp_comunity_strings, cli_credentials, cs_ip, cs_user, cs_password,
+    def execute(self, devices_ips, snmp_comunity_strings, vendor_settings, cs_ip, cs_user, cs_password,
                 additional_vendors_data):
         """Execute Auto-discovery command
 
         :param list[autodiscovery.models.DeviceIPRange] devices_ips: list of devices IPs to discover
         :param list snmp_comunity_strings: list of possible SNMP read community strings for the given devices
-        :param autodiscovery.models.vendor.CLICredentialsCollection cli_credentials:  possible CLI credentials
+        :param autodiscovery.models.vendor.VendorSettingsCollection vendor_settings: additional vendor settings
         :param str cs_ip: IP address of the CloudShell API
         :param str cs_user: user for the CloudShell API
         :param str cs_password: password for the CloudShell API
@@ -193,7 +193,7 @@ class RunCommand(AbstractRunCommand):
                                 "Invalid vendor type '{}'. Possible values are: {}".format(
                                     vendor.vendor_type, self.vendor_type_handlers_map.keys()))
 
-                        discovered_entry = handler.discover(entry=entry, vendor=vendor, cli_credentials=cli_credentials)
+                        discovered_entry = handler.discover(entry=entry, vendor=vendor, vendor_settings=vendor_settings)
 
                         if not self.offline:
                             cs_session = self._get_cs_session(cs_ip=cs_ip,

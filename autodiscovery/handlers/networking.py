@@ -8,12 +8,12 @@ from autodiscovery.handlers.base import AbstractHandler
 
 class NetworkingTypeHandler(AbstractHandler):
 
-    def discover(self, entry, vendor, cli_credentials):
+    def discover(self, entry, vendor, vendor_settings):
         """Discover device attributes
 
         :param autodiscovery.reports.base.Entry entry:
         :param autodiscovery.models.vendor.NetworkingVendorDefinition vendor:
-        :param autodiscovery.models.CLICredentialsCollection cli_credentials:
+        :param autodiscovery.models.VendorSettingsCollection vendor_settings:
         :rtype: autodiscovery.reports.base.Entry
         """
         device_os = vendor.get_device_os(entry.description)
@@ -27,7 +27,7 @@ class NetworkingTypeHandler(AbstractHandler):
         entry.model_type = model_type
 
         cli_creds = self._get_cli_credentials(vendor=vendor,
-                                              cli_credentials=cli_credentials,
+                                              vendor_settings=vendor_settings,
                                               device_ip=entry.ip)
         if cli_creds is None:
             entry.comment = "Unable to discover device user/password/enable password"
@@ -36,6 +36,7 @@ class NetworkingTypeHandler(AbstractHandler):
             entry.password = cli_creds.password
             entry.enable_password = cli_creds.enable_password
 
+        entry.folder_path = vendor_settings.get_folder_path_by_vendor(vendor)
         return entry
 
     def upload(self, entry, vendor, cs_session):
@@ -70,10 +71,14 @@ class NetworkingTypeHandler(AbstractHandler):
                                                          resource_model=second_gen["model_name"],
                                                          driver_name=second_gen["driver_name"],
                                                          device_ip=entry.ip,
+                                                         folder_path=entry.folder_path,
                                                          attributes=attributes,
                                                          attribute_prefix="{}.".format(second_gen["model_name"]))
             except CloudShellAPIError as e:
                 if e.code == CloudshellAPIErrorCodes.UNABLE_TO_LOCATE_FAMILY_OR_MODEL:
+                    self.logger.info("2-nd generation shell {} is not installed... trying 1-st generation one"
+                                     .format(second_gen["driver_name"]))
+
                     if "first_gen" in familes_data:
                         first_gen = familes_data["first_gen"]
                         try:
@@ -83,8 +88,8 @@ class NetworkingTypeHandler(AbstractHandler):
                                                                      resource_model=first_gen["model_name"],
                                                                      driver_name=first_gen["driver_name"],
                                                                      device_ip=entry.ip,
-                                                                     attributes=attributes,
-                                                                     attribute_prefix="")
+                                                                     folder_path=entry.folder_path,
+                                                                     attributes=attributes)
                         except CloudShellAPIError as e:
                             if e.code == CloudshellAPIErrorCodes.UNABLE_TO_LOCATE_FAMILY_OR_MODEL:
                                 entry.comment = "Shell {} is not installed".format(second_gen["driver_name"])
@@ -107,8 +112,8 @@ class NetworkingTypeHandler(AbstractHandler):
                                                          resource_model=first_gen["model_name"],
                                                          driver_name=first_gen["driver_name"],
                                                          device_ip=entry.ip,
-                                                         attributes=attributes,
-                                                         attribute_prefix="")
+                                                         folder_path=entry.folder_path,
+                                                         attributes=attributes)
             except CloudShellAPIError as e:
                 if e.code == CloudshellAPIErrorCodes.UNABLE_TO_LOCATE_FAMILY_OR_MODEL:
                     entry.comment = "Shell {} is not installed".format(first_gen["driver_name"])

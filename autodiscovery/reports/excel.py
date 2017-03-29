@@ -21,8 +21,9 @@ class ExcelReport(AbstractReport):
     MODEL_TYPE_COLUMN = "I"
     DEVICE_NAME_COLUMN = "J"
     DOMAIN_COLUMN = "K"
-    STATUS_COLUMN = "L"
-    COMMENT_COLUMN = "M"
+    FOLDER_COLUMN = "L"
+    STATUS_COLUMN = "M"
+    COMMENT_COLUMN = "N"
 
     def __init__(self, file_name=None):
         """
@@ -46,7 +47,7 @@ class ExcelReport(AbstractReport):
             description = re.sub("\s+", " ", entry.description)  # replace all \n \r \t symbols
             table_data.append((entry.ip, entry.vendor, entry.sys_object_id, description, entry.snmp_community,
                                entry.user, entry.password, entry.enable_password, entry.model_type, entry.device_name,
-                               entry.domain, entry.status, entry.comment))
+                               entry.domain, entry.folder_path, entry.status, entry.comment))
 
         for row_num, row in enumerate(table_data):
             for col_num, col in enumerate(row):
@@ -75,6 +76,7 @@ class ExcelReport(AbstractReport):
         worksheet.set_column(prepare_column(self.USER_COLUMN, self.ENABLE_PASSWORD_COLUMN), 20)
         worksheet.set_column(prepare_column(self.MODEL_TYPE_COLUMN, self.DEVICE_NAME_COLUMN), 20)
         worksheet.set_column(prepare_column(self.DOMAIN_COLUMN), 20)
+        worksheet.set_column(prepare_column(self.FOLDER_COLUMN), 20)
         worksheet.set_column(prepare_column(self.STATUS_COLUMN), 25)
         worksheet.set_column(prepare_column(self.COMMENT_COLUMN), 40)
 
@@ -107,6 +109,7 @@ class ExcelReport(AbstractReport):
                           model_type=get_cell_value(ExcelReport.MODEL_TYPE_COLUMN, row_num),
                           device_name=get_cell_value(ExcelReport.DEVICE_NAME_COLUMN, row_num),
                           domain=get_cell_value(ExcelReport.DOMAIN_COLUMN, row_num),
+                          folder_path=get_cell_value(ExcelReport.FOLDER_COLUMN, row_num),
                           status=get_cell_value(ExcelReport.STATUS_COLUMN, row_num),
                           comment=get_cell_value(ExcelReport.COMMENT_COLUMN, row_num))
 
