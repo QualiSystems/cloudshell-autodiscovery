@@ -18,15 +18,16 @@ class TestAbstractReport(unittest.TestCase):
     def test_add_entry(self, entry_class):
         """Check that method will add entry into the entries list and return given entry"""
         entry = mock.MagicMock()
-        ip = mock.MagicMock()
+        ip = "test IP"
+        domain = "test domain"
         offline = False
         entry_class.return_value = entry
         # act
-        result = self.tested_instance.add_entry(ip=ip, offline=offline)
+        result = self.tested_instance.add_entry(ip=ip, domain=domain, offline=offline)
         # verify
         self.assertEqual(result, entry)
         self.assertIn(result, self.tested_instance._entries)
-        entry_class.assert_called_once_with(ip=ip, status=entry_class.SUCCESS_STATUS)
+        entry_class.assert_called_once_with(ip=ip, domain=domain, status=entry_class.SUCCESS_STATUS)
 
     def test_edit_entry(self):
         """Check that method will add entry into the entries list and return given entry"""
@@ -65,7 +66,7 @@ class TestAbstractReport(unittest.TestCase):
 
 class TestEntry(unittest.TestCase):
     def setUp(self):
-        self.entry = Entry(ip="test_ip", status=Entry.SUCCESS_STATUS)
+        self.entry = Entry(ip="test_ip", status=Entry.SUCCESS_STATUS, domain="Tets domain")
 
     def test_enter_with_statement(self):
         """Check that with statement will return same entry"""

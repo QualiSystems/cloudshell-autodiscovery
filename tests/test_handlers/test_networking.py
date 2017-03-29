@@ -16,7 +16,7 @@ class TestNetworkingTypeHandler(unittest.TestCase):
     def test_discover(self):
         """Check that method will return Entry with updated attributes"""
         entry = mock.MagicMock()
-        cli_credentials = mock.MagicMock()
+        vendor_settings = mock.MagicMock()
         cli_creds = mock.MagicMock()
         model_type = mock.MagicMock()
         device_os = mock.MagicMock(get_device_model_type=mock.MagicMock(return_value=model_type))
@@ -27,7 +27,7 @@ class TestNetworkingTypeHandler(unittest.TestCase):
         # act
         result = self.networking_handler.discover(entry=entry,
                                                   vendor=vendor,
-                                                  cli_credentials=cli_credentials)
+                                                  vendor_settings=vendor_settings)
 
         # verify
         self.assertEqual(result, entry)
@@ -40,13 +40,13 @@ class TestNetworkingTypeHandler(unittest.TestCase):
         """Check that method will add comment to the Entry if there is no valid CLI credentials"""
         entry = mock.MagicMock(user=None, password=None, enable_password=None)
         vendor = mock.MagicMock()
-        cli_credentials = mock.MagicMock()
+        vendor_settings = mock.MagicMock()
         self.networking_handler._get_cli_credentials = mock.MagicMock(return_value=None)
 
         # act
         result = self.networking_handler.discover(entry=entry,
                                                   vendor=vendor,
-                                                  cli_credentials=cli_credentials)
+                                                  vendor_settings=vendor_settings)
 
         # verify
         self.assertEqual(result, entry)
@@ -85,6 +85,7 @@ class TestNetworkingTypeHandler(unittest.TestCase):
                                                                             resource_model=second_gen["model_name"],
                                                                             driver_name=second_gen["driver_name"],
                                                                             device_ip=entry.ip,
+                                                                            folder_path=entry.folder_path,
                                                                             attributes=attributes,
                                                                             attribute_prefix="{}.".format(
                                                                                 second_gen["model_name"]))
@@ -120,8 +121,8 @@ class TestNetworkingTypeHandler(unittest.TestCase):
                                                                             resource_model=first_gen["model_name"],
                                                                             driver_name=first_gen["driver_name"],
                                                                             device_ip=entry.ip,
-                                                                            attributes=attributes,
-                                                                            attribute_prefix="")
+                                                                            folder_path=entry.folder_path,
+                                                                            attributes=attributes)
         cs_session.AutoLoad.assert_called_once_with(resource_name)
 
     def test_upload_2_generation_shell_failed(self):
@@ -163,6 +164,7 @@ class TestNetworkingTypeHandler(unittest.TestCase):
                                                                     resource_model=second_gen["model_name"],
                                                                     driver_name=second_gen["driver_name"],
                                                                     device_ip=entry.ip,
+                                                                    folder_path=entry.folder_path,
                                                                     attributes=attributes,
                                                                     attribute_prefix="{}.".format(
                                                                         second_gen["model_name"]))
@@ -173,7 +175,7 @@ class TestNetworkingTypeHandler(unittest.TestCase):
                                                                     resource_model=first_gen["model_name"],
                                                                     driver_name=first_gen["driver_name"],
                                                                     device_ip=entry.ip,
-                                                                    attributes=attributes,
-                                                                    attribute_prefix="")
+                                                                    folder_path=entry.folder_path,
+                                                                    attributes=attributes)
 
         cs_session.AutoLoad.assert_called_once_with(resource_name)

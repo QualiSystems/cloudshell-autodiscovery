@@ -22,7 +22,7 @@ class TestAbstractHandler(unittest.TestCase):
         with self.assertRaises(NotImplementedError):
             self.tested_instance.discover(entry=mock.MagicMock(),
                                           vendor=mock.MagicMock(),
-                                          cli_credentials=mock.MagicMock())
+                                          vendor_settings=mock.MagicMock())
 
     def test_upload_method_raises_exception_if_it_was_not_implemented(self):
         """Check that method will raise exception if it wasn't implemented in the child class"""
@@ -66,6 +66,7 @@ class TestAbstractHandler(unittest.TestCase):
         resource_model = "test resource model"
         driver_name = "test driver name"
         device_ip = "test device IP"
+        folder_path = "test folder path"
         resource_attributes = mock.MagicMock()
         attr_name_value = mock.MagicMock()
         resource_attributes_update_request_class.return_value = resource_attributes
@@ -79,6 +80,7 @@ class TestAbstractHandler(unittest.TestCase):
                                                           resource_model=resource_model,
                                                           driver_name=driver_name,
                                                           device_ip=device_ip,
+                                                          folder_path=folder_path,
                                                           attributes={
                                                               "test attr": "test val"},
                                                           attribute_prefix="TEST_PREFIX_")
@@ -87,7 +89,8 @@ class TestAbstractHandler(unittest.TestCase):
         self.cs_session.CreateResource.assert_called_once_with(resourceFamily=resource_family,
                                                                resourceModel=resource_model,
                                                                resourceName=resource_name,
-                                                               resourceAddress=device_ip)
+                                                               resourceAddress=device_ip,
+                                                               folderFullPath=folder_path)
 
         attribute_name_value_class.assert_called_once_with('TEST_PREFIX_test attr', 'test val')
 
@@ -107,6 +110,7 @@ class TestAbstractHandler(unittest.TestCase):
         resource_model = "test resource model"
         driver_name = "test driver name"
         device_ip = "test device IP"
+        folder_path = "test folder path"
         expected_resource_name = "{}-1".format(resource_name)
         self.tested_instance._add_resource_driver = mock.MagicMock()
         self.cs_session.CreateResource.side_effect = [
@@ -121,6 +125,7 @@ class TestAbstractHandler(unittest.TestCase):
                                                           resource_model=resource_model,
                                                           driver_name=driver_name,
                                                           device_ip=device_ip,
+                                                          folder_path=folder_path,
                                                           attributes={})
         # verify
         self.assertEqual(result, expected_resource_name)
@@ -128,12 +133,14 @@ class TestAbstractHandler(unittest.TestCase):
         self.cs_session.CreateResource.assert_any_call(resourceFamily=resource_family,
                                                        resourceModel=resource_model,
                                                        resourceName=resource_name,
-                                                       resourceAddress=device_ip)
+                                                       resourceAddress=device_ip,
+                                                       folderFullPath=folder_path)
 
         self.cs_session.CreateResource.assert_any_call(resourceFamily=resource_family,
                                                        resourceModel=resource_model,
                                                        resourceName=expected_resource_name,
-                                                       resourceAddress=device_ip)
+                                                       resourceAddress=device_ip,
+                                                       folderFullPath=folder_path)
 
         self.tested_instance._add_resource_driver.assert_called_once_with(cs_session=self.cs_session,
                                                                           resource_name=expected_resource_name,
@@ -145,7 +152,7 @@ class TestAbstractHandler(unittest.TestCase):
         """Check that method will create valid credentials for first working session"""
         vendor = mock.MagicMock()
         vendor_cli_creds = mock.MagicMock()
-        cli_credentials = mock.MagicMock(get_creds_by_vendor=mock.MagicMock(return_value=vendor_cli_creds))
+        vendor_settings = mock.MagicMock(get_creds_by_vendor=mock.MagicMock(return_value=vendor_cli_creds))
         device_ip = "device_ip"
         ssh_session = mock.MagicMock()
         telnet_session = mock.MagicMock()
@@ -155,7 +162,7 @@ class TestAbstractHandler(unittest.TestCase):
         ssh_session.check_credentials.return_value = valid_creds
         # act
         self.tested_instance._get_cli_credentials(vendor=vendor,
-                                                  cli_credentials=cli_credentials,
+                                                  vendor_settings=vendor_settings,
                                                   device_ip=device_ip)
         # verify
         telnet_session_class.assert_called_once_with(device_ip)
@@ -175,7 +182,7 @@ class TestAbstractHandler(unittest.TestCase):
         """Check that method will try another session if first one will raise Exception"""
         vendor = mock.MagicMock()
         vendor_cli_creds = mock.MagicMock()
-        cli_credentials = mock.MagicMock(get_creds_by_vendor=mock.MagicMock(return_value=vendor_cli_creds))
+        vendor_settings = mock.MagicMock(get_creds_by_vendor=mock.MagicMock(return_value=vendor_cli_creds))
         device_ip = "device_ip"
         ssh_session = mock.MagicMock()
         telnet_session = mock.MagicMock()
@@ -186,7 +193,7 @@ class TestAbstractHandler(unittest.TestCase):
         telnet_session.check_credentials.return_value = valid_creds
         # act
         self.tested_instance._get_cli_credentials(vendor=vendor,
-                                                  cli_credentials=cli_credentials,
+                                                  vendor_settings=vendor_settings,
                                                   device_ip=device_ip)
         # verify
         ssh_session.check_credentials.assert_called_once_with(cli_credentials=vendor_cli_creds,

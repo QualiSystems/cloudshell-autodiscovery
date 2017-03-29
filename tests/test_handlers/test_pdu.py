@@ -16,7 +16,7 @@ class TestPDUTypeHandler(unittest.TestCase):
     def test_discover(self):
         """Check that method will return Entry with updated attributes"""
         entry = mock.MagicMock()
-        cli_credentials = mock.MagicMock()
+        vendor_settings = mock.MagicMock()
         cli_creds = mock.MagicMock()
         vendor = mock.MagicMock()
         self.pdu_handler._get_cli_credentials = mock.MagicMock(return_value=cli_creds)
@@ -24,7 +24,7 @@ class TestPDUTypeHandler(unittest.TestCase):
         # act
         result = self.pdu_handler.discover(entry=entry,
                                            vendor=vendor,
-                                           cli_credentials=cli_credentials)
+                                           vendor_settings=vendor_settings)
 
         # verify
         self.assertEqual(result, entry)
@@ -35,13 +35,13 @@ class TestPDUTypeHandler(unittest.TestCase):
         """Check that method will add comment to the Entry if there is no valid CLI credentials"""
         entry = mock.MagicMock(user=None, password=None)
         vendor = mock.MagicMock()
-        cli_credentials = mock.MagicMock()
+        vendor_settings = mock.MagicMock()
         self.pdu_handler._get_cli_credentials = mock.MagicMock(return_value=None)
 
         # act
         result = self.pdu_handler.discover(entry=entry,
                                            vendor=vendor,
-                                           cli_credentials=cli_credentials)
+                                           vendor_settings=vendor_settings)
 
         # verify
         self.assertEqual(result, entry)
