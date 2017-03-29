@@ -36,69 +36,6 @@ class AbstractHandler(object):
         """
         raise NotImplementedError("Class {} must implement method 'upload'".format(type(self)))
 
-    def _add_resource_driver(self, cs_session, resource_name, driver_name):
-        """Add appropriate driver to the created CloudShell resource
-
-        :param cloudshell.api.cloudshell_api.CloudShellAPISession cs_session:
-        :param str resource_name:
-        :param str driver_name:
-        :return:
-        """
-        try:
-            cs_session.UpdateResourceDriver(resourceFullPath=resource_name,
-                                            driverName=driver_name)
-        except CloudShellAPIError as e:
-            if e.code == CloudshellAPIErrorCodes.UNABLE_TO_LOCATE_DRIVER:
-                self.logger.exception("Unable to locate driver {}".format(driver_name))
-                raise ReportableException("Shell {} is not installed on the CloudShell".format(driver_name))
-            raise
-
-    def _create_cs_resource(self, cs_session, resource_name, resource_family, resource_model, driver_name, device_ip,
-                            folder_path, attributes, attribute_prefix=""):
-        """Create Resource on CloudShell with appropriate attributes
-
-        :param cloudshell.api.cloudshell_api.CloudShellAPISession cs_session:
-        :param str resource_name:
-        :param str resource_family:
-        :param str resource_model:
-        :param str driver_name:
-        :param str device_ip:
-        :param str folder_path:
-        :param dict attributes:
-        :param str attribute_prefix:
-        :return: name for the created Resource
-        :rtype: str
-        """
-        try:
-            cs_session.CreateResource(resourceFamily=resource_family,
-                                      resourceModel=resource_model,
-                                      resourceName=resource_name,
-                                      resourceAddress=device_ip,
-                                      folderFullPath=folder_path)
-        except CloudShellAPIError as e:
-            if e.code == CloudshellAPIErrorCodes.RESOURCE_ALREADY_EXISTS:
-                resource_name = "{}-1".format(resource_name)
-                cs_session.CreateResource(resourceFamily=resource_family,
-                                          resourceModel=resource_model,
-                                          resourceName=resource_name,
-                                          resourceAddress=device_ip,
-                                          folderFullPath=folder_path)
-            else:
-                self.logger.exception("Unable to locate Shell with Resource Family/Name: {}/{}"
-                                      .format(resource_family, resource_model))
-                raise
-
-        attributes = [AttributeNameValue("{}{}".format(attribute_prefix, key), value)
-                      for key, value in attributes.iteritems()]
-
-        cs_session.SetAttributesValues([ResourceAttributesUpdateRequest(resource_name, attributes)])
-
-        self._add_resource_driver(cs_session=cs_session,
-                                  resource_name=resource_name,
-                                  driver_name=driver_name)
-
-        return resource_name
-
     def _get_cli_credentials(self, vendor, vendor_settings, device_ip):
         """
 
@@ -122,3 +59,91 @@ class AbstractHandler(object):
                 else:
                     vendor_cli_creds.update_valid_creds(valid_creds)
                     return valid_creds
+
+    def _add_resource_driver(self, cs_session, resource_name, driver_name):
+        """Add appropriate driver to the created CloudShell resource
+
+        :param cloudshell.api.cloudshell_api.CloudShellAPISession cs_session:
+        :param str resource_name:
+        :param str driver_name:
+        :return:
+        """
+        try:
+            cs_session.UpdateResourceDriver(resourceFullPath=resource_name,
+                                            driverName=driver_name)
+        except CloudShellAPIError as e:
+            if e.code == CloudshellAPIErrorCodes.UNABLE_TO_LOCATE_DRIVER:
+                self.logger.exception("Unable to locate driver {}".format(driver_name))
+                raise ReportableException("Shell {} is not installed on the CloudShell".format(driver_name))
+            raise
+
+    def _create_cs_resource(self, cs_session, resource_name, resource_family, resource_model, device_ip, folder_path):
+        """Create Resource on CloudShell with appropriate attributes
+
+        :param cloudshell.api.cloudshell_api.CloudShellAPISession cs_session:
+        :param str resource_name:
+        :param str resource_family:
+        :param str resource_model:
+        :param str device_ip:
+        :param str folder_path:
+        :return: name for the created Resource
+        :rtype: str
+        """
+        try:
+            cs_session.CreateResource(resourceFamily=resource_family,
+                                      resourceModel=resource_model,
+                                      resourceName=resource_name,
+                                      resourceAddress=device_ip,
+                                      folderFullPath=folder_path)
+        except CloudShellAPIError as e:
+            if e.code == CloudshellAPIErrorCodes.RESOURCE_ALREADY_EXISTS:
+                resource_name = "{}-1".format(resource_name)
+                cs_session.CreateResource(resourceFamily=resource_family,
+                                          resourceModel=resource_model,
+                                          resourceName=resource_name,
+                                          resourceAddress=device_ip,
+                                          folderFullPath=folder_path)
+            else:
+                self.logger.exception("Unable to locate Shell with Resource Family/Name: {}/{}"
+                                      .format(resource_family, resource_model))
+                raise
+
+        return resource_name
+
+    def _upload_resource(self, cs_session, entry, resource_family, resource_model, driver_name, attributes,
+                         attribute_prefix=""):
+        """
+
+        :param cs_session:
+        :param entry:
+        :param resource_family:
+        :param resource_model:
+        :param driver_name:
+        :param attributes:
+        :param attribute_prefix:
+        :return:
+        """
+        try:
+            resource_name = self._create_cs_resource(cs_session=cs_session,
+                                                     resource_name=entry.device_name,
+                                                     resource_family=resource_family,
+                                                     resource_model=resource_model,
+                                                     device_ip=entry.ip,
+                                                     folder_path=entry.folder_path)
+        except CloudShellAPIError as e:
+            if e.code == CloudshellAPIErrorCodes.UNABLE_TO_LOCATE_FAMILY_OR_MODEL:
+                return
+            else:
+                raise
+
+        attributes = [AttributeNameValue("{}{}".format(attribute_prefix, key), value)
+                      for key, value in attributes.iteritems()]
+
+        cs_session.SetAttributesValues([ResourceAttributesUpdateRequest(resource_name, attributes)])
+
+        self._add_resource_driver(cs_session=cs_session,
+                                  resource_name=resource_name,
+                                  driver_name=driver_name)
+
+        cs_session.AutoLoad(resource_name)
+        return resource_name

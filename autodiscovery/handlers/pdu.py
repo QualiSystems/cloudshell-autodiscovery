@@ -39,19 +39,12 @@ class PDUTypeHandler(AbstractHandler):
             ResourceModelsAttributes.PASSWORD: entry.password,
         }
 
-        try:
-            resource_name = self._create_cs_resource(cs_session=cs_session,
-                                                     resource_name=entry.device_name,
-                                                     resource_family=vendor.family_name,
-                                                     resource_model=vendor.model_name,
-                                                     driver_name=vendor.driver_name,
-                                                     device_ip=entry.ip,
-                                                     attributes=attributes)
-        except CloudShellAPIError as e:
-            if e.code == CloudshellAPIErrorCodes.UNABLE_TO_LOCATE_FAMILY_OR_MODEL:
-                # todo: store all error comments in some specific module
-                entry.comment = "Shell {} is not installed".format(vendor.driver_name)
-            else:
-                raise
-        else:
-            cs_session.AutoLoad(resource_name)
+        resource_name = self._upload_resource(cs_session=cs_session,
+                                              entry=entry,
+                                              resource_family=vendor.family_name,
+                                              resource_model=vendor.model_name,
+                                              driver_name=vendor.driver_name,
+                                              attributes=attributes)
+
+        if not resource_name:
+            entry.comment = "Shell {} is not installed".format(vendor.driver_name)

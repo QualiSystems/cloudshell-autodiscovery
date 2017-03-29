@@ -55,7 +55,7 @@ class TestPDUTypeHandler(unittest.TestCase):
         vendor = mock.MagicMock()
         cs_session = mock.MagicMock()
         resource_name = "test resource name"
-        self.pdu_handler._create_cs_resource = mock.MagicMock(return_value=resource_name)
+        self.pdu_handler._upload_resource = mock.MagicMock(return_value=resource_name)
         attributes = {
             ResourceModelsAttributes.USER: entry.user,
             ResourceModelsAttributes.PASSWORD: entry.password,
@@ -66,12 +66,9 @@ class TestPDUTypeHandler(unittest.TestCase):
                                 vendor=vendor,
                                 cs_session=cs_session)
         # verify
-        self.pdu_handler._create_cs_resource.assert_called_once_with(cs_session=cs_session,
-                                                                     resource_name=entry.device_name,
-                                                                     resource_family=vendor.family_name,
-                                                                     resource_model=vendor.model_name,
-                                                                     driver_name=vendor.driver_name,
-                                                                     device_ip=entry.ip,
-                                                                     attributes=attributes)
-
-        cs_session.AutoLoad.assert_called_once_with(resource_name)
+        self.pdu_handler._upload_resource.assert_called_once_with(cs_session=cs_session,
+                                                                  entry=entry,
+                                                                  resource_family=vendor.family_name,
+                                                                  resource_model=vendor.model_name,
+                                                                  driver_name=vendor.driver_name,
+                                                                  attributes=attributes)

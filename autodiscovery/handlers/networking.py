@@ -61,63 +61,34 @@ class NetworkingTypeHandler(AbstractHandler):
 
         familes_data = device_os.families.get(entry.model_type)
 
-        # todo(A.Piddubny): simplify it
         if "second_gen" in familes_data:
             second_gen = familes_data["second_gen"]
-            try:
-                resource_name = self._create_cs_resource(cs_session=cs_session,
-                                                         resource_name=entry.device_name,
-                                                         resource_family=second_gen["family_name"],
-                                                         resource_model=second_gen["model_name"],
-                                                         driver_name=second_gen["driver_name"],
-                                                         device_ip=entry.ip,
-                                                         folder_path=entry.folder_path,
-                                                         attributes=attributes,
-                                                         attribute_prefix="{}.".format(second_gen["model_name"]))
-            except CloudShellAPIError as e:
-                if e.code == CloudshellAPIErrorCodes.UNABLE_TO_LOCATE_FAMILY_OR_MODEL:
-                    self.logger.info("2-nd generation shell {} is not installed... trying 1-st generation one"
-                                     .format(second_gen["driver_name"]))
-
-                    if "first_gen" in familes_data:
-                        first_gen = familes_data["first_gen"]
-                        try:
-                            resource_name = self._create_cs_resource(cs_session=cs_session,
-                                                                     resource_name=entry.device_name,
-                                                                     resource_family=first_gen["family_name"],
-                                                                     resource_model=first_gen["model_name"],
-                                                                     driver_name=first_gen["driver_name"],
-                                                                     device_ip=entry.ip,
-                                                                     folder_path=entry.folder_path,
-                                                                     attributes=attributes)
-                        except CloudShellAPIError as e:
-                            if e.code == CloudshellAPIErrorCodes.UNABLE_TO_LOCATE_FAMILY_OR_MODEL:
-                                entry.comment = "Shell {} is not installed".format(second_gen["driver_name"])
-                            else:
-                                raise
-                        else:
-                            cs_session.AutoLoad(resource_name)
-                    else:
-                        raise
-                else:
-                    raise
-            else:
-                cs_session.AutoLoad(resource_name)
+            driver_name = second_gen["driver_name"]
+            resource_name = self._upload_resource(cs_session=cs_session,
+                                                  entry=entry,
+                                                  resource_family=second_gen["family_name"],
+                                                  resource_model=second_gen["model_name"],
+                                                  driver_name=driver_name,
+                                                  attributes=attributes,
+                                                  attribute_prefix="{}.".format(second_gen["model_name"]))
+            if not resource_name:
+                if "first_gen" in familes_data:
+                    first_gen = familes_data["first_gen"]
+                    resource_name = self._upload_resource(cs_session=cs_session,
+                                                          entry=entry,
+                                                          resource_family=first_gen["family_name"],
+                                                          resource_model=first_gen["model_name"],
+                                                          driver_name=first_gen["driver_name"],
+                                                          attributes=attributes)
         else:
             first_gen = familes_data["first_gen"]
-            try:
-                resource_name = self._create_cs_resource(cs_session=cs_session,
-                                                         resource_name=entry.device_name,
-                                                         resource_family=first_gen["family_name"],
-                                                         resource_model=first_gen["model_name"],
-                                                         driver_name=first_gen["driver_name"],
-                                                         device_ip=entry.ip,
-                                                         folder_path=entry.folder_path,
-                                                         attributes=attributes)
-            except CloudShellAPIError as e:
-                if e.code == CloudshellAPIErrorCodes.UNABLE_TO_LOCATE_FAMILY_OR_MODEL:
-                    entry.comment = "Shell {} is not installed".format(first_gen["driver_name"])
-                else:
-                    raise
-            else:
-                cs_session.AutoLoad(resource_name)
+            driver_name = first_gen["driver_name"]
+            resource_name = self._upload_resource(cs_session=cs_session,
+                                                  entry=entry,
+                                                  resource_family=first_gen["family_name"],
+                                                  resource_model=first_gen["model_name"],
+                                                  driver_name=driver_name,
+                                                  attributes=attributes)
+
+        if not resource_name:
+            entry.comment = "Shell {} is not installed".format(driver_name)

@@ -65,7 +65,7 @@ class TestNetworkingTypeHandler(unittest.TestCase):
         second_gen = families["second_gen"]
         cs_session = mock.MagicMock()
         resource_name = "test resource name"
-        self.networking_handler._create_cs_resource = mock.MagicMock(return_value=resource_name)
+        self.networking_handler._upload_resource = mock.MagicMock(return_value=resource_name)
         attributes = {
             ResourceModelsAttributes.ENABLE_SNMP: "False",
             ResourceModelsAttributes.SNMP_READ_COMMUNITY: entry.snmp_community,
@@ -79,17 +79,14 @@ class TestNetworkingTypeHandler(unittest.TestCase):
                                        vendor=vendor,
                                        cs_session=cs_session)
         # verify
-        self.networking_handler._create_cs_resource.assert_called_once_with(cs_session=cs_session,
-                                                                            resource_name=entry.device_name,
-                                                                            resource_family=second_gen["family_name"],
-                                                                            resource_model=second_gen["model_name"],
-                                                                            driver_name=second_gen["driver_name"],
-                                                                            device_ip=entry.ip,
-                                                                            folder_path=entry.folder_path,
-                                                                            attributes=attributes,
-                                                                            attribute_prefix="{}.".format(
-                                                                                second_gen["model_name"]))
-        cs_session.AutoLoad.assert_called_once_with(resource_name)
+        self.networking_handler._upload_resource.assert_called_once_with(cs_session=cs_session,
+                                                                         entry=entry,
+                                                                         resource_family=second_gen["family_name"],
+                                                                         resource_model=second_gen["model_name"],
+                                                                         driver_name=second_gen["driver_name"],
+                                                                         attributes=attributes,
+                                                                         attribute_prefix="{}.".format(
+                                                                             second_gen["model_name"]))
 
     def test_upload_1_generation_shell(self):
         """Check that method will create CloudShell resource 1-nd generation and autoload it"""
@@ -101,7 +98,7 @@ class TestNetworkingTypeHandler(unittest.TestCase):
         first_gen = families["first_gen"]
         cs_session = mock.MagicMock()
         resource_name = "test resource name"
-        self.networking_handler._create_cs_resource = mock.MagicMock(return_value=resource_name)
+        self.networking_handler._upload_resource = mock.MagicMock(return_value=resource_name)
         attributes = {
             ResourceModelsAttributes.ENABLE_SNMP: "False",
             ResourceModelsAttributes.SNMP_READ_COMMUNITY: entry.snmp_community,
@@ -115,15 +112,12 @@ class TestNetworkingTypeHandler(unittest.TestCase):
                                        vendor=vendor,
                                        cs_session=cs_session)
         # verify
-        self.networking_handler._create_cs_resource.assert_called_once_with(cs_session=cs_session,
-                                                                            resource_name=entry.device_name,
-                                                                            resource_family=first_gen["family_name"],
-                                                                            resource_model=first_gen["model_name"],
-                                                                            driver_name=first_gen["driver_name"],
-                                                                            device_ip=entry.ip,
-                                                                            folder_path=entry.folder_path,
-                                                                            attributes=attributes)
-        cs_session.AutoLoad.assert_called_once_with(resource_name)
+        self.networking_handler._upload_resource.assert_called_once_with(cs_session=cs_session,
+                                                                         entry=entry,
+                                                                         resource_family=first_gen["family_name"],
+                                                                         resource_model=first_gen["model_name"],
+                                                                         driver_name=first_gen["driver_name"],
+                                                                         attributes=attributes)
 
     def test_upload_2_generation_shell_failed(self):
         """Check that method will upload 1-nd generation shell if 2-nd generation one failed"""
@@ -138,11 +132,9 @@ class TestNetworkingTypeHandler(unittest.TestCase):
         second_gen = families["second_gen"]
         cs_session = mock.MagicMock()
         resource_name = "test resource name"
-        self.networking_handler._create_cs_resource = mock.MagicMock(
+        self.networking_handler._upload_resource = mock.MagicMock(
             side_effect=[
-                CloudShellAPIError(code=CloudshellAPIErrorCodes.UNABLE_TO_LOCATE_FAMILY_OR_MODEL,
-                                   message="",
-                                   rawxml=""),
+                None,
                 resource_name])
 
         attributes = {
@@ -158,24 +150,18 @@ class TestNetworkingTypeHandler(unittest.TestCase):
                                        vendor=vendor,
                                        cs_session=cs_session)
         # verify
-        self.networking_handler._create_cs_resource.assert_any_call(cs_session=cs_session,
-                                                                    resource_name=entry.device_name,
-                                                                    resource_family=second_gen["family_name"],
-                                                                    resource_model=second_gen["model_name"],
-                                                                    driver_name=second_gen["driver_name"],
-                                                                    device_ip=entry.ip,
-                                                                    folder_path=entry.folder_path,
-                                                                    attributes=attributes,
-                                                                    attribute_prefix="{}.".format(
-                                                                        second_gen["model_name"]))
+        self.networking_handler._upload_resource.assert_any_call(cs_session=cs_session,
+                                                                 entry=entry,
+                                                                 resource_family=second_gen["family_name"],
+                                                                 resource_model=second_gen["model_name"],
+                                                                 driver_name=second_gen["driver_name"],
+                                                                 attributes=attributes,
+                                                                 attribute_prefix="{}.".format(
+                                                                     second_gen["model_name"]))
 
-        self.networking_handler._create_cs_resource.assert_any_call(cs_session=cs_session,
-                                                                    resource_name=entry.device_name,
-                                                                    resource_family=first_gen["family_name"],
-                                                                    resource_model=first_gen["model_name"],
-                                                                    driver_name=first_gen["driver_name"],
-                                                                    device_ip=entry.ip,
-                                                                    folder_path=entry.folder_path,
-                                                                    attributes=attributes)
-
-        cs_session.AutoLoad.assert_called_once_with(resource_name)
+        self.networking_handler._upload_resource.assert_any_call(cs_session=cs_session,
+                                                                 entry=entry,
+                                                                 resource_family=first_gen["family_name"],
+                                                                 resource_model=first_gen["model_name"],
+                                                                 driver_name=first_gen["driver_name"],
+                                                                 attributes=attributes)

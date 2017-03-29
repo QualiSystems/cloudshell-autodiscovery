@@ -72,18 +72,13 @@ class TestAbstractHandler(unittest.TestCase):
         resource_attributes_update_request_class.return_value = resource_attributes
         attribute_name_value_class.return_value = attr_name_value
 
-        self.tested_instance._add_resource_driver = mock.MagicMock()
         # act
         result = self.tested_instance._create_cs_resource(cs_session=self.cs_session,
                                                           resource_name=resource_name,
                                                           resource_family=resource_family,
                                                           resource_model=resource_model,
-                                                          driver_name=driver_name,
                                                           device_ip=device_ip,
-                                                          folder_path=folder_path,
-                                                          attributes={
-                                                              "test attr": "test val"},
-                                                          attribute_prefix="TEST_PREFIX_")
+                                                          folder_path=folder_path)
         # verify
         self.assertEqual(result, resource_name)
         self.cs_session.CreateResource.assert_called_once_with(resourceFamily=resource_family,
@@ -92,23 +87,11 @@ class TestAbstractHandler(unittest.TestCase):
                                                                resourceAddress=device_ip,
                                                                folderFullPath=folder_path)
 
-        attribute_name_value_class.assert_called_once_with('TEST_PREFIX_test attr', 'test val')
-
-        resource_attributes_update_request_class.assert_called_once_with(resource_name,
-                                                                         [attr_name_value])
-
-        self.cs_session.SetAttributesValues.assert_called_once_with([resource_attributes])
-
-        self.tested_instance._add_resource_driver.assert_called_once_with(cs_session=self.cs_session,
-                                                                          resource_name=resource_name,
-                                                                          driver_name=driver_name)
-
     def test_create_cs_resource_resource_name_is_taken(self):
         """Check that method will try to create resource one more time if given resource name is already taken"""
         resource_name = "test resource name"
         resource_family = "test resource family"
         resource_model = "test resource model"
-        driver_name = "test driver name"
         device_ip = "test device IP"
         folder_path = "test folder path"
         expected_resource_name = "{}-1".format(resource_name)
@@ -123,10 +106,8 @@ class TestAbstractHandler(unittest.TestCase):
                                                           resource_name=resource_name,
                                                           resource_family=resource_family,
                                                           resource_model=resource_model,
-                                                          driver_name=driver_name,
                                                           device_ip=device_ip,
-                                                          folder_path=folder_path,
-                                                          attributes={})
+                                                          folder_path=folder_path)
         # verify
         self.assertEqual(result, expected_resource_name)
 
@@ -141,10 +122,6 @@ class TestAbstractHandler(unittest.TestCase):
                                                        resourceName=expected_resource_name,
                                                        resourceAddress=device_ip,
                                                        folderFullPath=folder_path)
-
-        self.tested_instance._add_resource_driver.assert_called_once_with(cs_session=self.cs_session,
-                                                                          resource_name=expected_resource_name,
-                                                                          driver_name=driver_name)
 
     @mock.patch("autodiscovery.handlers.base.SSHDiscoverySession")
     @mock.patch("autodiscovery.handlers.base.TelnetDiscoverySession")
