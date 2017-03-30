@@ -84,4 +84,4 @@ class NetworkingTypeHandler(AbstractHandler):
                                                   driver_name=driver_name)
 
         if not resource_name:
-            entry.comment = "Shell {} is not installed".format(driver_name)
+            raise ReportableException("Shell {} is not installed".format(driver_name))

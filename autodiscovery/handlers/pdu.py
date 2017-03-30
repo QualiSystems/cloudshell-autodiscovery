@@ -1,5 +1,6 @@
 from cloudshell.api.common_cloudshell_api import CloudShellAPIError
 
+from autodiscovery.exceptions import ReportableException
 from autodiscovery.handlers.base import AbstractHandler
 from autodiscovery.common.consts import ResourceModelsAttributes
 from autodiscovery.common.consts import CloudshellAPIErrorCodes
@@ -41,4 +42,4 @@ class PDUTypeHandler(AbstractHandler):
                                               driver_name=vendor.driver_name)
 
         if not resource_name:
-            entry.comment = "Shell {} is not installed".format(vendor.driver_name)
+            raise ReportableException("Shell {} is not installed".format(vendor.driver_name))
