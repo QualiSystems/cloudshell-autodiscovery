@@ -110,8 +110,7 @@ class AbstractHandler(object):
 
         return resource_name
 
-    def _upload_resource(self, cs_session, entry, resource_family, resource_model, driver_name, attributes,
-                         attribute_prefix=""):
+    def _upload_resource(self, cs_session, entry, resource_family, resource_model, driver_name, attribute_prefix=""):
         """
 
         :param cs_session:
@@ -119,7 +118,6 @@ class AbstractHandler(object):
         :param resource_family:
         :param resource_model:
         :param driver_name:
-        :param attributes:
         :param attribute_prefix:
         :return:
         """
@@ -137,7 +135,7 @@ class AbstractHandler(object):
                 raise
 
         attributes = [AttributeNameValue("{}{}".format(attribute_prefix, key), value)
-                      for key, value in attributes.iteritems()]
+                      for key, value in entry.attributes.iteritems()]
 
         cs_session.SetAttributesValues([ResourceAttributesUpdateRequest(resource_name, attributes)])
 

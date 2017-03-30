@@ -28,8 +28,6 @@ class TestPDUTypeHandler(unittest.TestCase):
 
         # verify
         self.assertEqual(result, entry)
-        self.assertEqual(entry.user, cli_creds.user)
-        self.assertEqual(entry.password, cli_creds.password)
 
     def test_discover_no_cli_creds(self):
         """Check that method will add comment to the Entry if there is no valid CLI credentials"""
@@ -56,10 +54,6 @@ class TestPDUTypeHandler(unittest.TestCase):
         cs_session = mock.MagicMock()
         resource_name = "test resource name"
         self.pdu_handler._upload_resource = mock.MagicMock(return_value=resource_name)
-        attributes = {
-            ResourceModelsAttributes.USER: entry.user,
-            ResourceModelsAttributes.PASSWORD: entry.password,
-        }
 
         # act
         self.pdu_handler.upload(entry=entry,
@@ -70,5 +64,4 @@ class TestPDUTypeHandler(unittest.TestCase):
                                                                   entry=entry,
                                                                   resource_family=vendor.family_name,
                                                                   resource_model=vendor.model_name,
-                                                                  driver_name=vendor.driver_name,
-                                                                  attributes=attributes)
+                                                                  driver_name=vendor.driver_name)

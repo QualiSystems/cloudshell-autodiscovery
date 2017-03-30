@@ -2,8 +2,8 @@ from autodiscovery.exceptions import ReportableException
 
 
 class AbstractReport(object):
-    HEADER = ("IP", "VENDOR", "sysObjectID", "DESCRIPTION", "SNMP READ COMMUNITY", "USER", "PASSWORD",
-              "ENABLE PASSWORD", "MODEL_TYPE", "DEVICE_NAME", "DOMAIN", "FOLDER", "ADDED TO CLOUDSHELL", "COMMENT")
+    HEADER = ("IP", "VENDOR", "sysObjectID", "DESCRIPTION", "SNMP READ COMMUNITY", "MODEL_TYPE", "DEVICE_NAME",
+              "DOMAIN", "FOLDER", "ATTRIBUTES", "ADDED TO CLOUDSHELL", "COMMENT")
 
     def __init__(self):
         self._entries = []
@@ -59,10 +59,10 @@ class Entry(object):
     SUCCESS_STATUS = "Success"
     FAILED_STATUS = "Failed"
     SKIPPED_STATUS = "Skipped"
+    ATTRIBUTES_SEPARATOR = ";"
 
     def __init__(self, ip, status, domain, vendor="", device_name="", model_type="", sys_object_id="",
-                 snmp_community="", user="", password="", enable_password="", description="", comment="",
-                 folder_path=""):
+                 snmp_community="", description="", comment="", folder_path="", attributes=None):
         self.ip = ip
         self.status = status
         self.domain = domain
@@ -71,12 +71,39 @@ class Entry(object):
         self.model_type = model_type
         self.sys_object_id = sys_object_id
         self.snmp_community = snmp_community
-        self.user = user
-        self.password = password
-        self.enable_password = enable_password
         self.description = description
         self.comment = comment
         self.folder_path = folder_path
+        if attributes is None:
+            attributes = {}
+        self.attributes = attributes
+
+    def add_attribute(self, name, value):
+        """
+
+        :param str name:
+        :param str value:
+        :return:
+        """
+        self.attributes[name] = value
+
+    @property
+    def formatted_attrs(self):
+        """Return formatted resource attributes
+
+        :rtype: str
+        """
+        return self.ATTRIBUTES_SEPARATOR.join(["{}={}".format(key, val)
+                                               for key, val in self.attributes.iteritems()])
+
+    @staticmethod
+    def parse_formatted_attrs(attributes):
+        """Parse attributes from the formatted string
+
+        :rtype: list[str]
+        """
+        return {key.strip(): val.strip() for key, val in
+                (attr.split("=") for attr in attributes.split(Entry.ATTRIBUTES_SEPARATOR))}
 
     def __enter__(self):
         return self

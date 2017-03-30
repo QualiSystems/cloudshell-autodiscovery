@@ -24,19 +24,23 @@ class NetworkingTypeHandler(AbstractHandler):
         if model_type is None:
             raise ReportableException("Unable to determine device model type")
 
+        entry.folder_path = vendor_settings.get_folder_path_by_vendor(vendor)
         entry.model_type = model_type
 
         cli_creds = self._get_cli_credentials(vendor=vendor,
                                               vendor_settings=vendor_settings,
                                               device_ip=entry.ip)
+
+        entry.add_attribute(ResourceModelsAttributes.ENABLE_SNMP, "False")
+        entry.add_attribute(ResourceModelsAttributes.SNMP_READ_COMMUNITY, entry.snmp_community)
+
         if cli_creds is None:
             entry.comment = "Unable to discover device user/password/enable password"
         else:
-            entry.user = cli_creds.user
-            entry.password = cli_creds.password
-            entry.enable_password = cli_creds.enable_password
+            entry.add_attribute(ResourceModelsAttributes.USER, cli_creds.user)
+            entry.add_attribute(ResourceModelsAttributes.PASSWORD, cli_creds.password)
+            entry.add_attribute(ResourceModelsAttributes.ENABLE_PASSWORD, cli_creds.enable_password)
 
-        entry.folder_path = vendor_settings.get_folder_path_by_vendor(vendor)
         return entry
 
     def upload(self, entry, vendor, cs_session):
@@ -47,14 +51,6 @@ class NetworkingTypeHandler(AbstractHandler):
         :param cloudshell.api.cloudshell_api.CloudShellAPISession cs_session:
         :return:
         """
-        attributes = {
-            ResourceModelsAttributes.ENABLE_SNMP: "False",
-            ResourceModelsAttributes.SNMP_READ_COMMUNITY: entry.snmp_community,
-            ResourceModelsAttributes.USER: entry.user,
-            ResourceModelsAttributes.PASSWORD: entry.password,
-            ResourceModelsAttributes.ENABLE_PASSWORD: entry.enable_password
-        }
-
         device_os = vendor.get_device_os(entry.description)
         if device_os is None:
             raise ReportableException("Unable to determine device OS")
@@ -69,7 +65,6 @@ class NetworkingTypeHandler(AbstractHandler):
                                                   resource_family=second_gen["family_name"],
                                                   resource_model=second_gen["model_name"],
                                                   driver_name=driver_name,
-                                                  attributes=attributes,
                                                   attribute_prefix="{}.".format(second_gen["model_name"]))
             if not resource_name:
                 if "first_gen" in familes_data:
@@ -78,8 +73,7 @@ class NetworkingTypeHandler(AbstractHandler):
                                                           entry=entry,
                                                           resource_family=first_gen["family_name"],
                                                           resource_model=first_gen["model_name"],
-                                                          driver_name=first_gen["driver_name"],
-                                                          attributes=attributes)
+                                                          driver_name=first_gen["driver_name"])
         else:
             first_gen = familes_data["first_gen"]
             driver_name = first_gen["driver_name"]
@@ -87,8 +81,7 @@ class NetworkingTypeHandler(AbstractHandler):
                                                   entry=entry,
                                                   resource_family=first_gen["family_name"],
                                                   resource_model=first_gen["model_name"],
-                                                  driver_name=driver_name,
-                                                  attributes=attributes)
+                                                  driver_name=driver_name)
 
         if not resource_name:
             entry.comment = "Shell {} is not installed".format(driver_name)

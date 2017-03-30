@@ -21,8 +21,8 @@ class PDUTypeHandler(AbstractHandler):
         if cli_creds is None:
             entry.comment = "Unable to discover device user/password"
         else:
-            entry.user = cli_creds.user
-            entry.password = cli_creds.password
+            entry.add_attribute(ResourceModelsAttributes.USER, entry.user)
+            entry.add_attribute(ResourceModelsAttributes.PASSWORD, entry.password)
 
         return entry
 
@@ -34,17 +34,11 @@ class PDUTypeHandler(AbstractHandler):
         :param cloudshell.api.cloudshell_api.CloudShellAPISession cs_session:
         :return:
         """
-        attributes = {
-            ResourceModelsAttributes.USER: entry.user,
-            ResourceModelsAttributes.PASSWORD: entry.password,
-        }
-
         resource_name = self._upload_resource(cs_session=cs_session,
                                               entry=entry,
                                               resource_family=vendor.family_name,
                                               resource_model=vendor.model_name,
-                                              driver_name=vendor.driver_name,
-                                              attributes=attributes)
+                                              driver_name=vendor.driver_name)
 
         if not resource_name:
             entry.comment = "Shell {} is not installed".format(vendor.driver_name)

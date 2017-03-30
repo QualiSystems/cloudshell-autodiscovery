@@ -31,9 +31,6 @@ class TestNetworkingTypeHandler(unittest.TestCase):
 
         # verify
         self.assertEqual(result, entry)
-        self.assertEqual(entry.user, cli_creds.user)
-        self.assertEqual(entry.password, cli_creds.password)
-        self.assertEqual(entry.enable_password, cli_creds.enable_password)
         self.assertEqual(entry.model_type, model_type)
 
     def test_discover_no_cli_creds(self):
@@ -84,7 +81,6 @@ class TestNetworkingTypeHandler(unittest.TestCase):
                                                                          resource_family=second_gen["family_name"],
                                                                          resource_model=second_gen["model_name"],
                                                                          driver_name=second_gen["driver_name"],
-                                                                         attributes=attributes,
                                                                          attribute_prefix="{}.".format(
                                                                              second_gen["model_name"]))
 
@@ -99,13 +95,6 @@ class TestNetworkingTypeHandler(unittest.TestCase):
         cs_session = mock.MagicMock()
         resource_name = "test resource name"
         self.networking_handler._upload_resource = mock.MagicMock(return_value=resource_name)
-        attributes = {
-            ResourceModelsAttributes.ENABLE_SNMP: "False",
-            ResourceModelsAttributes.SNMP_READ_COMMUNITY: entry.snmp_community,
-            ResourceModelsAttributes.USER: entry.user,
-            ResourceModelsAttributes.PASSWORD: entry.password,
-            ResourceModelsAttributes.ENABLE_PASSWORD: entry.enable_password
-        }
 
         # act
         self.networking_handler.upload(entry=entry,
@@ -116,8 +105,7 @@ class TestNetworkingTypeHandler(unittest.TestCase):
                                                                          entry=entry,
                                                                          resource_family=first_gen["family_name"],
                                                                          resource_model=first_gen["model_name"],
-                                                                         driver_name=first_gen["driver_name"],
-                                                                         attributes=attributes)
+                                                                         driver_name=first_gen["driver_name"])
 
     def test_upload_2_generation_shell_failed(self):
         """Check that method will upload 1-nd generation shell if 2-nd generation one failed"""
@@ -155,7 +143,6 @@ class TestNetworkingTypeHandler(unittest.TestCase):
                                                                  resource_family=second_gen["family_name"],
                                                                  resource_model=second_gen["model_name"],
                                                                  driver_name=second_gen["driver_name"],
-                                                                 attributes=attributes,
                                                                  attribute_prefix="{}.".format(
                                                                      second_gen["model_name"]))
 
@@ -163,5 +150,4 @@ class TestNetworkingTypeHandler(unittest.TestCase):
                                                                  entry=entry,
                                                                  resource_family=first_gen["family_name"],
                                                                  resource_model=first_gen["model_name"],
-                                                                 driver_name=first_gen["driver_name"],
-                                                                 attributes=attributes)
+                                                                 driver_name=first_gen["driver_name"])
