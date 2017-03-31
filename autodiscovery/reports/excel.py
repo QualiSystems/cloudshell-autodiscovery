@@ -92,7 +92,7 @@ class ExcelReport(AbstractReport):
 
         def get_cell_value(column, row):
             cell = wb_sheet["{}{}".format(column, row)]
-            return cell.value
+            return cell.value or ""
 
         for row_num in xrange(2, wb_sheet.max_row+1):  # first row is a header
             formatted_attributes = get_cell_value(ExcelReport.ATTRIBUTES_COLUMN, row_num)

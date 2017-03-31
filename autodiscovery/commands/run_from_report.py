@@ -17,6 +17,7 @@ class RunFromReportCommand(AbstractRunCommand):
 
         for parsed_entry in parsed_entries:
             self.logger.info("Uploading device with IP {}".format(parsed_entry.ip))
+            self.output.send("Uploading device with IP {}".format(parsed_entry.ip))
             try:
                 with self.report.edit_entry(entry=parsed_entry) as entry:
 
@@ -44,8 +45,11 @@ class RunFromReportCommand(AbstractRunCommand):
                     handler.upload(entry=entry,  vendor=vendor, cs_session=cs_session)
 
             except Exception:
+                self.output.send("Failed to discover {} device. {}".format(parsed_entry.ip,
+                                                                           parsed_entry.comment), error=True)
                 self.logger.exception("Failed to upload {} device due to:".format(parsed_entry.ip))
             else:
+                self.output.send("Device with IP {} was successfully uploaded".format(parsed_entry.ip))
                 self.logger.info("Device with IP {} was successfully uploaded".format(parsed_entry.ip))
 
         self.report.generate()

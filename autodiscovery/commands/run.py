@@ -13,20 +13,26 @@ from autodiscovery.handlers import NetworkingTypeHandler
 from autodiscovery.handlers import Layer1TypeHandler
 from autodiscovery.handlers import TrafficGeneratorTypeHandler
 from autodiscovery.handlers import PDUTypeHandler
+from autodiscovery.output import EmptyOutput
 
 
 class AbstractRunCommand(object):
 
-    def __init__(self, data_processor, report, logger):
+    def __init__(self, data_processor, report, logger, output=None):
         """
 
         :param autodiscovery.data_processors.JsonDataProcessor data_processor:
         :param autodiscovery.reports.AbstractReport report:
         :param logging.Logger logger:
+        :param autodiscovery.output.AbstractOutput output:
         """
         self.data_processor = data_processor
         self.report = report
         self.logger = logger
+
+        if output is None:
+            output = EmptyOutput()
+        self.output = output
 
         self.vendor_type_handlers_map = {
             "networking": NetworkingTypeHandler(logger=logger),
@@ -81,15 +87,16 @@ class AbstractRunCommand(object):
 
 
 class RunCommand(AbstractRunCommand):
-    def __init__(self, data_processor, report, logger, offline):
+    def __init__(self, data_processor, report, logger, output=None, offline=False):
         """
 
         :param autodiscovery.data_processors.JsonDataProcessor data_processor:
         :param autodiscovery.reports.AbstractReport report:
         :param logging.Logger logger:
+        :param autodiscovery.output.AbstractOutput output:
         :param bool offline:
         """
-        super(RunCommand, self).__init__(data_processor, report, logger)
+        super(RunCommand, self).__init__(data_processor, report, logger, output)
         self.offline = offline
 
     def _parse_vendor_number(self, sys_obj_id):
@@ -178,6 +185,7 @@ class RunCommand(AbstractRunCommand):
             cs_domain = devices_ip_range.domain
             for device_ip in devices_ip_range.ip_range:
                 self.logger.info("Discovering device with IP {}".format(device_ip))
+                self.output.send("Discovering device with IP {}".format(device_ip))
                 try:
                     with self.report.add_entry(ip=device_ip, domain=cs_domain, offline=self.offline) as entry:
                         entry = self._discover_device(entry=entry, snmp_comunity_strings=snmp_comunity_strings)
@@ -202,10 +210,13 @@ class RunCommand(AbstractRunCommand):
                                                               cs_domain=cs_domain)
 
                             handler.upload(entry=discovered_entry, vendor=vendor, cs_session=cs_session)
-
                 except Exception:
+                    entry = self.report.get_current_entry()
+                    comment = entry.comment if entry is not None else ""
+                    self.output.send("Failed to discover {} device. {}".format(device_ip, comment), error=True)
                     self.logger.exception("Failed to discover {} device due to:".format(device_ip))
                 else:
+                    self.output.send("Device with IP {} was successfully discovered".format(device_ip))
                     self.logger.info("Device with IP {} was successfully discovered".format(device_ip))
 
         self.report.generate()

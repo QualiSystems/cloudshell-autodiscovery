@@ -103,7 +103,7 @@ class Entry(object):
         :rtype: list[str]
         """
         return {key.strip(): val.strip() for key, val in
-                (attr.split("=") for attr in attributes.split(Entry.ATTRIBUTES_SEPARATOR))}
+                (attr.split("=") for attr in attributes.split(Entry.ATTRIBUTES_SEPARATOR) if attr)}
 
     def __enter__(self):
         return self
