@@ -4,7 +4,7 @@ import mock
 
 from autodiscovery.models import VendorDefinitionCollection
 from autodiscovery.models import VendorCLICredentials
-from autodiscovery.models import CLICredentialsCollection
+from autodiscovery.models import VendorSettingsCollection
 from autodiscovery.models import CLICredentials
 from autodiscovery.models import NetworkingVendorDefinition
 from autodiscovery.models import BaseVendorDefinition
@@ -226,22 +226,27 @@ class TestVendorCLICredentials(unittest.TestCase):
         self.assertEqual(valid_creds, self.vendor_creds.cli_credentials[0])
 
 
-class TestCLICredentialsCollection(unittest.TestCase):
+class TestVendorSettingsCollection(unittest.TestCase):
     def setUp(self):
         self.vendor_name = "test vendor"
-        self.cli_creds = CLICredentialsCollection(cli_credentials={
-            "default": [
-                {
-                    "user": "test user 1",
-                    "password": "test password 1",
-                }
-            ],
-            self.vendor_name: [
-                {
-                    "user": "test vendor user 1",
-                    "password": "test vendor password 1",
-                }
-            ]
+        self.cli_creds = VendorSettingsCollection(vendor_settings={
+            "default": {
+                "cli-credentials": [
+                    {
+                        "user": "test user 1",
+                        "password": "test password 1",
+                    }
+                ],
+                "folder-path": "test folder path"
+            },
+            self.vendor_name: {
+                "cli-credentials": [
+                    {
+                        "user": "test vendor user 1",
+                        "password": "test vendor password 1",
+                    }
+                ]
+            }
         })
 
     def test_get_creds_by_vendor(self):

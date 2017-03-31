@@ -46,24 +46,38 @@ class TestAbstractInputDataParser(unittest.TestCase):
         # verify
         self.assertEqual(result, expected_res)
 
-    def test_parse_devices_ips(self):
-        """Check that method will return range of IPs and will call _find_ips method for each IP """
+    @mock.patch("autodiscovery.parsers.input_data_parsers.models.DeviceIPRange")
+    def test_parse_devices_ips(self, device_ip_range_class):
+        """Check that method will return list of DeviceIPRange models"""
         first_parsed_ips = mock.MagicMock()
         second_parsed_ips = mock.MagicMock()
-        self.tested_instance._find_ips = mock.MagicMock(side_effect=[[first_parsed_ips], [second_parsed_ips]])
-        expected_result = [first_parsed_ips, second_parsed_ips, "192.168.42.235"]
+        self.tested_instance._find_ips = mock.MagicMock(side_effect=[first_parsed_ips, second_parsed_ips])
+        device_ip_range = mock.MagicMock()
+        device_ip_range_class.return_value = device_ip_range
+        expected_res = [device_ip_range, device_ip_range, device_ip_range]
 
-        devices_ips = ["192.168.10.3-45",
-                       "192.168.8.1-9.10",
-                       "192.168.42.235"]
+        devices_ips = [
+            {
+                "range": "192.168.10.3-45",
+                "domain": "Test Domain"
+            },
+            {
+                "range": "192.168.8.1-9.10"
+            },
+            "192.168.42.235"]
+
         # act
         result = self.tested_instance._parse_devices_ips(devices_ips)
         # verify
+        self.assertEqual(result, expected_res)
+        device_ip_range_class.assert_any_call(ip_range=first_parsed_ips, domain="Test Domain")
+        device_ip_range_class.assert_any_call(ip_range=second_parsed_ips, domain=None)
+        device_ip_range_class.assert_any_call(ip_range=["192.168.42.235"], domain=None)
+
         self.tested_instance._find_ips.assert_any_call(start_ip=u"192.168.10.3",
                                                        last_ip=u"192.168.10.45")
         self.tested_instance._find_ips.assert_any_call(start_ip=u"192.168.8.1",
                                                        last_ip=u"192.168.9.10")
-        self.assertEqual(result, expected_result)
 
     def test_parse_method_raises_exception_if_it_was_not_implemented(self):
         """Check that method will raise exception if it wasn't implemented in the child class"""

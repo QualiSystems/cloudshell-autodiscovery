@@ -8,25 +8,20 @@ from autodiscovery.common.utils import get_logger
 
 class TestUtils(unittest.TestCase):
 
-    @mock.patch("autodiscovery.common.utils.sys")
     @mock.patch("autodiscovery.common.utils.logging")
-    def test_get_logger(self, logging, sys):
+    def test_get_logger(self, logging):
         """Check that method will return logger instance"""
         logger = mock.MagicMock()
         logging.getLogger.return_value = logger
         file_handler = mock.MagicMock()
-        stream_handler = mock.MagicMock()
         logging.FileHandler.return_value = file_handler
-        logging.StreamHandler.return_value = stream_handler
         # act
         result = get_logger()
         # verify
         self.assertEqual(result, logger)
         logging.getLogger.assert_called_once_with("autodiscovery")
         logging.FileHandler.assert_called_once_with("autodiscovery.log")
-        logging.StreamHandler.assert_called_once_with(sys.stdout)
         logger.addHandler.assert_any_call(file_handler)
-        logger.addHandler.assert_any_call(stream_handler)
 
     @mock.patch("autodiscovery.common.utils.os")
     def test_get_full_path(self, os):

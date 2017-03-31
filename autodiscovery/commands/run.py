@@ -13,20 +13,26 @@ from autodiscovery.handlers import NetworkingTypeHandler
 from autodiscovery.handlers import Layer1TypeHandler
 from autodiscovery.handlers import TrafficGeneratorTypeHandler
 from autodiscovery.handlers import PDUTypeHandler
+from autodiscovery.output import EmptyOutput
 
 
 class AbstractRunCommand(object):
 
-    def __init__(self, data_processor, report, logger):
+    def __init__(self, data_processor, report, logger, output=None):
         """
 
         :param autodiscovery.data_processors.JsonDataProcessor data_processor:
         :param autodiscovery.reports.AbstractReport report:
         :param logging.Logger logger:
+        :param autodiscovery.output.AbstractOutput output:
         """
         self.data_processor = data_processor
         self.report = report
         self.logger = logger
+
+        if output is None:
+            output = EmptyOutput()
+        self.output = output
 
         self.vendor_type_handlers_map = {
             "networking": NetworkingTypeHandler(logger=logger),
@@ -34,17 +40,18 @@ class AbstractRunCommand(object):
             "traffic_generator": TrafficGeneratorTypeHandler(logger=logger),
             "pdu": PDUTypeHandler(logger=logger),
         }
+        self._cs_sessions = {}
 
-    def _init_cs_session(self, cs_ip, cs_user, cs_password):
+    def _init_cs_session(self, cs_ip, cs_user, cs_password, cs_domain):
         """Initialize CloudShell session
 
         :param str cs_ip:
         :param str cs_user:
         :param str cs_password:
-        :return:
+        :rtype: CloudShellAPISession
         """
         try:
-            self.cs_session = CloudShellAPISession(host=cs_ip, username=cs_user, password=cs_password)
+            cs_session = CloudShellAPISession(host=cs_ip, username=cs_user, password=cs_password, domain=cs_domain)
         except CloudShellAPIError as e:
             if e.code in (CloudshellAPIErrorCodes.INCORRECT_LOGIN, CloudshellAPIErrorCodes.INCORRECT_PASSWORD):
                 self.logger.exception("Unable to login to the CloudShell API")
@@ -54,20 +61,42 @@ class AbstractRunCommand(object):
             self.logger.exception("Unable to connect to the CloudShell API")
             raise AutoDiscoveryException("CloudShell server is unreachable")
 
+        return cs_session
+
+    def _get_cs_session(self, cs_ip, cs_user, cs_password, cs_domain):
+        """
+
+        :param cs_ip:
+        :param cs_user:
+        :param cs_password:
+        :param cs_domain:
+        :return:
+        """
+        if cs_domain not in self._cs_sessions:
+            cs_session = self._init_cs_session(cs_ip=cs_ip,
+                                               cs_user=cs_user,
+                                               cs_password=cs_password,
+                                               cs_domain=cs_domain)
+
+            self._cs_sessions[cs_domain] = cs_session
+
+        return self._cs_sessions[cs_domain]
+
     def execute(self, *args, **kwargs):
         raise NotImplementedError("Class {} must implement method 'execute'".format(type(self)))
 
 
 class RunCommand(AbstractRunCommand):
-    def __init__(self, data_processor, report, logger, offline):
+    def __init__(self, data_processor, report, logger, output=None, offline=False):
         """
 
         :param autodiscovery.data_processors.JsonDataProcessor data_processor:
         :param autodiscovery.reports.AbstractReport report:
         :param logging.Logger logger:
+        :param autodiscovery.output.AbstractOutput output:
         :param bool offline:
         """
-        super(RunCommand, self).__init__(data_processor, report, logger)
+        super(RunCommand, self).__init__(data_processor, report, logger, output)
         self.offline = offline
 
     def _parse_vendor_number(self, sys_obj_id):
@@ -137,13 +166,13 @@ class RunCommand(AbstractRunCommand):
         entry.device_name = sys_name
         return entry
 
-    def execute(self, devices_ips, snmp_comunity_strings, cli_credentials, cs_ip, cs_user, cs_password,
+    def execute(self, devices_ips, snmp_comunity_strings, vendor_settings, cs_ip, cs_user, cs_password,
                 additional_vendors_data):
         """Execute Auto-discovery command
 
-        :param list devices_ips: list of devices IPs to discover
+        :param list[autodiscovery.models.DeviceIPRange] devices_ips: list of devices IPs to discover
         :param list snmp_comunity_strings: list of possible SNMP read community strings for the given devices
-        :param autodiscovery.models.vendor.CLICredentialsCollection cli_credentials:  possible CLI credentials
+        :param autodiscovery.models.vendor.VendorSettingsCollection vendor_settings: additional vendor settings
         :param str cs_ip: IP address of the CloudShell API
         :param str cs_user: user for the CloudShell API
         :param str cs_password: password for the CloudShell API
@@ -152,34 +181,42 @@ class RunCommand(AbstractRunCommand):
         """
         vendor_config = self.data_processor.load_vendor_config(additional_vendors_data=additional_vendors_data)
 
-        if not self.offline:
-            self._init_cs_session(cs_ip=cs_ip, cs_user=cs_user, cs_password=cs_password)
+        for devices_ip_range in devices_ips:
+            cs_domain = devices_ip_range.domain
+            for device_ip in devices_ip_range.ip_range:
+                self.logger.info("Discovering device with IP {}".format(device_ip))
+                self.output.send("Discovering device with IP {}".format(device_ip))
+                try:
+                    with self.report.add_entry(ip=device_ip, domain=cs_domain, offline=self.offline) as entry:
+                        entry = self._discover_device(entry=entry, snmp_comunity_strings=snmp_comunity_strings)
+                        vendor = vendor_config.get_vendor(vendor_name=entry.vendor)
 
-        for device_ip in devices_ips:
-            self.logger.info("Discovering device with IP {}".format(device_ip))
-            try:
-                with self.report.add_entry(ip=device_ip, offline=self.offline) as entry:
-                    entry = self._discover_device(entry=entry, snmp_comunity_strings=snmp_comunity_strings)
-                    vendor = vendor_config.get_vendor(vendor_name=entry.vendor)
+                        if vendor is None:
+                            raise ReportableException("Unsupported vendor {}".format(entry.vendor))
 
-                    if vendor is None:
-                        raise ReportableException("Unsupported vendor {}".format(entry.vendor))
+                        try:
+                            handler = self.vendor_type_handlers_map[vendor.vendor_type.lower()]
+                        except KeyError:
+                            raise ReportableException(
+                                "Invalid vendor type '{}'. Possible values are: {}".format(
+                                    vendor.vendor_type, self.vendor_type_handlers_map.keys()))
 
-                    try:
-                        handler = self.vendor_type_handlers_map[vendor.vendor_type.lower()]
-                    except KeyError:
-                        raise ReportableException(
-                            "Invalid vendor type '{}'. Possible values are: {}".format(
-                                vendor.vendor_type, self.vendor_type_handlers_map.keys()))
+                        discovered_entry = handler.discover(entry=entry, vendor=vendor, vendor_settings=vendor_settings)
 
-                    discovered_entry = handler.discover(entry=entry, vendor=vendor, cli_credentials=cli_credentials)
+                        if not self.offline:
+                            cs_session = self._get_cs_session(cs_ip=cs_ip,
+                                                              cs_user=cs_user,
+                                                              cs_password=cs_password,
+                                                              cs_domain=cs_domain)
 
-                    if not self.offline:
-                        handler.upload(entry=discovered_entry, vendor=vendor, cs_session=self.cs_session)
-
-            except Exception:
-                self.logger.exception("Failed to discover {} device due to:".format(device_ip))
-            else:
-                self.logger.info("Device with IP {} was successfully discovered".format(device_ip))
+                            handler.upload(entry=discovered_entry, vendor=vendor, cs_session=cs_session)
+                except Exception:
+                    entry = self.report.get_current_entry()
+                    comment = entry.comment if entry is not None else ""
+                    self.output.send("Failed to discover {} device. {}".format(device_ip, comment), error=True)
+                    self.logger.exception("Failed to discover {} device due to:".format(device_ip))
+                else:
+                    self.output.send("Device with IP {} was successfully discovered".format(device_ip))
+                    self.logger.info("Device with IP {} was successfully discovered".format(device_ip))
 
         self.report.generate()

@@ -42,20 +42,28 @@ class AbstractInputDataParser(object):
         """Parse all devices IPs and IP ranges into a single list
 
         :param list[str] devices_ips:
-        :rtype: list
+        :rtype: list[models.DeviceIPRange]
         """
         parsed_ips = []
 
         for device_range in devices_ips:
-            if "-" in device_range:
-                first_ip, last_ip = device_range.split("-")
+            if isinstance(device_range, dict):
+                device_ips = device_range["range"]
+                domain = device_range.get("domain")
+            else:
+                device_ips = device_range
+                domain = None
+
+            if "-" in device_ips:
+                first_ip, last_ip = device_ips.split("-")
                 first_ip_octets = first_ip.split(".")
                 last_ip_octets = last_ip.split(".")
                 last_ip = first_ip_octets[:4-len(last_ip_octets)] + last_ip_octets
-                ips = self._find_ips(start_ip=unicode(first_ip), last_ip=unicode(".".join(last_ip)))
-                parsed_ips.extend(ips)
+                ip_range = self._find_ips(start_ip=unicode(first_ip), last_ip=unicode(".".join(last_ip)))
             else:
-                parsed_ips.append(device_range)
+                ip_range = [device_ips]
+
+            parsed_ips.append(models.DeviceIPRange(ip_range=ip_range, domain=domain))
 
         return parsed_ips
 
@@ -82,7 +90,7 @@ class YAMLInputDataParser(AbstractInputDataParser):
 
         data = yaml.load(file_data)
         devices_ips = self._parse_devices_ips(data["devices-ips"])
-        cli_creds = models.CLICredentialsCollection(data.get("cli-credentials", {}))
+        vendor_settings = models.VendorSettingsCollection(data.get("vendor-settings", {}))
         cs_data = data.get("cloudshell", {})
 
         return models.InputDataModel(devices_ips=devices_ips,
@@ -90,7 +98,7 @@ class YAMLInputDataParser(AbstractInputDataParser):
                                      cs_user=cs_data.get("user"),
                                      cs_password=cs_data.get("password"),
                                      snmp_community_strings=data["community-strings"],
-                                     cli_credentials=cli_creds)
+                                     vendor_settings=vendor_settings)
 
 
 class JSONInputDataParser(AbstractInputDataParser):
@@ -106,7 +114,7 @@ class JSONInputDataParser(AbstractInputDataParser):
             data = json.load(input_f)
 
         devices_ips = self._parse_devices_ips(data["devices-ips"])
-        cli_creds = models.CLICredentialsCollection(data.get("cli-credentials", {}))
+        vendor_settings = models.VendorSettingsCollection(data.get("vendor-settings", {}))
         cs_data = data.get("cloudshell", {})
 
         return models.InputDataModel(devices_ips=devices_ips,
@@ -114,4 +122,4 @@ class JSONInputDataParser(AbstractInputDataParser):
                                      cs_user=cs_data.get("user"),
                                      cs_password=cs_data.get("password"),
                                      snmp_community_strings=data["community-strings"],
-                                     cli_credentials=cli_creds)
+                                     vendor_settings=vendor_settings)

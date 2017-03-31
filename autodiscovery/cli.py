@@ -6,6 +6,7 @@ from autodiscovery import commands
 from autodiscovery import reports
 from autodiscovery.common.utils import get_logger
 from autodiscovery.data_processors import JsonDataProcessor
+from autodiscovery.output import ConsoleOutput
 from autodiscovery.parsers.input_data_parsers import get_input_data_parser
 from autodiscovery.parsers.config_data_parsers import get_config_data_parser
 
@@ -80,11 +81,12 @@ def run(input_file, config_file, log_file, report_file, report_type, offline):
     auto_discover_command = commands.RunCommand(data_processor=JsonDataProcessor(logger=logger),
                                                 report=report,
                                                 logger=logger,
+                                                output=ConsoleOutput(),
                                                 offline=offline)
 
     auto_discover_command.execute(devices_ips=input_data_model.devices_ips,
                                   snmp_comunity_strings=input_data_model.snmp_community_strings,
-                                  cli_credentials=input_data_model.cli_credentials,
+                                  vendor_settings=input_data_model.vendor_settings,
                                   cs_ip=input_data_model.cs_ip,
                                   cs_user=input_data_model.cs_user,
                                   cs_password=input_data_model.cs_password,
@@ -116,7 +118,8 @@ def run_from_report(input_file, config_file, log_file, report_file):
     command = commands.RunFromReportCommand(data_processor=JsonDataProcessor(logger=logger),
                                             report=reports.get_report(report_file=report_file,
                                                                       report_type=reports.DEFAULT_REPORT_TYPE),
-                                            logger=logger)
+                                            logger=logger,
+                                            output=ConsoleOutput())
 
     command.execute(parsed_entries=parsed_entries,
                     cs_ip=input_data_model.cs_ip,

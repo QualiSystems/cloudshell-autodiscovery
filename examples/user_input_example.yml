@@ -1,7 +1,9 @@
 # IP of devices to discover (could be a range or single one)
 devices-ips:
-    -   192.168.10.3-45
-    -   192.168.8.1-9.10
+    -   range: 192.168.10.3-45
+        domain: Some Domain
+    -   range: 192.168.8.1-9.10
+        domain: Some other Domain
     -   192.168.42.235
 
 # IP and credentials for the CloudShell API
@@ -15,22 +17,27 @@ community-strings:
     -   public
     -   public2
 
-# Possible CLI credentials: username/password (default ones and some specific for different Vendors)
-cli-credentials:
+# Additional settings per Vendor (Possible CLI credentials (user/password), resource folder)
+vendor-settings:
     default:
-        -   user: root
-            password: Password1
-            enable password: Password2
-        -   user: root1
-            password: Password2
+        cli-credentials:
+            -   user: root
+                password: Password1
+                enable password: Password2we
+            -   user: root1
+                password: Password2
+        folder-path: autodiscovery
     Cisco:
-        -   user: cisco
-            password: Password1
-        -   user: cisco2
-            password: Password2
+        cli-credentials:
+            -   user: cisco
+                password: Password1
+            -   user: cisco2
+                password: Password2
+        folder-path: cisco
     Juniper:
-        -   user: juniper
-            password: Password1
-        -   user: juniper2
-            password: Password2
-            enable_password: Password2
+        cli-credentials:
+            -   user: juniper
+                password: Password1
+            -   user: juniper2
+                password: Password2
+                enable_password: Password2
