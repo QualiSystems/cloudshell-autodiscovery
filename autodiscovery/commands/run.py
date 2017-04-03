@@ -18,13 +18,14 @@ from autodiscovery.output import EmptyOutput
 
 class AbstractRunCommand(object):
 
-    def __init__(self, data_processor, report, logger, output=None):
+    def __init__(self, data_processor, report, logger, output=None, autoload=True):
         """
 
         :param autodiscovery.data_processors.JsonDataProcessor data_processor:
         :param autodiscovery.reports.AbstractReport report:
         :param logging.Logger logger:
         :param autodiscovery.output.AbstractOutput output:
+        :param bool autoload:
         """
         self.data_processor = data_processor
         self.report = report
@@ -35,10 +36,10 @@ class AbstractRunCommand(object):
         self.output = output
 
         self.vendor_type_handlers_map = {
-            "networking": NetworkingTypeHandler(logger=logger),
-            "layer1": Layer1TypeHandler(logger=logger),
-            "traffic_generator": TrafficGeneratorTypeHandler(logger=logger),
-            "pdu": PDUTypeHandler(logger=logger),
+            "networking": NetworkingTypeHandler(logger=logger, autoload=autoload),
+            "layer1": Layer1TypeHandler(logger=logger, autoload=autoload),
+            "traffic_generator": TrafficGeneratorTypeHandler(logger=logger, autoload=autoload),
+            "pdu": PDUTypeHandler(logger=logger, autoload=autoload),
         }
         self._cs_sessions = {}
 
@@ -87,16 +88,17 @@ class AbstractRunCommand(object):
 
 
 class RunCommand(AbstractRunCommand):
-    def __init__(self, data_processor, report, logger, output=None, offline=False):
+    def __init__(self, data_processor, report, logger, output=None, autoload=True, offline=False):
         """
 
         :param autodiscovery.data_processors.JsonDataProcessor data_processor:
         :param autodiscovery.reports.AbstractReport report:
         :param logging.Logger logger:
         :param autodiscovery.output.AbstractOutput output:
+        :param bool autoload:
         :param bool offline:
         """
-        super(RunCommand, self).__init__(data_processor, report, logger, output)
+        super(RunCommand, self).__init__(data_processor, report, logger, output, autoload)
         self.offline = offline
 
     def _parse_vendor_number(self, sys_obj_id):

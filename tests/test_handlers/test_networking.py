@@ -11,7 +11,7 @@ from autodiscovery.handlers import NetworkingTypeHandler
 class TestNetworkingTypeHandler(unittest.TestCase):
     def setUp(self):
         self.logger = mock.MagicMock()
-        self.networking_handler = NetworkingTypeHandler(logger=self.logger)
+        self.networking_handler = NetworkingTypeHandler(logger=self.logger, autoload=True)
 
     def test_discover(self):
         """Check that method will return Entry with updated attributes"""

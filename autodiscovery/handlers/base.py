@@ -9,12 +9,14 @@ from autodiscovery.exceptions import ReportableException
 
 
 class AbstractHandler(object):
-    def __init__(self, logger):
+    def __init__(self, logger, autoload):
         """
 
         :param logging.Logger logger:
+        :param bool autoload:
         """
         self.logger = logger
+        self.autoload = autoload
 
     def discover(self, entry, vendor, vendor_settings):
         """Discover device attributes
@@ -134,14 +136,19 @@ class AbstractHandler(object):
             else:
                 raise
 
+        self.logger.info("Adding attributes to the resource {}".format(resource_name))
         attributes = [AttributeNameValue("{}{}".format(attribute_prefix, key), value)
                       for key, value in entry.attributes.iteritems()]
 
         cs_session.SetAttributesValues([ResourceAttributesUpdateRequest(resource_name, attributes)])
 
+        self.logger.info("Attaching driver to the resource {}".format(resource_name))
         self._add_resource_driver(cs_session=cs_session,
                                   resource_name=resource_name,
                                   driver_name=driver_name)
 
-        cs_session.AutoLoad(resource_name)
+        if self.autoload:
+            self.logger.info("Autoloading resource {}".format(resource_name))
+            cs_session.AutoLoad(resource_name)
+
         return resource_name

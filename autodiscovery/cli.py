@@ -64,7 +64,9 @@ def echo_vendors_config_template(template_format, save_to_file):
 @click.option("--report-type", type=click.Choice(reports.REPORT_TYPES), default=reports.DEFAULT_REPORT_TYPE,
               help="Type for generated report")
 @click.option("--offline", is_flag=True, help="Generate report without creation of any Resource on the CloudShell")
-def run(input_file, config_file, log_file, report_file, report_type, offline):
+@click.option('--autoload/--no-autoload', help="Whether autoload discovered resource on the CloudShell or not",
+              default=True)
+def run(input_file, config_file, log_file, report_file, report_type, offline, autoload):
     """Run Auto discovery command with given arguments from the input file"""
     input_data_parser = get_input_data_parser(input_file)
     input_data_model = input_data_parser.parse(input_file)
@@ -82,7 +84,8 @@ def run(input_file, config_file, log_file, report_file, report_type, offline):
                                                 report=report,
                                                 logger=logger,
                                                 output=ConsoleOutput(),
-                                                offline=offline)
+                                                offline=offline,
+                                                autoload=autoload)
 
     auto_discover_command.execute(devices_ips=input_data_model.devices_ips,
                                   snmp_comunity_strings=input_data_model.snmp_community_strings,
@@ -100,7 +103,9 @@ def run(input_file, config_file, log_file, report_file, report_type, offline):
                                     "'echo-vendors-configuration-template' command")
 @click.option("--log-file", help="File name for logs")
 @click.option("--report-file", required=True, help="File name of the report to run from")
-def run_from_report(input_file, config_file, log_file, report_file):
+@click.option('--autoload/--no-autoload', help="Whether autoload discovered resource on the CloudShell or not",
+              default=True)
+def run_from_report(input_file, config_file, log_file, report_file, autoload):
     """Create and autoload CloudShell resources from the generated report"""
     input_data_parser = get_input_data_parser(input_file)
     input_data_model = input_data_parser.parse(input_file)
@@ -119,7 +124,8 @@ def run_from_report(input_file, config_file, log_file, report_file):
                                             report=reports.get_report(report_file=report_file,
                                                                       report_type=reports.DEFAULT_REPORT_TYPE),
                                             logger=logger,
-                                            output=ConsoleOutput())
+                                            output=ConsoleOutput(),
+                                            autoload=autoload)
 
     command.execute(parsed_entries=parsed_entries,
                     cs_ip=input_data_model.cs_ip,
