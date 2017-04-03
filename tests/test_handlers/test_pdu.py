@@ -11,7 +11,7 @@ from autodiscovery.handlers import PDUTypeHandler
 class TestPDUTypeHandler(unittest.TestCase):
     def setUp(self):
         self.logger = mock.MagicMock()
-        self.pdu_handler = PDUTypeHandler(logger=self.logger)
+        self.pdu_handler = PDUTypeHandler(logger=self.logger, autoload=True)
 
     def test_discover(self):
         """Check that method will return Entry with updated attributes"""

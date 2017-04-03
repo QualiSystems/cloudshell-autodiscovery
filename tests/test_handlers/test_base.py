@@ -15,7 +15,7 @@ class TestAbstractHandler(unittest.TestCase):
 
         self.logger = mock.MagicMock()
         self.cs_session = mock.MagicMock()
-        self.tested_instance = TestedClass(logger=self.logger)
+        self.tested_instance = TestedClass(logger=self.logger, autoload=True)
 
     def test_discover_method_raises_exception_if_it_was_not_implemented(self):
         """Check that method will raise exception if it wasn't implemented in the child class"""
