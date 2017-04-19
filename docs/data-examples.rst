@@ -12,6 +12,6 @@ Input data in JSON format
 .. program-output:: autodiscovery echo-input-template --template-format json
 
 
-Additional vendors configuration in JSON format
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+An additional vendors configuration in JSON format
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. program-output:: autodiscovery echo-vendors-configuration-template --template-format json

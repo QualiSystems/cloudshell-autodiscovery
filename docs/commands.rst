@@ -5,8 +5,8 @@ Generate input data template command
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. command-output:: autodiscovery echo-input-template --help
 
-Generate additional vendors configuration template command
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Generate an additional vendors configuration template command
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. command-output:: autodiscovery echo-vendors-configuration-template --help
 
 Run autodiscovery command and generate report for the discovered devices
