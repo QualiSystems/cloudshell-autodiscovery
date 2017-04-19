@@ -7,6 +7,6 @@ Input data JSON scheme
 .. program-output:: cat ../json_schemes/input_data_schema.json
 
 
-Additional vendors configuration JSON sheme
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+An additional vendors configuration JSON scheme
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. program-output:: cat ../json_schemes/vendors_config_schema.json

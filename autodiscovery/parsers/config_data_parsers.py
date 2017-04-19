@@ -18,7 +18,7 @@ class JSONConfigDataParser(object):
     FILE_EXTENSION = "json"
 
     def parse(self, config_file):
-        """Parse additional vendors configuration file into list
+        """Parse an additional vendors configuration file into list
 
         :param str config_file: path to config file
         :rtype: list[dict]

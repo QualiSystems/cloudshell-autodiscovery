@@ -10,7 +10,8 @@ install:
 script:
     - python setup.py develop
     - nosetests --with-coverage --cover-package=autodiscovery
-    - sphinx-build -c docs/ -nW -b html -d docs/_build/doctrees docs docs/_build/html
+    - sphinx-build -c docs/ -nW -b latex -d docs/_build/doctrees docs docs/_build/pdf
+    - cd docs/_build/pdf && latex cloudshell-autodiscovery
 
 after_success:
     - coveralls

@@ -15,11 +15,3 @@ Welcome to cloudshell-autodiscovery's documentation!
    commands
    data-schemes
    data-examples
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
