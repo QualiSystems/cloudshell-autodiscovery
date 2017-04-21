@@ -3,9 +3,9 @@
 Installation
 ------------
 
-To install the auto-discovery utility via pip, run the following:::
+To install the auto-discovery utility from the .egg Python package, run the following:::
 
-  pip install cloudshell-autodiscovery
+  python -m easy_install cloudshell_autodiscovery-1.0.1-py2.7.egg
 
 Install from source::
 

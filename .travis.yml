@@ -12,6 +12,7 @@ script:
     - nosetests --with-coverage --cover-package=autodiscovery
     - sphinx-build -c docs/ -nW -b latex -d docs/_build/doctrees docs docs/_build/pdf
     - cd docs/_build/pdf && latex cloudshell-autodiscovery
+    - python setup.py bdist_egg --exclude-source-files
 
 after_success:
     - coveralls
