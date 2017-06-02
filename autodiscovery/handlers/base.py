@@ -123,6 +123,10 @@ class AbstractHandler(object):
         :param attribute_prefix:
         :return:
         """
+        if entry.folder_path != "":
+            # create folder before uploading resource. If folder was already created it will return successful result
+            cs_session.CreateFolder(folderFullPath=entry.folder_path)
+
         try:
             resource_name = self._create_cs_resource(cs_session=cs_session,
                                                      resource_name=entry.device_name,
