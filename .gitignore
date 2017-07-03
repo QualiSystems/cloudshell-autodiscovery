@@ -61,7 +61,10 @@ instance/
 .scrapy
 
 # Sphinx documentation
-docs/_build/
+docs/_build/pdf/*
+docs/_build/doctrees/*
+# exclude latest sphinx pdf docs
+!docs/_build/pdf/cloudshell-autodiscovery.pdf
 
 # PyBuilder
 target/
