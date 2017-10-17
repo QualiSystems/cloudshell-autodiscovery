@@ -316,6 +316,38 @@
       ]
    },
    {
+      "name": "Arista",
+      "aliases": [
+         "[Aa]rista"
+      ],
+      "type": "networking",
+      "default_os": "EOS",
+      "default_prompt": ">\\s*$",
+      "enable_prompt": "#\\s*$",
+      "operation_systems": [
+         {
+            "name": "EOS",
+            "default_model": "switch",
+            "families": {
+               "switch": {
+                  "first_gen": {
+                     "family_name": "Switch",
+                     "model_name": "Arista EOS Switch",
+                     "driver_name": "Generic Arista EOS Driver Version1"
+                  }
+               },
+               "router": {
+                  "first_gen": {
+                     "family_name": "Router",
+                     "model_name": "Arista EOS Router",
+                     "driver_name": "Generic Arista EOS Driver Version1"
+                  }
+               }
+            }
+         }
+      ]
+   },
+   {
       "name": "Raritan",
       "aliases": [
          "[Rr]aritan"
