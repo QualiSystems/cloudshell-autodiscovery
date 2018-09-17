@@ -7,7 +7,7 @@ before_install:
     - sudo apt-get install texlive-latex-recommended
     - sudo apt-get install texlive-latex-extra
     - sudo apt-get install texlive-fonts-recommended
-    
+
 install:
   - 'if [ ${TRAVIS_BRANCH} \!= "master" ] && [ -f dev_requirements.txt ]; then
         pip install --extra-index-url https://testpypi.python.org/pypi -r dev_requirements.txt;
@@ -21,9 +21,6 @@ install:
 
 script:
     - nosetests --with-coverage --cover-package=autodiscovery tests
+    - coveralls
     - sphinx-build -c docs/ -nW -b latex -d docs/_build/doctrees docs docs/_build/pdf
     - cd docs/_build/pdf && latex cloudshell-autodiscovery
-#    - python setup.py bdist_egg --exclude-source-files
-
-after_success:
-    - coveralls
