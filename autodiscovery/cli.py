@@ -54,6 +54,15 @@ def echo_vendors_config_template(template_format, save_to_file):
     echo_conf_tpl_command.execute(template_format=template_format, save_to_file=save_to_file)
 
 
+@cli.command(name="echo-excel-report-template")
+@click.option("--save-to-file", required=True, help="File to save generated user input template file")
+def echo_excel_report_template(save_to_file):
+    """Generate .xlsx report example file for the "run-from-report" command"""
+    report = reports.ExcelReport(file_name=save_to_file)
+    echo_report_tpl_command = commands.EchoReportTemplateCommand(report=report)
+    echo_report_tpl_command.execute()
+
+
 @cli.command()
 @click.option("--input-file", required=True, help="Input file with devices IPs and other configuration data. "
                                                   "Can be generated with a 'echo-input-template' command")
