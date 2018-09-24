@@ -8,7 +8,8 @@ from autodiscovery.reports.base import Entry
 
 
 class ExcelReport(AbstractReport):
-    DEFAULT_REPORT_FILE = "report.xlsx"
+    FILE_EXTENSION = ".xlsx"
+    DEFAULT_REPORT_FILE = "report{}".format(FILE_EXTENSION)
 
     IP_COLUMN = "A"
     VENDOR_COLUMN = "B"
@@ -29,8 +30,11 @@ class ExcelReport(AbstractReport):
         :param str file_name:
         """
         super(ExcelReport, self).__init__()
+
         if file_name is None:
             file_name = self.DEFAULT_REPORT_FILE
+        elif not file_name.lower().endswith(self.FILE_EXTENSION):
+            file_name += self.FILE_EXTENSION
 
         self.file_name = file_name
 
