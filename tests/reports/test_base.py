@@ -3,8 +3,8 @@ import unittest
 import mock
 
 from autodiscovery.exceptions import ReportableException
-from autodiscovery.reports.base import Entry
-from autodiscovery.reports.base import AbstractReport
+from autodiscovery.reports import AbstractReport
+from autodiscovery.reports import Entry
 
 
 class TestAbstractReport(unittest.TestCase):

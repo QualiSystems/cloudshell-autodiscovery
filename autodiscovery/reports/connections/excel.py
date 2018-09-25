@@ -1,28 +1,19 @@
-import re
-
 import xlsxwriter
 from openpyxl import load_workbook
 
-from autodiscovery.reports.base import AbstractReport
-from autodiscovery.reports.base import Entry
+from autodiscovery.reports.connections.base import AbstractReport
+from autodiscovery.reports.connections.base import Entry
 
 
 class ExcelReport(AbstractReport):
     FILE_EXTENSION = ".xlsx"
-    DEFAULT_REPORT_FILE = "report{}".format(FILE_EXTENSION)
+    DEFAULT_REPORT_FILE = "connect_ports_report{}".format(FILE_EXTENSION)
 
-    IP_COLUMN = "A"
-    VENDOR_COLUMN = "B"
-    SYS_OBJ_COLUMN = "C"
-    DESCRIPTION_COLUMN = "D"
-    SNMP_COMMUNITY_COLUMN = "E"
-    MODEL_TYPE_COLUMN = "F"
-    DEVICE_NAME_COLUMN = "G"
-    DOMAIN_COLUMN = "H"
-    FOLDER_COLUMN = "I"
-    ATTRIBUTES_COLUMN = "J"
-    STATUS_COLUMN = "K"
-    COMMENT_COLUMN = "L"
+    SOURCE_PORT_COLUMN = "A"
+    TARGET_PORT_COLUMN = "B"
+    DOMAIN_COLUMN = "C"
+    STATUS_COLUMN = "D"
+    COMMENT_COLUMN = "E"
 
     def __init__(self, file_name=None):
         """
@@ -31,6 +22,7 @@ class ExcelReport(AbstractReport):
         """
         super(ExcelReport, self).__init__()
 
+        # todo: this code is duplicated
         if file_name is None:
             file_name = self.DEFAULT_REPORT_FILE
         elif not file_name.lower().endswith(self.FILE_EXTENSION):
@@ -46,10 +38,7 @@ class ExcelReport(AbstractReport):
         table_data = [self.HEADER]
 
         for entry in self._entries:
-            description = re.sub("\s+", " ", entry.description)  # replace all \n \r \t symbols
-            table_data.append((entry.ip, entry.vendor, entry.sys_object_id, description, entry.snmp_community,
-                               entry.model_type, entry.device_name, entry.domain, entry.folder_path,
-                               entry.formatted_attrs, entry.status, entry.comment))
+            table_data.append((entry.source_port, entry.target_port, entry.domain, entry.status, entry.comment))
 
         for row_num, row in enumerate(table_data):
             for col_num, col in enumerate(row):
@@ -71,14 +60,9 @@ class ExcelReport(AbstractReport):
             return "{}:{}".format(start_column, end_column)
 
         # format columns width
-        worksheet.set_column(prepare_column(self.IP_COLUMN, self.VENDOR_COLUMN), 20)
-        worksheet.set_column(prepare_column(self.SYS_OBJ_COLUMN), 30)
-        worksheet.set_column(prepare_column(self.DESCRIPTION_COLUMN), 50)
-        worksheet.set_column(prepare_column(self.SNMP_COMMUNITY_COLUMN), 30)
-        worksheet.set_column(prepare_column(self.MODEL_TYPE_COLUMN, self.DEVICE_NAME_COLUMN), 20)
+        worksheet.set_column(prepare_column(self.SOURCE_PORT_COLUMN), 30)
+        worksheet.set_column(prepare_column(self.TARGET_PORT_COLUMN), 30)
         worksheet.set_column(prepare_column(self.DOMAIN_COLUMN), 20)
-        worksheet.set_column(prepare_column(self.FOLDER_COLUMN), 20)
-        worksheet.set_column(prepare_column(self.ATTRIBUTES_COLUMN), 25)
         worksheet.set_column(prepare_column(self.STATUS_COLUMN), 25)
         worksheet.set_column(prepare_column(self.COMMENT_COLUMN), 40)
 
@@ -99,18 +83,9 @@ class ExcelReport(AbstractReport):
             return cell.value or ""
 
         for row_num in xrange(2, wb_sheet.max_row+1):  # first row is a header
-            formatted_attributes = get_cell_value(ExcelReport.ATTRIBUTES_COLUMN, row_num)
-
-            entry = Entry(ip=get_cell_value(ExcelReport.IP_COLUMN, row_num),
-                          vendor=get_cell_value(ExcelReport.VENDOR_COLUMN, row_num),
-                          sys_object_id=get_cell_value(ExcelReport.SYS_OBJ_COLUMN, row_num),
-                          description=get_cell_value(ExcelReport.DESCRIPTION_COLUMN, row_num),
-                          snmp_community=get_cell_value(ExcelReport.SNMP_COMMUNITY_COLUMN, row_num),
-                          model_type=get_cell_value(ExcelReport.MODEL_TYPE_COLUMN, row_num),
-                          device_name=get_cell_value(ExcelReport.DEVICE_NAME_COLUMN, row_num),
+            entry = Entry(source_port=get_cell_value(ExcelReport.SOURCE_PORT_COLUMN, row_num),
+                          target_port=get_cell_value(ExcelReport.TARGET_PORT_COLUMN, row_num),
                           domain=get_cell_value(ExcelReport.DOMAIN_COLUMN, row_num),
-                          folder_path=get_cell_value(ExcelReport.FOLDER_COLUMN, row_num),
-                          attributes=Entry.parse_formatted_attrs(formatted_attributes),
                           status=get_cell_value(ExcelReport.STATUS_COLUMN, row_num),
                           comment=get_cell_value(ExcelReport.COMMENT_COLUMN, row_num))
 

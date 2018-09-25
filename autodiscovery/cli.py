@@ -7,8 +7,8 @@ from autodiscovery import reports
 from autodiscovery.common.utils import get_logger
 from autodiscovery.data_processors import JsonDataProcessor
 from autodiscovery.output import ConsoleOutput
-from autodiscovery.parsers.input_data_parsers import get_input_data_parser
 from autodiscovery.parsers.config_data_parsers import get_config_data_parser
+from autodiscovery.parsers.input_data_parsers import get_input_data_parser
 
 
 @click.group()
@@ -55,11 +55,20 @@ def echo_vendors_config_template(template_format, save_to_file):
 
 
 @cli.command(name="echo-excel-report-template")
-@click.option("--save-to-file", required=True, help="File to save generated user input template file")
+@click.option("--save-to-file", required=True, help="File to save generated template file")
 def echo_excel_report_template(save_to_file):
     """Generate .xlsx report example file for the "run-from-report" command"""
-    report = reports.ExcelReport(file_name=save_to_file)
+    report = reports.discovery.ExcelReport(file_name=save_to_file)
     echo_report_tpl_command = commands.EchoReportTemplateCommand(report=report)
+    echo_report_tpl_command.execute()
+
+
+@cli.command(name="echo-excel-connections-report-template")
+@click.option("--save-to-file", required=True, help="File to save generated user input template file")
+def echo_excel_connections_template(save_to_file):
+    """Generate .xlsx report example file for the "connect-ports" command"""
+    report = reports.connections.ExcelReport(file_name=save_to_file)
+    echo_report_tpl_command = commands.EchoConnectionsTemplateCommand(report=report)
     echo_report_tpl_command.execute()
 
 
@@ -70,7 +79,8 @@ def echo_excel_report_template(save_to_file):
                                     "'echo-vendors-configuration-template' command")
 @click.option("--log-file", help="File name for logs")
 @click.option("--report-file", help="File name for generated report")
-@click.option("--report-type", type=click.Choice(reports.REPORT_TYPES), default=reports.DEFAULT_REPORT_TYPE,
+@click.option("--report-type", type=click.Choice(reports.discovery.REPORT_TYPES),
+              default=reports.discovery.DEFAULT_REPORT_TYPE,
               help="Type for generated report")
 @click.option("--offline", is_flag=True, help="Generate report without creation of any Resource on the CloudShell")
 @click.option('--autoload/--no-autoload', help="Whether autoload discovered resource on the CloudShell or not",
@@ -87,7 +97,7 @@ def run(input_file, config_file, log_file, report_file, report_type, offline, au
         config_data_parser = get_config_data_parser(config_file)
         additional_vendors_data = config_data_parser.parse(config_file)
 
-    report = reports.get_report(report_file=report_file, report_type=report_type)
+    report = reports.discovery.get_report(report_file=report_file, report_type=report_type)
 
     auto_discover_command = commands.RunCommand(data_processor=JsonDataProcessor(logger=logger),
                                                 report=report,
@@ -126,12 +136,13 @@ def run_from_report(input_file, config_file, log_file, report_file, autoload):
         config_data_parser = get_config_data_parser(config_file)
         additional_vendors_data = config_data_parser.parse(config_file)
 
-    report = reports.get_report(report_file=report_file, report_type=reports.DEFAULT_REPORT_TYPE)
+    report = reports.discovery.get_report(report_file=report_file)
     parsed_entries = report.parse_entries_from_file(report_file)
 
     command = commands.RunFromReportCommand(data_processor=JsonDataProcessor(logger=logger),
-                                            report=reports.get_report(report_file=report_file,
-                                                                      report_type=reports.DEFAULT_REPORT_TYPE),
+                                            report=reports.discovery.get_report(
+                                                report_file=report_file,
+                                                report_type=reports.discovery.DEFAULT_REPORT_TYPE),
                                             logger=logger,
                                             output=ConsoleOutput(),
                                             autoload=autoload)
@@ -141,3 +152,28 @@ def run_from_report(input_file, config_file, log_file, report_file, autoload):
                     cs_user=input_data_model.cs_user,
                     cs_password=input_data_model.cs_password,
                     additional_vendors_data=additional_vendors_data)
+
+
+@cli.command(name="connect-ports")
+@click.option("--input-file", required=True, help="Input file with CloudShell configuration data. "
+                                                  "Can be generated with a 'echo-input-template' command")
+@click.option("--connections-report-file", required=True, help="File with port connections data. Can be generated with "
+                                                               "'echo-excel-connections-report-template' command")
+@click.option("--log-file", help="File name for logs")
+def connect_ports(input_file, connections_report_file, log_file):
+    """Create connections between CloudShell Port resources specified in the connection file"""
+    input_data_parser = get_input_data_parser(input_file)
+    input_data_model = input_data_parser.parse(input_file)
+    logger = get_logger(log_file)
+
+    report = reports.connections.get_report(report_file=connections_report_file)
+    parsed_entries = report.parse_entries_from_file(connections_report_file)
+
+    command = commands.ConnectPortsCommand(report=reports.connections.get_report(report_file=connections_report_file),
+                                           logger=logger,
+                                           output=ConsoleOutput())
+
+    command.execute(parsed_entries=parsed_entries,
+                    cs_ip=input_data_model.cs_ip,
+                    cs_user=input_data_model.cs_user,
+                    cs_password=input_data_model.cs_password)
