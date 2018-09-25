@@ -2,13 +2,13 @@ from textwrap import wrap
 
 from terminaltables import AsciiTable
 
-from autodiscovery.reports.base import AbstractReport
+from autodiscovery.reports.discovery.base import AbstractReport
 
 
 class ConsoleReport(AbstractReport):
     DESCRIPTION_COLUMN_WIDTH = 60
     COMMENT_COLUMN_WIDTH = 40
-    DEFAULT_REPORT_FILE = "report.txt"
+    DEFAULT_REPORT_FILE = "discovery-report.txt"
 
     def __init__(self, file_name=None):
         """

@@ -3,13 +3,13 @@ import re
 import xlsxwriter
 from openpyxl import load_workbook
 
-from autodiscovery.reports.base import AbstractReport
-from autodiscovery.reports.base import Entry
+from autodiscovery.reports.discovery.base import AbstractReport
+from autodiscovery.reports.discovery.base import Entry
 
 
 class ExcelReport(AbstractReport):
     FILE_EXTENSION = ".xlsx"
-    DEFAULT_REPORT_FILE = "report{}".format(FILE_EXTENSION)
+    DEFAULT_REPORT_FILE = "discovery-report{}".format(FILE_EXTENSION)
 
     IP_COLUMN = "A"
     VENDOR_COLUMN = "B"
