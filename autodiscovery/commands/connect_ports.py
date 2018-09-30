@@ -1,74 +1,27 @@
-from cloudshell.api.cloudshell_api import CloudShellAPISession
-from cloudshell.api.common_cloudshell_api import CloudShellAPIError
-
-from autodiscovery.common.consts import CloudshellAPIErrorCodes
-from autodiscovery.exceptions import AutoDiscoveryException
 from autodiscovery.output import EmptyOutput
 
 
 class ConnectPortsCommand(object):
-    def __init__(self, report, logger, output=None):
+    def __init__(self, cs_session_manager, report, logger, output=None):
         """
 
+        :param cs_session_manager:
+        :param report:
+        :param logger:
         :param output:
         """
         if output is None:
             output = EmptyOutput()
 
+        self.cs_session_manager = cs_session_manager
         self.report = report
         self.output = output
         self.logger = logger
-        self._cs_sessions = {}
 
-    # TODO: this code is duplicated !!!!
-    def _init_cs_session(self, cs_ip, cs_user, cs_password, cs_domain):
-        """Initialize CloudShell session
-
-        :param str cs_ip:
-        :param str cs_user:
-        :param str cs_password:
-        :rtype: CloudShellAPISession
-        """
-        try:
-            cs_session = CloudShellAPISession(host=cs_ip, username=cs_user, password=cs_password, domain=cs_domain)
-        except CloudShellAPIError as e:
-            if e.code in (CloudshellAPIErrorCodes.INCORRECT_LOGIN, CloudshellAPIErrorCodes.INCORRECT_PASSWORD):
-                self.logger.exception("Unable to login to the CloudShell API")
-                raise AutoDiscoveryException("Wrong CloudShell user/password")
-            raise
-        except Exception:
-            self.logger.exception("Unable to connect to the CloudShell API")
-            raise AutoDiscoveryException("CloudShell server is unreachable")
-
-        return cs_session
-
-    # TODO: this code is duplicated !!!!
-    def _get_cs_session(self, cs_ip, cs_user, cs_password, cs_domain):
-        """
-
-        :param cs_ip:
-        :param cs_user:
-        :param cs_password:
-        :param cs_domain:
-        :return:
-        """
-        if cs_domain not in self._cs_sessions:
-            cs_session = self._init_cs_session(cs_ip=cs_ip,
-                                               cs_user=cs_user,
-                                               cs_password=cs_password,
-                                               cs_domain=cs_domain)
-
-            self._cs_sessions[cs_domain] = cs_session
-
-        return self._cs_sessions[cs_domain]
-
-    def execute(self, parsed_entries, cs_ip, cs_user, cs_password):
+    def execute(self, parsed_entries):
         """
 
         :param list[autodiscovery.reports.connections.base.Entry] parsed_entries:
-        :param str cs_ip:
-        :param str cs_user:
-        :param str cs_password:
         :return:
         """
         for parsed_entry in parsed_entries:
@@ -83,10 +36,7 @@ class ConnectPortsCommand(object):
 
                     entry.status = entry.SUCCESS_STATUS
 
-                    cs_session = self._get_cs_session(cs_ip=cs_ip,
-                                                      cs_user=cs_user,
-                                                      cs_password=cs_password,
-                                                      cs_domain=entry.domain)
+                    cs_session = self.cs_session_manager.get_session(cs_domain=entry.domain)
 
                     cs_session.UpdatePhysicalConnection(resourceAFullPath=parsed_entry.source_port,
                                                         resourceBFullPath=parsed_entry.target_port)

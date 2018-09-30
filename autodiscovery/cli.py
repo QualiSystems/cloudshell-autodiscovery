@@ -4,6 +4,7 @@ import click
 
 from autodiscovery import commands
 from autodiscovery import reports
+from autodiscovery.common.cs_session_manager import CloudShellSessionManager
 from autodiscovery.common.utils import get_logger
 from autodiscovery.data_processors import JsonDataProcessor
 from autodiscovery.output import ConsoleOutput
@@ -139,18 +140,21 @@ def run_from_report(input_file, config_file, log_file, report_file, autoload):
     report = reports.discovery.get_report(report_file=report_file)
     parsed_entries = report.parse_entries_from_file(report_file)
 
+    cs_session_manager = CloudShellSessionManager(cs_ip=input_data_model.cs_ip,
+                                                  cs_user=input_data_model.cs_user,
+                                                  cs_password=input_data_model.cs_password,
+                                                  logger=logger)
+
     command = commands.RunFromReportCommand(data_processor=JsonDataProcessor(logger=logger),
                                             report=reports.discovery.get_report(
                                                 report_file=report_file,
                                                 report_type=reports.discovery.DEFAULT_REPORT_TYPE),
                                             logger=logger,
+                                            cs_session_manager=cs_session_manager,
                                             output=ConsoleOutput(),
                                             autoload=autoload)
 
     command.execute(parsed_entries=parsed_entries,
-                    cs_ip=input_data_model.cs_ip,
-                    cs_user=input_data_model.cs_user,
-                    cs_password=input_data_model.cs_password,
                     additional_vendors_data=additional_vendors_data)
 
 
@@ -169,11 +173,14 @@ def connect_ports(input_file, connections_report_file, log_file):
     report = reports.connections.get_report(report_file=connections_report_file)
     parsed_entries = report.parse_entries_from_file(connections_report_file)
 
-    command = commands.ConnectPortsCommand(report=reports.connections.get_report(report_file=connections_report_file),
+    cs_session_manager = CloudShellSessionManager(cs_ip=input_data_model.cs_ip,
+                                                  cs_user=input_data_model.cs_user,
+                                                  cs_password=input_data_model.cs_password,
+                                                  logger=logger)
+
+    command = commands.ConnectPortsCommand(cs_session_manager=cs_session_manager,
+                                           report=reports.connections.get_report(report_file=connections_report_file),
                                            logger=logger,
                                            output=ConsoleOutput())
 
-    command.execute(parsed_entries=parsed_entries,
-                    cs_ip=input_data_model.cs_ip,
-                    cs_user=input_data_model.cs_user,
-                    cs_password=input_data_model.cs_password)
+    command.execute(parsed_entries=parsed_entries)
