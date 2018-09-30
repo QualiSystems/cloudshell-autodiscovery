@@ -43,7 +43,7 @@ class ExcelReport(AbstractReport):
         # todo(A.Piddubny): use one library to read/write xlsx files - openpyxl
         workbook = xlsxwriter.Workbook(self.file_name)
         worksheet = workbook.add_worksheet()
-        table_data = [self.HEADER]
+        table_data = [self._header]
 
         for entry in self._entries:
             description = re.sub("\s+", " ", entry.description)  # replace all \n \r \t symbols

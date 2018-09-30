@@ -1,80 +1,44 @@
-from autodiscovery.exceptions import ReportableException
+import collections
+
+from autodiscovery.reports.base import AbstractEntry
+from autodiscovery.reports.discovery.base import AbstractReport
 
 
-class AbstractReport(object):
-    HEADER = ("Source Port Full Name", "Target Port Full Name", "Domain", "Connection Status", "Comment")
+class AbstractConnectionsReport(AbstractReport):
+    SOURCE_PORT_HEADER = "Source Port Full Name"
+    TARGET_PORT_HEADER = "Target Port Full Name"
+    DOMAIN_HEADER = "Domain"
+    STATUS_HEADER = "Connection Status"
+    COMMENT_HEADER = "Comment"
 
-    def __init__(self):
-        self._entries = []
+    @property
+    def entry_class(self):
+        return Entry
 
-    def add_entry(self, source_port, target_port, domain):
-        """Add new Entry for the device with given IP
-
-        :param str source_port: full address of the source port
-        :param str target_port: full address of the source port
-        :param str domain: domain on the CloudShell
-        :rtype: Entry
-        """
-        entry = Entry(source_port=source_port, target_port=target_port, domain=domain)
-        self._entries.append(entry)
-
-        return entry
-
-    def edit_entry(self, entry):
-        """Add new Entry for the device with given IP
-
-        :param Entry entry:
-        :rtype: Entry
-        """
-        self._entries.append(entry)
-        return entry
-
-    def get_current_entry(self):
-        """Get last added entry to the report"""
-        if self._entries:
-            return self._entries[-1]
-
-    def generate(self):
-        """Generate report for all processed connections (entries)
+    @property
+    def _header_entry_map(self):
+        """Map between header and Entry attribute name
 
         :return:
         """
-        raise NotImplementedError("Class {} must implement method 'generate'".format(type(self)))
-
-    def parse_entries_from_file(self, report_file):
-        """Parse all connections (entries) from a given file
-
-        :param str report_file: file path to the generated report
-        :rtype: list[Entry]
-        """
-        raise NotImplementedError("Class {} must implement method 'parse_entries_from_file'".format(type(self)))
+        return collections.OrderedDict([(self.SOURCE_PORT_HEADER, "source_port"),
+                                        (self.TARGET_PORT_HEADER, "target_port"),
+                                        (self.DOMAIN_HEADER, "status"),
+                                        (self.STATUS_HEADER, "domain"),
+                                        (self.COMMENT_HEADER, "comment")])
 
 
-class Entry(object):
-    SUCCESS_STATUS = "Success"
-    FAILED_STATUS = "Failed"
-    SKIPPED_STATUS = "Skipped"
-
-    def __init__(self, source_port, target_port, domain, status=SUCCESS_STATUS, comment=""):
+class Entry(AbstractEntry):
+    def __init__(self, source_port, target_port, domain, status=AbstractEntry.SUCCESS_STATUS, comment=""):
         """
 
         :param source_port:
         :param target_port:
         :param domain:
-        :param status:
         :param comment:
         """
+        super(Entry, self).__init__(status=status)
         self.source_port = source_port
         self.target_port = target_port
         self.domain = domain
-        self.status = status
         self.comment = comment
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        if exc_type is not None:
-            self.status = self.FAILED_STATUS
-            if isinstance(exc_val, ReportableException):
-                self.comment = str(exc_val)

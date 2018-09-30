@@ -6,6 +6,7 @@ class AbstractReport(object):
               "DOMAIN", "FOLDER", "ATTRIBUTES", "ADDED TO CLOUDSHELL", "COMMENT")
 
     def __init__(self):
+        """"""
         self._entries = []
 
     def add_entry(self, ip, domain, offline):
