@@ -1,4 +1,4 @@
-from autodiscovery.reports.connections.base import Entry, AbstractConnectionsReport
+from autodiscovery.reports.connections.base import AbstractConnectionsReport
 from autodiscovery.reports.excel import AbstractExcelReport
 
 

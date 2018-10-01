@@ -15,7 +15,7 @@ class EchoConnectionsTemplateCommand(object):
                                    target_port="DUT 2/Chassis 1/Module 1/Port 1",
                                    domain="Global") as entry:
 
-            entry.status = entry.SKIPPED_STATUS
+            entry.status = ""
             entry.comment = "Auto-generated ports connection example"
 
         self.report.generate()

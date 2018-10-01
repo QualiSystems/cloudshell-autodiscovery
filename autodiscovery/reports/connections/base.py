@@ -1,7 +1,7 @@
 import collections
 
 from autodiscovery.reports.base import AbstractEntry
-from autodiscovery.reports.discovery.base import AbstractReport
+from autodiscovery.reports.base import AbstractReport
 
 
 class AbstractConnectionsReport(AbstractReport):
@@ -23,8 +23,8 @@ class AbstractConnectionsReport(AbstractReport):
         """
         return collections.OrderedDict([(self.SOURCE_PORT_HEADER, "source_port"),
                                         (self.TARGET_PORT_HEADER, "target_port"),
-                                        (self.DOMAIN_HEADER, "status"),
-                                        (self.STATUS_HEADER, "domain"),
+                                        (self.DOMAIN_HEADER, "domain"),
+                                        (self.STATUS_HEADER, "status"),
                                         (self.COMMENT_HEADER, "comment")])
 
 

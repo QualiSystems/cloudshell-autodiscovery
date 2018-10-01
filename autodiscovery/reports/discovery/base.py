@@ -1,13 +1,24 @@
-from autodiscovery.exceptions import ReportableException
+from autodiscovery.reports.base import AbstractEntry
+from autodiscovery.reports.base import AbstractReport
 
 
-class AbstractReport(object):
-    HEADER = ("IP", "VENDOR", "sysObjectID", "DESCRIPTION", "SNMP READ COMMUNITY", "MODEL_TYPE", "DEVICE_NAME",
-              "DOMAIN", "FOLDER", "ATTRIBUTES", "ADDED TO CLOUDSHELL", "COMMENT")
+class AbstractDiscoveryReport(AbstractReport):
+    IP_HEADER = "IP"
+    VENDOR_HEADER = "VENDOR"
+    SYS_OBJ_ID_HEADER = "sysObjectID"
+    DESCRIPTION_HEADER = "DESCRIPTION"
+    SNMP_READ_COMMUNITY_HEADER = "SNMP READ COMMUNITY"
+    MODEL_TYPE_HEADER = "MODEL_TYPE"
+    DEVICE_NAME_HEADER = "DEVICE_NAME"
+    DOMAIN_HEADER = "DOMAIN"
+    FOLDER_HEADER = "FOLDER"
+    ATTRIBUTES_HEADER = "ATTRIBUTES"
+    ADDED_TO_CLOUDSHELL_HEADER = "ADDED TO CLOUDSHELL"
+    COMMENT_HEADER = "COMMENT"
 
-    def __init__(self):
-        """"""
-        self._entries = []
+    @property
+    def entry_class(self):
+        return Entry
 
     def add_entry(self, ip, domain, offline):
         """Add new Entry for the device with given IP
@@ -22,50 +33,17 @@ class AbstractReport(object):
         else:
             status = Entry.SUCCESS_STATUS
 
-        entry = Entry(ip=ip, status=status, domain=domain)
-        self._entries.append(entry)
-        return entry
-
-    def edit_entry(self, entry):
-        """Add new Entry for the device with given IP
-
-        :param Entry entry:
-        :rtype: Entry
-        """
-        self._entries.append(entry)
-        return entry
-
-    def get_current_entry(self):
-        """Get last added entry to the report"""
-        if self._entries:
-            return self._entries[-1]
-
-    def generate(self):
-        """Generate report for all discovered devices (entries)
-
-        :return:
-        """
-        raise NotImplementedError("Class {} must implement method 'generate'".format(type(self)))
-
-    def parse_entries_from_file(self, report_file):
-        """Parse all discovered devices (entries) from a given file
-
-        :param str report_file: file path to the generated report
-        :rtype: list[Entry]
-        """
-        raise NotImplementedError("Class {} must implement method 'parse_entries_from_file'".format(type(self)))
+        return super(AbstractDiscoveryReport, self).add_entry(ip=ip, domain=domain, status=status)
 
 
-class Entry(object):
-    SUCCESS_STATUS = "Success"
-    FAILED_STATUS = "Failed"
+class Entry(AbstractEntry):
     SKIPPED_STATUS = "Skipped"
     ATTRIBUTES_SEPARATOR = ";"
 
     def __init__(self, ip, status, domain, vendor="", device_name="", model_type="", sys_object_id="",
-                 snmp_community="", description="", comment="", folder_path="", attributes=None):
+                 snmp_community="", description="", comment="", folder_path="", attributes=None, formated_attrs=None):
+        super(Entry, self).__init__(status=status)
         self.ip = ip
-        self.status = status
         self.domain = domain
         self.vendor = vendor
         self.device_name = device_name
@@ -75,8 +53,12 @@ class Entry(object):
         self.description = description
         self.comment = comment
         self.folder_path = folder_path
-        if attributes is None:
+
+        if formated_attrs is not None:
+            attributes = self.parse_formatted_attrs(formated_attrs)
+        elif attributes is None:
             attributes = {}
+
         self.attributes = attributes
 
     def add_attribute(self, name, value):
@@ -105,12 +87,3 @@ class Entry(object):
         """
         return {key.strip(): val.strip() for key, val in
                 (attr.split("=") for attr in attributes.split(Entry.ATTRIBUTES_SEPARATOR) if attr)}
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        if exc_type is not None:
-            self.status = self.FAILED_STATUS
-            if isinstance(exc_val, ReportableException):
-                self.comment = str(exc_val)
