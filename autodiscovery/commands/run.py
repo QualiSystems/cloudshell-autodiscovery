@@ -1,13 +1,9 @@
 import re
 import uuid
 
-from cloudshell.api.cloudshell_api import CloudShellAPISession
-from cloudshell.api.common_cloudshell_api import CloudShellAPIError
 from cloudshell.snmp.quali_snmp import QualiSnmp
 from cloudshell.snmp.snmp_parameters import SNMPV2Parameters
 
-from autodiscovery.common.consts import CloudshellAPIErrorCodes
-from autodiscovery.exceptions import AutoDiscoveryException
 from autodiscovery.exceptions import ReportableException
 from autodiscovery.handlers import NetworkingTypeHandler
 from autodiscovery.handlers import Layer1TypeHandler
@@ -17,19 +13,20 @@ from autodiscovery.output import EmptyOutput
 
 
 class AbstractRunCommand(object):
-
-    def __init__(self, data_processor, report, logger, output=None, autoload=True):
+    def __init__(self, data_processor, report, logger, cs_session_manager, output=None, autoload=True):
         """
 
         :param autodiscovery.data_processors.JsonDataProcessor data_processor:
         :param autodiscovery.reports.AbstractReport report:
         :param logging.Logger logger:
+        :param cs_session_manager:
         :param autodiscovery.output.AbstractOutput output:
         :param bool autoload:
         """
         self.data_processor = data_processor
         self.report = report
         self.logger = logger
+        self.cs_session_manager = cs_session_manager
 
         if output is None:
             output = EmptyOutput()
@@ -41,64 +38,24 @@ class AbstractRunCommand(object):
             "traffic_generator": TrafficGeneratorTypeHandler(logger=logger, autoload=autoload),
             "pdu": PDUTypeHandler(logger=logger, autoload=autoload),
         }
-        self._cs_sessions = {}
-
-    def _init_cs_session(self, cs_ip, cs_user, cs_password, cs_domain):
-        """Initialize CloudShell session
-
-        :param str cs_ip:
-        :param str cs_user:
-        :param str cs_password:
-        :rtype: CloudShellAPISession
-        """
-        try:
-            cs_session = CloudShellAPISession(host=cs_ip, username=cs_user, password=cs_password, domain=cs_domain)
-        except CloudShellAPIError as e:
-            if e.code in (CloudshellAPIErrorCodes.INCORRECT_LOGIN, CloudshellAPIErrorCodes.INCORRECT_PASSWORD):
-                self.logger.exception("Unable to login to the CloudShell API")
-                raise AutoDiscoveryException("Wrong CloudShell user/password")
-            raise
-        except Exception:
-            self.logger.exception("Unable to connect to the CloudShell API")
-            raise AutoDiscoveryException("CloudShell server is unreachable")
-
-        return cs_session
-
-    def _get_cs_session(self, cs_ip, cs_user, cs_password, cs_domain):
-        """
-
-        :param cs_ip:
-        :param cs_user:
-        :param cs_password:
-        :param cs_domain:
-        :return:
-        """
-        if cs_domain not in self._cs_sessions:
-            cs_session = self._init_cs_session(cs_ip=cs_ip,
-                                               cs_user=cs_user,
-                                               cs_password=cs_password,
-                                               cs_domain=cs_domain)
-
-            self._cs_sessions[cs_domain] = cs_session
-
-        return self._cs_sessions[cs_domain]
 
     def execute(self, *args, **kwargs):
         raise NotImplementedError("Class {} must implement method 'execute'".format(type(self)))
 
 
 class RunCommand(AbstractRunCommand):
-    def __init__(self, data_processor, report, logger, output=None, autoload=True, offline=False):
+    def __init__(self, data_processor, report, logger, cs_session_manager, output=None, autoload=True, offline=False):
         """
 
         :param autodiscovery.data_processors.JsonDataProcessor data_processor:
         :param autodiscovery.reports.AbstractReport report:
         :param logging.Logger logger:
+        :param autodiscovery.common.cs_session_manager.CloudShellSessionManager cs_session_manager:
         :param autodiscovery.output.AbstractOutput output:
         :param bool autoload:
         :param bool offline:
         """
-        super(RunCommand, self).__init__(data_processor, report, logger, output, autoload)
+        super(RunCommand, self).__init__(data_processor, report, logger, cs_session_manager, output, autoload)
         self.offline = offline
 
     def _parse_vendor_number(self, sys_obj_id):
@@ -168,16 +125,12 @@ class RunCommand(AbstractRunCommand):
         entry.device_name = sys_name
         return entry
 
-    def execute(self, devices_ips, snmp_comunity_strings, vendor_settings, cs_ip, cs_user, cs_password,
-                additional_vendors_data):
+    def execute(self, devices_ips, snmp_comunity_strings, vendor_settings, additional_vendors_data):
         """Execute Auto-discovery command
 
         :param list[autodiscovery.models.DeviceIPRange] devices_ips: list of devices IPs to discover
         :param list snmp_comunity_strings: list of possible SNMP read community strings for the given devices
         :param autodiscovery.models.vendor.VendorSettingsCollection vendor_settings: additional vendor settings
-        :param str cs_ip: IP address of the CloudShell API
-        :param str cs_user: user for the CloudShell API
-        :param str cs_password: password for the CloudShell API
         :param list[dict] additional_vendors_data: additional vendors configuration
         :return:
         """
@@ -206,12 +159,9 @@ class RunCommand(AbstractRunCommand):
                         discovered_entry = handler.discover(entry=entry, vendor=vendor, vendor_settings=vendor_settings)
 
                         if not self.offline:
-                            cs_session = self._get_cs_session(cs_ip=cs_ip,
-                                                              cs_user=cs_user,
-                                                              cs_password=cs_password,
-                                                              cs_domain=cs_domain)
-
+                            cs_session = self.cs_session_manager.get_session(cs_domain=cs_domain)
                             handler.upload(entry=discovered_entry, vendor=vendor, cs_session=cs_session)
+
                 except Exception:
                     entry = self.report.get_current_entry()
                     comment = entry.comment if entry is not None else ""
