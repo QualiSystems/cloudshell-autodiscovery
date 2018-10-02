@@ -3,13 +3,10 @@ from autodiscovery.exceptions import ReportableException
 
 
 class RunFromReportCommand(AbstractRunCommand):
-    def execute(self, parsed_entries, cs_ip, cs_user, cs_password, additional_vendors_data):
+    def execute(self, parsed_entries, additional_vendors_data):
         """
 
         :param list[autodiscovery.reports.base.Entry] parsed_entries:
-        :param str cs_ip:
-        :param str cs_user:
-        :param str cs_password:
         :param list[dict] additional_vendors_data:
         :return:
         """
@@ -37,11 +34,7 @@ class RunFromReportCommand(AbstractRunCommand):
                         raise ReportableException("Invalid vendor type '{}'. Possible values are: {}"
                                                   .format(vendor.vendor_type, self.vendor_type_handlers_map.keys()))
 
-                    cs_session = self._get_cs_session(cs_ip=cs_ip,
-                                                      cs_user=cs_user,
-                                                      cs_password=cs_password,
-                                                      cs_domain=entry.domain)
-
+                    cs_session = self.cs_session_manager.get_session(cs_domain=entry.domain)
                     handler.upload(entry=entry,  vendor=vendor, cs_session=cs_session)
 
             except Exception:
