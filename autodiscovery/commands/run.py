@@ -44,17 +44,18 @@ class AbstractRunCommand(object):
 
 
 class RunCommand(AbstractRunCommand):
-    def __init__(self, data_processor, report, logger, output=None, autoload=True, offline=False):
+    def __init__(self, data_processor, report, logger, cs_session_manager, output=None, autoload=True, offline=False):
         """
 
         :param autodiscovery.data_processors.JsonDataProcessor data_processor:
         :param autodiscovery.reports.AbstractReport report:
         :param logging.Logger logger:
+        :param autodiscovery.common.cs_session_manager.CloudShellSessionManager cs_session_manager:
         :param autodiscovery.output.AbstractOutput output:
         :param bool autoload:
         :param bool offline:
         """
-        super(RunCommand, self).__init__(data_processor, report, logger, output, autoload)
+        super(RunCommand, self).__init__(data_processor, report, logger, cs_session_manager, output, autoload)
         self.offline = offline
 
     def _parse_vendor_number(self, sys_obj_id):

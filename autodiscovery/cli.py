@@ -100,9 +100,15 @@ def run(input_file, config_file, log_file, report_file, report_type, offline, au
 
     report = reports.discovery.get_report(report_file=report_file, report_type=report_type)
 
+    cs_session_manager = CloudShellSessionManager(cs_ip=input_data_model.cs_ip,
+                                                  cs_user=input_data_model.cs_user,
+                                                  cs_password=input_data_model.cs_password,
+                                                  logger=logger)
+
     auto_discover_command = commands.RunCommand(data_processor=JsonDataProcessor(logger=logger),
                                                 report=report,
                                                 logger=logger,
+                                                cs_session_manager=cs_session_manager,
                                                 output=ConsoleOutput(),
                                                 offline=offline,
                                                 autoload=autoload)
@@ -110,9 +116,6 @@ def run(input_file, config_file, log_file, report_file, report_type, offline, au
     auto_discover_command.execute(devices_ips=input_data_model.devices_ips,
                                   snmp_comunity_strings=input_data_model.snmp_community_strings,
                                   vendor_settings=input_data_model.vendor_settings,
-                                  cs_ip=input_data_model.cs_ip,
-                                  cs_user=input_data_model.cs_user,
-                                  cs_password=input_data_model.cs_password,
                                   additional_vendors_data=additional_vendors_data)
 
 
