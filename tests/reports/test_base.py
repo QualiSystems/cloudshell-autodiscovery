@@ -3,31 +3,31 @@ import unittest
 import mock
 
 from autodiscovery.exceptions import ReportableException
-from autodiscovery.reports import AbstractReport
-from autodiscovery.reports import Entry
+from autodiscovery.reports.base import AbstractReport
+from autodiscovery.reports.base import AbstractEntry
 
 
 class TestAbstractReport(unittest.TestCase):
     def setUp(self):
-        class TestedClass(AbstractReport):
-            pass
+        with mock.patch("autodiscovery.reports.base.AbstractEntry") as entry_class:
+            class TestedClass(AbstractReport):
+                @property
+                def entry_class(self):
+                    return entry_class
 
+        self.entry_class = entry_class
         self.tested_instance = TestedClass()
 
-    @mock.patch("autodiscovery.reports.base.Entry")
-    def test_add_entry(self, entry_class):
+    def test_add_entry(self):
         """Check that method will add entry into the entries list and return given entry"""
         entry = mock.MagicMock()
-        ip = "test IP"
-        domain = "test domain"
-        offline = False
-        entry_class.return_value = entry
+        self.entry_class.return_value = entry
         # act
-        result = self.tested_instance.add_entry(ip=ip, domain=domain, offline=offline)
+        result = self.tested_instance.add_entry()
         # verify
         self.assertEqual(result, entry)
         self.assertIn(result, self.tested_instance._entries)
-        entry_class.assert_called_once_with(ip=ip, domain=domain, status=entry_class.SUCCESS_STATUS)
+        self.entry_class.assert_called_once_with()
 
     def test_edit_entry(self):
         """Check that method will add entry into the entries list and return given entry"""
@@ -64,9 +64,12 @@ class TestAbstractReport(unittest.TestCase):
             self.tested_instance.parse_entries_from_file(report_file="report.xlsx")
 
 
-class TestEntry(unittest.TestCase):
+class TestAbstractEntry(unittest.TestCase):
     def setUp(self):
-        self.entry = Entry(ip="test_ip", status=Entry.SUCCESS_STATUS, domain="Tets domain")
+        class TestedClass(AbstractEntry):
+            pass
+
+        self.entry = TestedClass(ip="test_ip", status=AbstractEntry.SUCCESS_STATUS, domain="Tets domain")
 
     def test_enter_with_statement(self):
         """Check that with statement will return same entry"""
@@ -80,5 +83,5 @@ class TestEntry(unittest.TestCase):
                 self.assertEqual(self.entry, entry)
                 raise ReportableException("Test Exception")
 
-        self.assertEqual(self.entry.status, Entry.FAILED_STATUS)
+        self.assertEqual(self.entry.status, AbstractEntry.FAILED_STATUS)
         self.assertEqual(self.entry.comment, "Test Exception")
