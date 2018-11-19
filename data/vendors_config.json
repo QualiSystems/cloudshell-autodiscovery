@@ -91,8 +91,8 @@
                   },
                   "second_gen": {
                      "family_name": "CS_Switch",
-                     "model_name": "Cisco NXOS Switch 2 Gen",
-                     "driver_name": "Cisco NXOS Switch 2 Gen"
+                     "model_name": "Cisco NXOS Switch 2G",
+                     "driver_name": "Cisco NXOS Switch 2G"
                   }
                }
             }
