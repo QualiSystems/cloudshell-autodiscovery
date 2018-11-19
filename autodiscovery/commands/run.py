@@ -162,11 +162,14 @@ class RunCommand(AbstractRunCommand):
                             cs_session = self.cs_session_manager.get_session(cs_domain=cs_domain)
                             handler.upload(entry=discovered_entry, vendor=vendor, cs_session=cs_session)
 
-                except Exception:
-                    entry = self.report.get_current_entry()
-                    comment = entry.comment if entry is not None else ""
-                    self.output.send("Failed to discover {} device. {}".format(device_ip, comment), error=True)
+                except ReportableException as e:
+                    self.output.send("Failed to discover {} device. {}".format(device_ip, str(e)), error=True)
                     self.logger.exception("Failed to discover {} device due to:".format(device_ip))
+
+                except Exception:
+                    self.output.send("Failed to discover {} device. See log for details".format(device_ip), error=True)
+                    self.logger.exception("Failed to discover {} device due to:".format(device_ip))
+
                 else:
                     self.output.send("Device with IP {} was successfully discovered".format(device_ip))
                     self.logger.info("Device with IP {} was successfully discovered".format(device_ip))
