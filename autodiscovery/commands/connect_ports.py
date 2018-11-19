@@ -1,3 +1,4 @@
+from autodiscovery.exceptions import ReportableException
 from autodiscovery.output import EmptyOutput
 
 
@@ -35,17 +36,23 @@ class ConnectPortsCommand(object):
                         continue
 
                     entry.status = entry.SUCCESS_STATUS
-
                     cs_session = self.cs_session_manager.get_session(cs_domain=entry.domain)
 
                     cs_session.UpdatePhysicalConnection(resourceAFullPath=parsed_entry.source_port,
                                                         resourceBFullPath=parsed_entry.target_port)
 
-            except Exception:
+            except ReportableException as e:
                 self.output.send("Failed to connect port {} and {}. {}".format(parsed_entry.source_port,
                                                                                parsed_entry.target_port,
-                                                                               parsed_entry.comment), error=True)
+                                                                               str(e)), error=True)
                 self.logger.exception("Failed to connect ports due to:")
+
+            except Exception:
+                self.output.send("Failed to connect port {} and {}. See log for details".format(
+                    parsed_entry.source_port,
+                    parsed_entry.target_port), error=True)
+                self.logger.exception("Failed to connect ports due to:")
+
             else:
                 msg = "Connection between port {} and port {} was successfully processed".format(
                     parsed_entry.source_port,
