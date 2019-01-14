@@ -5,11 +5,6 @@
 [![Waffle.io - Columns and their card count](https://badge.waffle.io/QualiSystems/cloudshell-autodiscovery.svg?columns=all)](https://waffle.io/QualiSystems/cloudshell-autodiscovery)
 [![Documentation Status](https://readthedocs.org/projects/autodiscovery-tool/badge/?version=latest)](https://autodiscovery-tool.readthedocs.io/en/latest/?badge=latest)
 
-<a href="docs/_build/pdf/cloudshell-autodiscovery.pdf">Offline PDF Documentation</a>
-<p align="center">
-<img src="https://github.com/QualiSystems/devguide_source/raw/master/logo.png"></img>
-</p>
-
 ---
 
 # **CloudShell Autodiscovery Tool**  
