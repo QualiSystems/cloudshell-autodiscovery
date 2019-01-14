@@ -225,11 +225,11 @@ In offline mode, the Autodiscovery tool gives you an opportunity to verify the i
 1.	To generate the input file, run the following command-line: 
 
     ```autodiscovery echo-input-template --save-to-file input.yml```
+    
+    The input file is created in the folder where you ran the command. If you want the file to be created in a different location, specify the full path to this location.
       
     * *To generate the file in json format, change “yml” to “json”. For reference, see sample input files: [Input file in YAML format](#input-file-in-yaml-format) or [Input file in JSON format](#input-file-in-json-format).*
-
-    * *The input file is created in the folder where you ran the command. If you want the file to be created in a different location, specify the full path to this location.* 
-
+   
     * *To rename the input file, use* ```autodiscovery echo-input-template <input filename>.[yml|json]```
 
 2.	Open the *input* file in your preferred editor and update the device info and CloudShell server credentials as explained in [Autodiscovering devices modeled in CloudShell](#autodiscovering-devices-modeled-in-cloudshell).
