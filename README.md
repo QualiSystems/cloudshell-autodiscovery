@@ -124,10 +124,10 @@ This chapter explains how to discover devices in CloudShell using the Autodiscov
 
    ```autodiscovery echo-input-template --save-to-file input.yml```
    
-    * *To generate the file in json format, change “yml” to “json”. For reference, see sample input files: [Input file in YAML format](#input-file-in-yaml-format) or [Input file in JSON format](#input-file-in-json-format).*
+   The input file is created in the folder where you ran the command. If you want the file to be created in a different location, specify the full path to this location.
    
-    * *The input file is created in the folder where you ran the command. If you want the file to be created in a different location, specify the full path to this location.*
-  
+    * *To generate the file in json format, change “yml” to “json”. For reference, see sample input files: [Input file in YAML format](#input-file-in-yaml-format) or [Input file in JSON format](#input-file-in-json-format).*
+      
     * *To rename the input file, use:* ```autodiscovery echo-input-template --save-to-file <input filename>.[yml|json]```
 
 3. Open the *input* file in your preferred editor and update the device info and CloudShell server credentials.
