@@ -308,7 +308,7 @@ In online mode, the Autodiscovery tool immediately attempts to create and discov
    
 4.	Generate the input file that combines the information from the *input* file with the information in the additional vendors configuration file (*extended_vendors.json*).
 
-    1. Run the following command-line: 
+    * Run the following command-line: 
    
          ```autodiscovery run --input-file input.yml --config-file extended_vendors.json```
 
