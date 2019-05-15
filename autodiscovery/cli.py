@@ -86,7 +86,11 @@ def echo_excel_connections_template(save_to_file):
 @click.option("--offline", is_flag=True, help="Generate report without creation of any Resource on the CloudShell")
 @click.option('--autoload/--no-autoload', help="Whether autoload discovered resource on the CloudShell or not",
               default=True)
-def run(input_file, config_file, log_file, report_file, report_type, offline, autoload):
+@click.option('--populate-phys-connections/--no-populate-phys-connections',
+              help="Whether to create physical connections on the discovered resource based on the "
+                   "ports attribute 'Adjacent' or not. Available only with --autoload flag",
+              default=True)
+def run(input_file, config_file, log_file, report_file, report_type, offline, autoload, populate_phys_connections):
     """Run Auto discovery command with given arguments from the input file"""
     input_data_parser = get_input_data_parser(input_file)
     input_data_model = input_data_parser.parse(input_file)
@@ -111,7 +115,8 @@ def run(input_file, config_file, log_file, report_file, report_type, offline, au
                                                 cs_session_manager=cs_session_manager,
                                                 output=ConsoleOutput(),
                                                 offline=offline,
-                                                autoload=autoload)
+                                                autoload=autoload,
+                                                populate_phys_connections=populate_phys_connections)
 
     auto_discover_command.execute(devices_ips=input_data_model.devices_ips,
                                   snmp_comunity_strings=input_data_model.snmp_community_strings,
@@ -128,7 +133,11 @@ def run(input_file, config_file, log_file, report_file, report_type, offline, au
 @click.option("--report-file", required=True, help="File name of the report to run from")
 @click.option('--autoload/--no-autoload', help="Whether autoload discovered resource on the CloudShell or not",
               default=True)
-def run_from_report(input_file, config_file, log_file, report_file, autoload):
+@click.option('--populate-phys-connections/--no-populate-phys-connections',
+              help="Whether to create physical connections on the discovered resource based on the "
+                   "ports attribute 'Adjacent' or not. Available only with --autoload flag",
+              default=True)
+def run_from_report(input_file, config_file, log_file, report_file, autoload, populate_phys_connections):
     """Create and autoload CloudShell resources from the generated report"""
     input_data_parser = get_input_data_parser(input_file)
     input_data_model = input_data_parser.parse(input_file)
@@ -155,7 +164,8 @@ def run_from_report(input_file, config_file, log_file, report_file, autoload):
                                             logger=logger,
                                             cs_session_manager=cs_session_manager,
                                             output=ConsoleOutput(),
-                                            autoload=autoload)
+                                            autoload=autoload,
+                                            populate_phys_connections=populate_phys_connections)
 
     command.execute(parsed_entries=parsed_entries,
                     additional_vendors_data=additional_vendors_data)

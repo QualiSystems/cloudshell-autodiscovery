@@ -13,7 +13,8 @@ from autodiscovery.output import EmptyOutput
 
 
 class AbstractRunCommand(object):
-    def __init__(self, data_processor, report, logger, cs_session_manager, output=None, autoload=True):
+    def __init__(self, data_processor, report, logger, cs_session_manager, output=None, autoload=True,
+                 populate_phys_connections=True):
         """
 
         :param autodiscovery.data_processors.JsonDataProcessor data_processor:
@@ -22,6 +23,7 @@ class AbstractRunCommand(object):
         :param cs_session_manager:
         :param autodiscovery.output.AbstractOutput output:
         :param bool autoload:
+        :param bool populate_phys_connections:
         """
         self.data_processor = data_processor
         self.report = report
@@ -44,7 +46,8 @@ class AbstractRunCommand(object):
 
 
 class RunCommand(AbstractRunCommand):
-    def __init__(self, data_processor, report, logger, cs_session_manager, output=None, autoload=True, offline=False):
+    def __init__(self, data_processor, report, logger, cs_session_manager, output=None, autoload=True, offline=False,
+                 populate_phys_connections=True):
         """
 
         :param autodiscovery.data_processors.JsonDataProcessor data_processor:
@@ -54,6 +57,7 @@ class RunCommand(AbstractRunCommand):
         :param autodiscovery.output.AbstractOutput output:
         :param bool autoload:
         :param bool offline:
+        :param bool populate_phys_connections:
         """
         super(RunCommand, self).__init__(data_processor, report, logger, cs_session_manager, output, autoload)
         self.offline = offline
