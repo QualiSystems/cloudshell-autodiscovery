@@ -155,4 +155,40 @@ class AbstractHandler(object):
             self.logger.info("Autoloading resource {}".format(resource_name))
             cs_session.AutoLoad(resource_name)
 
+            def _get_resource_attribute_value(resource, attribute_name):
+                """
+
+                :param resource cloudshell.api.cloudshell_api.ResourceInfo:
+                :param str attribute_name:
+                """
+                for attribute in resource.ResourceAttributes:
+                    if attribute.Name.endswith(attribute_name):
+                        return attribute.Value
+
+            def _find_ports(resource):
+                """
+
+                :param resource:
+                :return:
+                """
+                ports = {}
+                # todo: replace with tuples
+                for resource in resource.ChildResources:
+                    if resource.ResourceFamilyName == "CS_Port":
+                        adjacent = _get_resource_attribute_value(resource=resource,
+                                                                 attribute_name="Adjacent")
+                        if adjacent:
+                            ports[resource.Name] = adjacent
+                            # resource.Name
+                            # 'Boogie.Cisco2950/Chassis 0/FastEthernet0-1'
+                    else:
+                        ports.update(_find_ports(resource))
+                return ports
+
+            resource = cs_session.GetResourceDetails(resource_name)
+
+            for port, adjacent in _find_ports(resource):  # ('192.168.42.235/CH0/P1', '001f45465400 through ge.1.1')
+                adjacent_device, adjacent_port = [x.strip() for x in adjacent.split("through")]
+
+
         return resource_name
