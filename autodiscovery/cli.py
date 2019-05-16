@@ -3,6 +3,7 @@ import pkg_resources
 import click
 
 from autodiscovery import commands
+from autodiscovery import config
 from autodiscovery import reports
 from autodiscovery.common.cs_session_manager import CloudShellSessionManager
 from autodiscovery.common.utils import get_logger
@@ -86,11 +87,7 @@ def echo_excel_connections_template(save_to_file):
 @click.option("--offline", is_flag=True, help="Generate report without creation of any Resource on the CloudShell")
 @click.option('--autoload/--no-autoload', help="Whether autoload discovered resource on the CloudShell or not",
               default=True)
-@click.option('--populate-phys-connections/--no-populate-phys-connections',
-              help="Whether to create physical connections on the discovered resource based on the "
-                   "ports attribute 'Adjacent' or not. Available only with --autoload flag",
-              default=True)
-def run(input_file, config_file, log_file, report_file, report_type, offline, autoload, populate_phys_connections):
+def run(input_file, config_file, log_file, report_file, report_type, offline, autoload):
     """Run Auto discovery command with given arguments from the input file"""
     input_data_parser = get_input_data_parser(input_file)
     input_data_model = input_data_parser.parse(input_file)
@@ -115,8 +112,7 @@ def run(input_file, config_file, log_file, report_file, report_type, offline, au
                                                 cs_session_manager=cs_session_manager,
                                                 output=ConsoleOutput(),
                                                 offline=offline,
-                                                autoload=autoload,
-                                                populate_phys_connections=populate_phys_connections)
+                                                autoload=autoload)
 
     auto_discover_command.execute(devices_ips=input_data_model.devices_ips,
                                   snmp_comunity_strings=input_data_model.snmp_community_strings,
@@ -133,11 +129,7 @@ def run(input_file, config_file, log_file, report_file, report_type, offline, au
 @click.option("--report-file", required=True, help="File name of the report to run from")
 @click.option('--autoload/--no-autoload', help="Whether autoload discovered resource on the CloudShell or not",
               default=True)
-@click.option('--populate-phys-connections/--no-populate-phys-connections',
-              help="Whether to create physical connections on the discovered resource based on the "
-                   "ports attribute 'Adjacent' or not. Available only with --autoload flag",
-              default=True)
-def run_from_report(input_file, config_file, log_file, report_file, autoload, populate_phys_connections):
+def run_from_report(input_file, config_file, log_file, report_file, autoload):
     """Create and autoload CloudShell resources from the generated report"""
     input_data_parser = get_input_data_parser(input_file)
     input_data_model = input_data_parser.parse(input_file)
@@ -164,8 +156,7 @@ def run_from_report(input_file, config_file, log_file, report_file, autoload, po
                                             logger=logger,
                                             cs_session_manager=cs_session_manager,
                                             output=ConsoleOutput(),
-                                            autoload=autoload,
-                                            populate_phys_connections=populate_phys_connections)
+                                            autoload=autoload)
 
     command.execute(parsed_entries=parsed_entries,
                     additional_vendors_data=additional_vendors_data)
@@ -197,3 +188,35 @@ def connect_ports(input_file, connections_report_file, log_file):
                                            output=ConsoleOutput())
 
     command.execute(parsed_entries=parsed_entries)
+
+
+@cli.command(name="update-physical-connections")
+@click.option("--input-file", required=True, help="Input file with CloudShell configuration data. "
+                                                  "Can be generated with a 'echo-input-template' command")
+@click.option("--resources-names", required=True, help="The names of the resources for which connections will be "
+                                                       "created based on the 'adjacent' attribute. "
+                                                       "it can be a single name or comma-separated names")
+@click.option("--domain", help="CloudShell domain", default=config.DEFAULT_CLOUDSHELL_DOMAIN)
+@click.option("--report-file", help="File name for generated report")
+@click.option("--report-type", type=click.Choice(reports.discovery.REPORT_TYPES),
+              default=reports.connections.DEFAULT_REPORT_TYPE,
+              help="Type for generated report")
+@click.option("--log-file", help="File name for logs")
+def connect_adjacent_resources(input_file, resources_names, domain, report_file, report_type, log_file):
+    input_data_parser = get_input_data_parser(input_file)
+    input_data_model = input_data_parser.parse(input_file)
+    logger = get_logger(log_file)
+
+    cs_session_manager = CloudShellSessionManager(cs_ip=input_data_model.cs_ip,
+                                                  cs_user=input_data_model.cs_user,
+                                                  cs_password=input_data_model.cs_password,
+                                                  logger=logger)
+
+    command = commands.ConnectAdjacentResourcesCommand(cs_session_manager=cs_session_manager,
+                                                       report=reports.connections.get_report(report_file=report_file,
+                                                                                             report_type=report_type),
+                                                       logger=logger,
+                                                       output=ConsoleOutput())
+
+    resources_names = [name.strip() for name in resources_names.split(",")]
+    command.execute(resources_names=resources_names, domain=domain)

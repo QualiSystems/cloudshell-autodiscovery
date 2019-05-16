@@ -1,3 +1,4 @@
+from connect_adjacent_resources import ConnectAdjacentResourcesCommand
 from connect_ports import ConnectPortsCommand
 from run import RunCommand
 from update_vendors import UpdateVendorsCommand
