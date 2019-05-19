@@ -48,7 +48,27 @@ class ConnectAdjacentResourcesCommand(object):
 
         return ports
 
-    def _find_resource_by_sys_name(self, adjacent_device_name):
+    def _find_resource_by_sys_name(self, cs_session, sys_name):
+        """
+
+        :param cloudshell.api.cloudshell_api.CloudShellAPISession cs_session:
+        :param sys_name:
+        :return:
+        """
+        cs_session.FindResources(resourceFullName=sys_name, resourceFamily="CS_Port")
+
+        # tt.Resources[0].FullName
+        # todo: resource name can be different than sys_name - find all resources with resourceFamily="CS_Switch" ?
+        # 'R2.quali.local/Chassis 0/Module 3/Ethernet2-0'
+
+    def _find_port_by_adjacent_name(self, cs_session, adjacent_name):
+        """
+
+        :param cs_session:
+        :param sys_name:
+        :return:
+        """
+        # todo: create possible port names by replacing "/" in "-" or "."
         pass
 
     def execute(self, resources_names, domain):
@@ -66,12 +86,11 @@ class ConnectAdjacentResourcesCommand(object):
             try:
                 for port, adjacent in self._find_ports(resource):
                     adjacent_device_name, adjacent_port = [x.strip() for x in adjacent.split("through")]
-
                     # todo: 1) find correct resource by sys name
-                    # todo: 2) create possible port names by replacing "/" in "-" or "."
                     # todo: 3) iterate over all resources to find needed port
 
-                    adjacent_resource = self._find_resource_by_sys_name(adjacent_device_name)
+                    adjacent_resource = self._find_resource_by_sys_name(cs_session=cs_session,
+                                                                        sys_name=adjacent_device_name)
 
                     with self.report.add_entry(source_port=port, target_port=adjacent_port,
                                                domain=domain) as entry:
@@ -86,6 +105,7 @@ class ConnectAdjacentResourcesCommand(object):
                 self.logger.exception("Failed to connect ports due to:")
 
             except Exception:
+                # todo: fix this !
                 self.output.send("Failed to connect port {} and {}. See log for details".format(
                     entry.source_port,
                     entry.target_port), error=True)
