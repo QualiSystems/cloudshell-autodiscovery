@@ -190,7 +190,7 @@ def connect_ports(input_file, connections_report_file, log_file):
     command.execute(parsed_entries=parsed_entries)
 
 
-@cli.command(name="update-physical-connections")
+@cli.command(name="connect-adjacent-ports")
 @click.option("--input-file", required=True, help="Input file with CloudShell configuration data. "
                                                   "Can be generated with a 'echo-input-template' command")
 @click.option("--resources-names", required=True, help="The names of the resources for which connections will be "
@@ -203,6 +203,7 @@ def connect_ports(input_file, connections_report_file, log_file):
               help="Type for generated report")
 @click.option("--log-file", help="File name for logs")
 def connect_adjacent_resources(input_file, resources_names, domain, report_file, report_type, log_file):
+    """Create connections between CloudShell Port resources based on the "Adjacent" attributes"""
     input_data_parser = get_input_data_parser(input_file)
     input_data_model = input_data_parser.parse(input_file)
     logger = get_logger(log_file)
