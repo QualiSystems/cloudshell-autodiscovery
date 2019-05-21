@@ -141,7 +141,8 @@ class ConnectPortsCommand(object):
                                                    source_port=port,
                                                    adjacent=adjacent,
                                                    target_port="",
-                                                   domain=domain) as entry:
+                                                   domain=domain,
+                                                   offline=self.offline) as entry:
 
                             adjacent_sys_name, adjacent_port_name = [x.strip() for x in adjacent.split("through")]
                             adjacent_resource = self._find_resource_by_sys_name(cs_session=cs_session,
@@ -152,8 +153,9 @@ class ConnectPortsCommand(object):
 
                             entry.target_port = adjacent_port.Name
 
-                            cs_session.UpdatePhysicalConnection(resourceAFullPath=entry.source_port,
-                                                                resourceBFullPath=entry.target_port)
+                            if not self.offline:
+                                cs_session.UpdatePhysicalConnection(resourceAFullPath=entry.source_port,
+                                                                    resourceBFullPath=entry.target_port)
 
                     except ReportableException as e:
                         self.output.send("\t- Failed to update physical connection for the port '{}'. {}"
