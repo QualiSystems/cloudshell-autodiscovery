@@ -41,7 +41,7 @@ class AbstractDiscoveryReport(AbstractReport):
                                         (self.ADDED_TO_CLOUDSHELL_HEADER, "status"),
                                         (self.COMMENT_HEADER, "comment")])
 
-    def add_entry(self, ip, domain, offline):
+    def add_entry(self, offline, **kwargs):
         """Add new Entry for the device with given IP
 
         :param str ip: IP address of the discovered device
@@ -54,7 +54,8 @@ class AbstractDiscoveryReport(AbstractReport):
         else:
             status = Entry.SUCCESS_STATUS
 
-        return super(AbstractDiscoveryReport, self).add_entry(ip=ip, domain=domain, status=status)
+        kwargs["status"] = status
+        return super(AbstractDiscoveryReport, self).add_entry(**kwargs)
 
 
 class Entry(AbstractEntry):

@@ -17,7 +17,7 @@ class AbstractRunCommand(object):
         """
 
         :param autodiscovery.data_processors.JsonDataProcessor data_processor:
-        :param autodiscovery.reports.AbstractReport report:
+        :param autodiscovery.reports.discovery.base.AbstractDiscoveryReport report:
         :param logging.Logger logger:
         :param cs_session_manager:
         :param autodiscovery.output.AbstractOutput output:
@@ -48,7 +48,7 @@ class RunCommand(AbstractRunCommand):
         """
 
         :param autodiscovery.data_processors.JsonDataProcessor data_processor:
-        :param autodiscovery.reports.AbstractReport report:
+        :param autodiscovery.reports.discovery.base.AbstractDiscoveryReport report:
         :param logging.Logger logger:
         :param autodiscovery.common.cs_session_manager.CloudShellSessionManager cs_session_manager:
         :param autodiscovery.output.AbstractOutput output:

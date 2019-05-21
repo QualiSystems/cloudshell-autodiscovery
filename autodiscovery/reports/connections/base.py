@@ -31,9 +31,26 @@ class AbstractConnectionsReport(AbstractReport):
                                         (self.STATUS_HEADER, "status"),
                                         (self.COMMENT_HEADER, "comment")])
 
+    def add_entry(self, offline, **kwargs):
+        """
+
+        :param bool offline:
+        :rtype: Entry
+        """
+        if offline:
+            status = Entry.SKIPPED_STATUS
+        else:
+            status = Entry.SUCCESS_STATUS
+
+        kwargs["status"] = status
+        return super(AbstractConnectionsReport, self).add_entry(**kwargs)
+
 
 class Entry(AbstractEntry):
-    def __init__(self, resource_name, source_port, adjacent, target_port, domain, status=AbstractEntry.SUCCESS_STATUS, comment=""):
+    SKIPPED_STATUS = "Skipped"
+
+    def __init__(self, resource_name, source_port, adjacent, target_port, domain,
+                 status, comment=""):
         """
 
         :param resource_name:
