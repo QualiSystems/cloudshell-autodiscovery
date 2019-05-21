@@ -75,8 +75,7 @@ class ConnectPortsCommand(object):
         :param sys_name:
         :return:
         """
-        # todo: show duplicates resources in []
-        resource = None
+        resources = []
         families = set([res.ResourceFamilyName for res in cs_session.GetResourceList().Resources])
 
         for family, sys_attr in [("", SYSTEM_NAME_PORT_ATTRIBUTE)] + [(family, "{}.{}".format(
@@ -87,18 +86,16 @@ class ConnectPortsCommand(object):
                                                 attributeValues=[AttributeNameValue(Name=sys_attr,
                                                                                     Value=sys_name)]).Resources:
                 # response may contain an empty result
-                if res.ResourceFamilyName is None:
-                    continue
+                if res.ResourceFamilyName:
+                    resources.append(res)
 
-                if resource is None:
-                    resource = res
-                else:
-                    raise ReportableException("Found several resources with System Name: '{}' attribute".format(sys_name))
+        if not resources:
+            raise ReportableException("Unable to find resource with 'System Name' attribute: '{}'".format(sys_name))
+        elif len(resources) > 1:
+            raise ReportableException("Found several resources: {} with the same 'System Name' attribute: '{}'"
+                                      .format([resource.Name for resource in resources], sys_name))
 
-        if not resource:
-            raise ReportableException("Unable to find resource with System Name: '{}' attribute".format(sys_name))
-
-        return cs_session.GetResourceDetails(resource.FullName)
+        return cs_session.GetResourceDetails(resources[0].FullName)
 
     def _find_port_by_adjacent_name(self, adjacent_resource, adjacent_port_name):
         """
