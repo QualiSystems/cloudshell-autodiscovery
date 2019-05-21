@@ -11,11 +11,13 @@ class EchoConnectionsTemplateCommand(object):
 
         :return:
         """
-        with self.report.add_entry(source_port="DUT 1/Chassis 1/Module 1/Port 1",
+        with self.report.add_entry(resource_name="-",
+                                   source_port="DUT 1/Chassis 1/Module 1/Port 1",
+                                   adjacent="-",
                                    target_port="DUT 2/Chassis 1/Module 1/Port 1",
                                    domain="Global") as entry:
 
-            entry.status = ""
+            entry.status = "Skipped"
             entry.comment = "Auto-generated ports connection example"
 
         self.report.generate()

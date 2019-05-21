@@ -60,14 +60,16 @@ class AbstractEntry(object):
     SUCCESS_STATUS = "Success"
     FAILED_STATUS = "Failed"
 
-    def __init__(self, status=SUCCESS_STATUS, *args, **kwargs):
+    def __init__(self, status=SUCCESS_STATUS, comment="", *args, **kwargs):
         """
 
         :param status:
+        :param comment:
         :param args:
         :param kwargs:
         """
         self.status = status
+        self.comment = comment
 
     def __enter__(self):
         return self
