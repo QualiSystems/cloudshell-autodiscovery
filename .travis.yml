@@ -18,9 +18,12 @@ install:
       fi'
   - pip install -r test_requirements.txt
   - pip install -r docs_requirements.txt
+  - pip install codecov
 
 script:
     - nosetests --with-coverage --cover-package=autodiscovery tests
-    - coveralls
     - sphinx-build -c docs/ -nW -b latex -d docs/_build/doctrees docs docs/_build/pdf
     - cd docs/_build/pdf && latex cloudshell-autodiscovery
+
+after_success:
+    - codecov
