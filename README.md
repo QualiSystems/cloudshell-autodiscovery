@@ -1,9 +1,7 @@
 [![Build Status](https://travis-ci.org/QualiSystems/cloudshell-autodiscovery.svg?branch=master)](https://travis-ci.org/QualiSystems/cloudshell-autodiscovery)
-[![Coverage Status](https://coveralls.io/repos/github/QualiSystems/cloudshell-autodiscovery-tool/badge.svg?branch=master)](https://coveralls.io/github/QualiSystems/cloudshell-autodiscovery-tool?branch=master)
-[![PyPI version](https://badge.fury.io/py/cloudshell-autodiscovery-tool.svg)](https://badge.fury.io/py/cloudshell-autodiscovery-tool)
+[![codecov](https://codecov.io/gh/QualiSystems/cloudshell-autodiscovery/branch/master/graph/badge.svg)](https://codecov.io/gh/QualiSystems/cloudshell-autodiscovery)
+[![PyPI version](https://badge.fury.io/py/cloudshell-autodiscovery.svg)](https://badge.fury.io/py/cloudshell-autodiscovery)
 [![Dependency Status](https://dependencyci.com/github/QualiSystems/cloudshell-autodiscovery/badge)](https://tidelift.com/subscriber/github/QualiSystems/repositories/cloudshell-autodiscovery)
-[![Waffle.io - Columns and their card count](https://badge.waffle.io/QualiSystems/cloudshell-autodiscovery.svg?columns=all)](https://waffle.io/QualiSystems/cloudshell-autodiscovery)
-[![Documentation Status](https://readthedocs.org/projects/autodiscovery-tool/badge/?version=latest)](https://autodiscovery-tool.readthedocs.io/en/latest/?badge=latest)
 
 ---
 
