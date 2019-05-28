@@ -93,6 +93,95 @@ class TestRunCommand(unittest.TestCase):
         with self.assertRaisesRegexp(ReportableException, "Found several resources"):
             self.connect_ports_command._find_resource_by_sys_name(cs_session=cs_session, sys_name=sys_name)
 
-    # def test_find_port_by_adjacent_name(self):
-    #     # act
-    #     self._find_port_by_adjacent_name
+    def test_find_port_by_adjacent_name(self):
+        port_name = "Test Port Name"
+        port = mock.MagicMock(Name="10.10.10.10/Chassis 1/Module 1/{}".format(port_name))
+        self.connect_ports_command._find_ports = mock.MagicMock(return_value=[port])
+        # act
+        result = self.connect_ports_command._find_port_by_adjacent_name(adjacent_resource=mock.MagicMock(),
+                                                                        adjacent_port_name=port_name)
+        # verify
+        self.assertEquals(result, port)
+
+    def test_find_port_by_adjacent_name_no_such_port(self):
+        port_name = "Test Port Name"
+        port = mock.MagicMock(Name="10.10.10.10/Chassis 1/Module 1/Other Port Name")
+        self.connect_ports_command._find_ports = mock.MagicMock(return_value=[port])
+        # act
+        with self.assertRaisesRegexp(ReportableException, "Unable to find Adjacent port"):
+            self.connect_ports_command._find_port_by_adjacent_name(adjacent_resource=mock.MagicMock(),
+                                                                   adjacent_port_name=port_name)
+
+    def test_execute(self):
+        domain = "Test Domain"
+        resource_name = "Test Resource"
+        port_name = "Port 1"
+        adjacent = "Device 1 through Eth 2/1"
+        cs_session = mock.MagicMock()
+        self.cs_session_manager.get_session.return_value = cs_session
+        self.connect_ports_command._find_adjacent_ports = mock.MagicMock(return_value=[(port_name, adjacent)])
+        self.connect_ports_command._find_resource_by_sys_name = mock.MagicMock()
+        self.connect_ports_command._find_port_by_adjacent_name = mock.MagicMock()
+        # act
+        self.connect_ports_command.execute(resources_names=[resource_name], domain=domain)
+
+        # verify
+        cs_session.GetResourceDetails.assert_called_once_with(resource_name)
+        self.report.add_entry.assert_called_once_with(adjacent=adjacent,
+                                                      domain=domain,
+                                                      offline=False,
+                                                      resource_name=resource_name,
+                                                      source_port=port_name,
+                                                      target_port="")
+
+        cs_session.UpdatePhysicalConnection.assert_called_once_with(
+            resourceAFullPath=self.report.add_entry().__enter__().source_port,
+            resourceBFullPath=self.connect_ports_command._find_port_by_adjacent_name().Name)
+
+        self.report.generate.assert_called_once_with()
+
+    def test_execute_handles_reportable_exception(self):
+        domain = "Test Domain"
+        resource_name = "Test Resource"
+        port_name = "Port 1"
+        adjacent = "Device 1 through Eth 2/1"
+        cs_session = mock.MagicMock()
+        self.cs_session_manager.get_session.return_value = cs_session
+        self.connect_ports_command._find_adjacent_ports = mock.MagicMock(return_value=[(port_name, adjacent)])
+        self.connect_ports_command._find_resource_by_sys_name = mock.MagicMock(side_effect=ReportableException)
+        # act
+        self.connect_ports_command.execute(resources_names=[resource_name], domain=domain)
+
+        # verify
+        self.report.add_entry.assert_called_once_with(adjacent=adjacent,
+                                                      domain=domain,
+                                                      offline=False,
+                                                      resource_name=resource_name,
+                                                      source_port=port_name,
+                                                      target_port="")
+
+        self.report.generate.assert_called_once_with()
+        self.logger.exception.assert_called_once()
+
+    def test_execute_handles_exception(self):
+        domain = "Test Domain"
+        resource_name = "Test Resource"
+        port_name = "Port 1"
+        adjacent = "Device 1 through Eth 2/1"
+        cs_session = mock.MagicMock()
+        self.cs_session_manager.get_session.return_value = cs_session
+        self.connect_ports_command._find_adjacent_ports = mock.MagicMock(return_value=[(port_name, adjacent)])
+        self.connect_ports_command._find_resource_by_sys_name = mock.MagicMock(side_effect=Exception)
+        # act
+        self.connect_ports_command.execute(resources_names=[resource_name], domain=domain)
+
+        # verify
+        self.report.add_entry.assert_called_once_with(adjacent=adjacent,
+                                                      domain=domain,
+                                                      offline=False,
+                                                      resource_name=resource_name,
+                                                      source_port=port_name,
+                                                      target_port="")
+
+        self.report.generate.assert_called_once_with()
+        self.logger.exception.assert_called_once()
