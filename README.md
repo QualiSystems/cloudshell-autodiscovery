@@ -27,7 +27,7 @@ Document version: 1.0
         * [Online Mode](#online-mode)
         * [Additional vendors configuration file editable parameters](#additional-vendors-configuration-file-editable-parameters)
 * [Creating Connections on Discovered Devices](#creating-connections-on-discovered-devices)
-    * [Automated Mode](#automated-mode)
+    * [Automatic Mode](#automatic-mode)
     * [Manual Mode](#manual-mode)
 
 * [Input Data Files](#input-data-files)
@@ -339,9 +339,9 @@ In online mode, the Autodiscovery tool immediately attempts to create and discov
 
 This section describes how to connect the discovered resources to your physical network. 
 
-There are two ways to create these connections: automated and manual.
+There are two ways to create these connections: [automated](#automatic-mode) and [manual](#manual-mode).
 
-**Automated Mode:**
+## Automatic Mode
 
 In the automatic mode Autodiscovery tool will discover all ports on the specified resources and create physical network connections based on their "Adjacent" attributes.
 
@@ -349,15 +349,15 @@ In the automatic mode Autodiscovery tool will discover all ports on the specifie
 
     ```autodiscovery connect-ports --<input filename>.[yml|json] --resources-names <resources name> --domain <domain>```
 
-    Command will generate a connect_ports_report.xlsx file, containing the discovered connections, in the folder where you ran the command. Use this file to troubleshoot any issues.
-
       * *Replace* ```<resources name>``` *with the comma-separated names of the resources, between which you want to discover and create connections*
       * *Replace* ```<domain>``` *with the CloudShell domain where the resources are located*
       * *To generate a log file, add the tag:* ```--log-file <log filename>```
       * *To generate the report in console format instead of .xlsx (default), add the tag:* ```--connections-report-type console```
       * *To generate only report, without creation of any connections on the CloudShell add the tag:* ```--offline```. *This report can be used with the* ```autodiscovery connect-ports-from-report``` *command later*
+      
+    Command will generate a connect_ports_report.xlsx file, containing the discovered connections, in the folder where you ran the command. Use this file to troubleshoot any issues.
 
-**Manual Mode:**
+## Manual Mode
 
 Manual mode is a three-step process. First, you must generate a “device connections” Excel file, then edit the file with the required connections, and finally run it using the Autodiscovery tool. You can also use connect_ports_report.xlsx report from the ```autodiscovery connect-ports --ofline``` command as a “device connections” Excel file.
 
