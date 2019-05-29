@@ -353,7 +353,7 @@ In the automatic mode Autodiscovery tool will discover all ports on the specifie
       * *Replace* ```<domain>``` *with the CloudShell domain where the resources are located*
       * *To generate a log file, add the tag:* ```--log-file <log filename>```
       * *To generate the report in console format instead of .xlsx (default), add the tag:* ```--connections-report-type console```
-      * *To generate only report, without creation of any connections on the CloudShell add the tag:* ```--offline```. *This report can be used with the* ```autodiscovery connect-ports-from-report``` *command later*
+      * *To generate only report, without creation of any connections on the CloudShell add the tag:* ```--offline```. *This report can be used later with the* ```autodiscovery connect-ports-from-report``` *command*
       
     Command will generate a connect_ports_report.xlsx file, containing the discovered connections, in the folder where you ran the command. Use this file to troubleshoot any issues.
 
