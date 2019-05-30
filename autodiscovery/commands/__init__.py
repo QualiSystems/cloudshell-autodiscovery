@@ -1,4 +1,5 @@
 from connect_ports import ConnectPortsCommand
+from connect_ports_from_report import ConnectPortsFromReportCommand
 from run import RunCommand
 from update_vendors import UpdateVendorsCommand
 from echo_report_template import EchoReportTemplateCommand

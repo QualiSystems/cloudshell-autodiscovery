@@ -3,6 +3,7 @@ import pkg_resources
 import click
 
 from autodiscovery import commands
+from autodiscovery import config
 from autodiscovery import reports
 from autodiscovery.common.cs_session_manager import CloudShellSessionManager
 from autodiscovery.common.utils import get_logger
@@ -164,10 +165,46 @@ def run_from_report(input_file, config_file, log_file, report_file, autoload):
 @cli.command(name="connect-ports")
 @click.option("--input-file", required=True, help="Input file with CloudShell configuration data. "
                                                   "Can be generated with a 'echo-input-template' command")
+@click.option("--resources-names", required=True, help="The names of the resources for which connections will be "
+                                                       "created based on the 'adjacent' attribute. "
+                                                       "it can be a single name or comma-separated names")
+@click.option("--domain", help="CloudShell domain", default=config.DEFAULT_CLOUDSHELL_DOMAIN)
+@click.option("--offline", is_flag=True, help="Generate report without creation of any connections on the CloudShell")
+@click.option("--connections-report-file", help="File name for generated report")
+@click.option("--connections-report-type", type=click.Choice(reports.connections.REPORT_TYPES),
+              default=reports.connections.DEFAULT_REPORT_TYPE,
+              help="Type for generated report")
+@click.option("--log-file", help="File name for logs")
+def connect_ports(input_file, resources_names, domain, offline, connections_report_file,
+                  connections_report_type, log_file):
+    """Create connections between CloudShell Port resources based on the "Adjacent" attributes"""
+    input_data_parser = get_input_data_parser(input_file)
+    input_data_model = input_data_parser.parse(input_file)
+    logger = get_logger(log_file)
+
+    cs_session_manager = CloudShellSessionManager(cs_ip=input_data_model.cs_ip,
+                                                  cs_user=input_data_model.cs_user,
+                                                  cs_password=input_data_model.cs_password,
+                                                  logger=logger)
+
+    command = commands.ConnectPortsCommand(cs_session_manager=cs_session_manager,
+                                           report=reports.connections.get_report(report_file=connections_report_file,
+                                                                                 report_type=connections_report_type),
+                                           offline=offline,
+                                           logger=logger,
+                                           output=ConsoleOutput())
+
+    resources_names = [name.strip() for name in resources_names.split(",")]
+    command.execute(resources_names=resources_names, domain=domain)
+
+
+@cli.command(name="connect-ports-from-report")
+@click.option("--input-file", required=True, help="Input file with CloudShell configuration data. "
+                                                  "Can be generated with a 'echo-input-template' command")
 @click.option("--connections-report-file", required=True, help="File with port connections data. Can be generated with "
                                                                "'echo-excel-connections-report-template' command")
 @click.option("--log-file", help="File name for logs")
-def connect_ports(input_file, connections_report_file, log_file):
+def connect_ports_from_report(input_file, connections_report_file, log_file):
     """Create connections between CloudShell Port resources specified in the connection file"""
     input_data_parser = get_input_data_parser(input_file)
     input_data_model = input_data_parser.parse(input_file)
@@ -181,9 +218,10 @@ def connect_ports(input_file, connections_report_file, log_file):
                                                   cs_password=input_data_model.cs_password,
                                                   logger=logger)
 
-    command = commands.ConnectPortsCommand(cs_session_manager=cs_session_manager,
-                                           report=reports.connections.get_report(report_file=connections_report_file),
-                                           logger=logger,
-                                           output=ConsoleOutput())
+    command = commands.ConnectPortsFromReportCommand(cs_session_manager=cs_session_manager,
+                                                     report=reports.connections.get_report(
+                                                         report_file=connections_report_file),
+                                                     logger=logger,
+                                                     output=ConsoleOutput())
 
     command.execute(parsed_entries=parsed_entries)
