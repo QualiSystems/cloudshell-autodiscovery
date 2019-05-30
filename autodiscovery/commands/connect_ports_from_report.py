@@ -35,6 +35,10 @@ class ConnectPortsFromReportCommand(object):
                     if entry.status == entry.SUCCESS_STATUS:
                         continue
 
+                    if not all([entry.source_port, parsed_entry.target_port]):
+                        raise ReportableException("'Source Port Full Name' and 'Target Port Full Name' fields "
+                                                  "cannot be empty")
+
                     entry.status = entry.SUCCESS_STATUS
                     cs_session = self.cs_session_manager.get_session(cs_domain=entry.domain)
 
@@ -42,19 +46,19 @@ class ConnectPortsFromReportCommand(object):
                                                         resourceBFullPath=parsed_entry.target_port)
 
             except ReportableException as e:
-                self.output.send("Failed to connect port {} and {}. {}".format(parsed_entry.source_port,
-                                                                               parsed_entry.target_port,
-                                                                               str(e)), error=True)
+                self.output.send("Failed to connect port '{}' and '{}'. {}".format(parsed_entry.source_port,
+                                                                                   parsed_entry.target_port,
+                                                                                   str(e)), error=True)
                 self.logger.exception("Failed to connect ports due to:")
 
             except Exception:
-                self.output.send("Failed to connect port {} and {}. See log for details".format(
+                self.output.send("Failed to connect port '{}' and '{}'. See log for details".format(
                     parsed_entry.source_port,
                     parsed_entry.target_port), error=True)
                 self.logger.exception("Failed to connect ports due to:")
 
             else:
-                msg = "Connection between port {} and port {} was successfully processed".format(
+                msg = "Connection between port '{}' and port '{}' was successfully processed".format(
                     parsed_entry.source_port,
                     parsed_entry.target_port)
 
