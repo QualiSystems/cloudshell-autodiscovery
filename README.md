@@ -339,27 +339,27 @@ In online mode, the Autodiscovery tool immediately attempts to create and discov
 
 This section describes how to connect the discovered resources to your physical network. 
 
-There are two ways to create these connections: [automated](#automatic-mode) and [manual](#manual-mode).
+There are two ways to create these connections: [automatic](#automatic-mode) and [manual](#manual-mode).
 
 ## Automatic Mode
 
-In the automatic mode Autodiscovery tool will discover all ports on the specified resources and create physical network connections based on their "Adjacent" attributes.
+In automatic mode, the Autodiscovery tool discovers all the ports on the specified resources and creates physical network connections based on their "Adjacent" attributes.
 
-1.	To discover and create resource connections, run the following command-line from the folder containing the input file:
+* To discover and create resource connections, run the following command-line from the folder containing the input file:
 
     ```autodiscovery connect-ports --<input filename>.[yml|json] --resources-names <resources name> --domain <domain>```
 
-      * *Replace* ```<resources name>``` *with the comma-separated names of the resources, between which you want to discover and create connections*
-      * *Replace* ```<domain>``` *with the CloudShell domain where the resources are located*
+      * *Replace* ```<resources name>``` *with the comma-separated names of the resources you want to discover and connect*
+      * *Replace* ```<domain>``` *with the CloudShell domain of the resources*
       * *To generate a log file, add the tag:* ```--log-file <log filename>```
       * *To generate the report in console format instead of .xlsx (default), add the tag:* ```--connections-report-type console```
-      * *To generate only report, without creation of any connections on the CloudShell add the tag:* ```--offline```. *This report can be used later with the* ```autodiscovery connect-ports-from-report``` *command*
+      * *To only generate the report without creating any connections in CloudShell, add the tag:* ```--offline```. *This report can be used later with the* ```autodiscovery connect-ports-from-report``` *command*.
       
-    Command will generate a connect_ports_report.xlsx file, containing the discovered connections, in the folder where you ran the command. Use this file to troubleshoot any issues.
+    The tool generates a *connect_ports_report.xlsx* file containing the discovered connections in the folder where you ran the command. Use this file to troubleshoot any issues.
 
 ## Manual Mode
 
-Manual mode is a three-step process. First, you must generate a “device connections” Excel file, then edit the file with the required connections, and finally run it using the Autodiscovery tool. You can also use connect_ports_report.xlsx report from the ```autodiscovery connect-ports --ofline``` command as a “device connections” Excel file.
+Manual mode is a three-step process. First, generate a “device connections” Excel file, then edit the file with the required connections, and finally run it using the Autodiscovery tool. You can also use the *connect_ports_report.xlsx* report that is generated with the ```autodiscovery connect-ports --offline``` command as a “device connections” Excel file.
 
 1.	Create the resource connections Excel file. 
 
