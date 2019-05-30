@@ -15,7 +15,8 @@ class EchoConnectionsTemplateCommand(object):
                                    source_port="DUT 1/Chassis 1/Module 1/Port 1",
                                    adjacent="-",
                                    target_port="DUT 2/Chassis 1/Module 1/Port 1",
-                                   domain="Global") as entry:
+                                   domain="Global",
+                                   offline=True) as entry:
 
             entry.status = "Skipped"
             entry.comment = "Auto-generated ports connection example"
