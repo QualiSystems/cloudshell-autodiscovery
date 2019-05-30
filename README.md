@@ -375,9 +375,9 @@ Manual mode is a three-step process. First, you must generate a “device connec
    
    |Field|Description|
    |:---|:---|
-   |Resource Name|Name of the resource where port is located. Can be left blank|
+   |Resource Name|(Optional) Name of the resource where port is located.|
    |Source Port Full Name|Full path to the resource’s port on CloudShell.<br>For example:  DUT 1/Chassis 1/Module 1/Port 1|
-   |Adjacent|"Adjacent" port's attribute value. Can be left blank|
+   |Adjacent|(optional) "Adjacent" port's attribute value.|
    |Target Port Full Name|Full path to the resource’s port on CloudShell.<br>For example: Switch 2/Chassis 1/Module 1/Port 1|
    |Domain|CloudShell domain of the resources|
    |Connection Status|Read-only field indicating the status after running the **connect-ports** command.<br>•	**Success** - Ports were successfully connected<br>•	**Skipped** - Connections were discovered but not added to the CloudShell<br>•	**Failed** - Ports were not successfully connected|
