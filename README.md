@@ -348,11 +348,11 @@ In automatic mode, the Autodiscovery tool discovers all the ports on the specifi
 
     ```autodiscovery connect-ports --<input filename>.[yml|json] --resources-names <resources name> --domain <domain>```
 
-      * *Replace* ```<resources name>``` *with the comma-separated names of the resources you want to discover and connect*
-      * *Replace* ```<domain>``` *with the CloudShell domain of the resources*
-      * *To generate a log file, add the tag:* ```--log-file <log filename>```
-      * *To generate the report in console format instead of .xlsx (default), add the tag:* ```--connections-report-type console```
-      * *To only generate the report without creating any connections in CloudShell, add the tag:* ```--offline```. *This report can be used later with the* ```autodiscovery connect-ports-from-report``` *command*.
+     * *Replace* ```<resources name>``` *with the comma-separated names of the resources you want to discover and connect*
+     * *Replace* ```<domain>``` *with the CloudShell domain of the resources*
+     * *To generate a log file, add the tag:* ```--log-file <log filename>```
+     * *To generate the report in console format instead of .xlsx (default), add the tag:* ```--connections-report-type console```
+     * *To only generate the report without creating any connections in CloudShell, add the tag:* ```--offline```. *This report can be used later with the* ```autodiscovery connect-ports-from-report``` *command*.
       
     The tool generates a *connect_ports_report.xlsx* file containing the discovered connections in the folder where you ran the command. Use this file to troubleshoot any issues.
 
@@ -376,7 +376,7 @@ Manual mode is a three-step process. First, generate a “device connections” 
    |:---|:---|
    |Resource Name|(Optional) Name of the resource where port is located.|
    |Source Port Full Name|Full path to the resource’s port on CloudShell.<br>For example:  DUT 1/Chassis 1/Module 1/Port 1|
-   |Adjacent|(optional) "Adjacent" port's attribute value.|
+   |Adjacent|(Optional) "Adjacent" port's attribute value.|
    |Target Port Full Name|Full path to the resource’s port on CloudShell.<br>For example: Switch 2/Chassis 1/Module 1/Port 1|
    |Domain|CloudShell domain of the resources|
    |Connection Status|Read-only field indicating the status after running the **connect-ports** command.<br>•	**Success** - Ports were successfully connected<br>•	**Skipped** - Connections were discovered but not added to the CloudShell<br>•	**Failed** - Ports were not successfully connected|
