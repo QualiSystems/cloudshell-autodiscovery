@@ -25,8 +25,8 @@ def version():
 
 
 @cli.command(name="update-vendor-data")
-@click.option("--url", help="URL for file with private enterprise numbers")
-@click.option("--log-file", help="File name for logs")
+@click.option("-u", "--url", help="URL for file with private enterprise numbers")
+@click.option("-l", "--log-file", help="File name for logs")
 def update_vendor_data(url, log_file):
     """Update file with vendor enterprise numbers data"""
     logger = get_logger(log_file)
@@ -37,9 +37,9 @@ def update_vendor_data(url, log_file):
 
 
 @cli.command(name="echo-input-template")
-@click.option("--template-format", help="Format of the generated user input template file",
+@click.option("-t", "--template-format", help="Format of the generated user input template file",
               type=click.Choice(["yml", "json"]), default="yml")
-@click.option("--save-to-file", help="File to save generated user input template file")
+@click.option("-f", "--save-to-file", help="File to save generated user input template file")
 def echo_input_template(template_format, save_to_file):
     """Generate user input example file in the given format"""
     echo_input_tpl_command = commands.EchoUserInputTemplateCommand()
@@ -47,9 +47,9 @@ def echo_input_template(template_format, save_to_file):
 
 
 @cli.command(name="echo-vendors-configuration-template")
-@click.option("--template-format", help="Format of the generated user input template file",
+@click.option("-t", "--template-format", help="Format of the generated user input template file",
               type=click.Choice(["json"]), default="json")
-@click.option("--save-to-file", help="File to save generated user input template file")
+@click.option("-f", "--save-to-file", help="File to save generated user input template file")
 def echo_vendors_config_template(template_format, save_to_file):
     """Generate vendors configuration example file in the given format"""
     echo_conf_tpl_command = commands.EchoVendorsConfigTemplateCommand()
@@ -57,7 +57,7 @@ def echo_vendors_config_template(template_format, save_to_file):
 
 
 @cli.command(name="echo-excel-report-template")
-@click.option("--save-to-file", required=True, help="File to save generated template file")
+@click.option("-f", "--save-to-file", required=True, help="File to save generated template file")
 def echo_excel_report_template(save_to_file):
     """Generate .xlsx report example file for the "run-from-report" command"""
     report = reports.discovery.ExcelReport(file_name=save_to_file)
@@ -66,7 +66,7 @@ def echo_excel_report_template(save_to_file):
 
 
 @cli.command(name="echo-excel-connections-report-template")
-@click.option("--save-to-file", required=True, help="File to save generated user input template file")
+@click.option("-f", "--save-to-file", required=True, help="File to save generated user input template file")
 def echo_excel_connections_template(save_to_file):
     """Generate .xlsx report example file for the "connect-ports" command"""
     report = reports.connections.ExcelReport(file_name=save_to_file)
@@ -75,18 +75,18 @@ def echo_excel_connections_template(save_to_file):
 
 
 @cli.command()
-@click.option("--input-file", required=True, help="Input file with devices IPs and other configuration data. "
-                                                  "Can be generated with a 'echo-input-template' command")
-@click.option("--config-file", help="Vendors configuration file with additional data. Can be generated with a "
-                                    "'echo-vendors-configuration-template' command")
-@click.option("--log-file", help="File name for logs")
-@click.option("--report-file", help="File name for generated report")
-@click.option("--report-type", type=click.Choice(reports.discovery.REPORT_TYPES),
+@click.option("-i", "--input-file", required=True, help="Input file with devices IPs and other configuration data. "
+                                                        "Can be generated with a 'echo-input-template' command")
+@click.option("-c", "--config-file", help="Vendors configuration file with additional data. Can be generated with a "
+                                          "'echo-vendors-configuration-template' command")
+@click.option("-l", "--log-file", help="File name for logs")
+@click.option("-r", "--report-file", help="File name for generated report")
+@click.option("-t", "--report-type", type=click.Choice(reports.discovery.REPORT_TYPES),
               default=reports.discovery.DEFAULT_REPORT_TYPE,
               help="Type for generated report")
-@click.option("--offline", is_flag=True, help="Generate report without creation of any Resource on the CloudShell")
-@click.option('--autoload/--no-autoload', help="Whether autoload discovered resource on the CloudShell or not",
-              default=True)
+@click.option("-o", "--offline", is_flag=True, help="Generate report without creation of any Resource on the CloudShell")
+@click.option("-a/-na", "--autoload/--no-autoload", help="Whether autoload discovered resource on the CloudShell or "
+                                                         "not", default=True)
 def run(input_file, config_file, log_file, report_file, report_type, offline, autoload):
     """Run Auto discovery command with given arguments from the input file"""
     input_data_parser = get_input_data_parser(input_file)
@@ -121,14 +121,14 @@ def run(input_file, config_file, log_file, report_file, report_type, offline, au
 
 
 @cli.command(name="run-from-report")
-@click.option("--input-file", required=True, help="Input file with CloudShell configuration data. "
-                                                  "Can be generated with a 'echo-input-template' command")
-@click.option("--config-file", help="Vendors configuration file with additional data. Can be generated with a "
-                                    "'echo-vendors-configuration-template' command")
-@click.option("--log-file", help="File name for logs")
-@click.option("--report-file", required=True, help="File name of the report to run from")
-@click.option('--autoload/--no-autoload', help="Whether autoload discovered resource on the CloudShell or not",
-              default=True)
+@click.option("-i", "--input-file", required=True, help="Input file with CloudShell configuration data. Can be "
+                                                        "generated with a 'echo-input-template' command")
+@click.option("-c", "--config-file", help="Vendors configuration file with additional data. Can be generated with a "
+                                          "'echo-vendors-configuration-template' command")
+@click.option("-l", "--log-file", help="File name for logs")
+@click.option("-r", "--report-file", required=True, help="File name of the report to run from")
+@click.option("-a/-na", "--autoload/--no-autoload", help="Whether autoload discovered resource on the CloudShell "
+                                                         "or not", default=True)
 def run_from_report(input_file, config_file, log_file, report_file, autoload):
     """Create and autoload CloudShell resources from the generated report"""
     input_data_parser = get_input_data_parser(input_file)
@@ -163,18 +163,19 @@ def run_from_report(input_file, config_file, log_file, report_file, autoload):
 
 
 @cli.command(name="connect-ports")
-@click.option("--input-file", required=True, help="Input file with CloudShell configuration data. "
-                                                  "Can be generated with a 'echo-input-template' command")
-@click.option("--resources-names", required=True, help="The names of the resources for which connections will be "
-                                                       "created based on the 'adjacent' attribute. "
-                                                       "it can be a single name or comma-separated names")
-@click.option("--domain", help="CloudShell domain", default=config.DEFAULT_CLOUDSHELL_DOMAIN)
-@click.option("--offline", is_flag=True, help="Generate report without creation of any connections on the CloudShell")
-@click.option("--connections-report-file", help="File name for generated report")
-@click.option("--connections-report-type", type=click.Choice(reports.connections.REPORT_TYPES),
+@click.option("-i", "--input-file", required=True, help="Input file with CloudShell configuration data. Can be "
+                                                        "generated with a 'echo-input-template' command")
+@click.option("-n", "--resources-names", required=True, help="The names of the resources for which connections will be "
+                                                             "created based on the 'adjacent' attribute. it can be a "
+                                                             "single name or comma-separated names")
+@click.option("-d", "--domain", help="CloudShell domain", default=config.DEFAULT_CLOUDSHELL_DOMAIN)
+@click.option("-o", "--offline", is_flag=True, help="Generate report without creation of any connections "
+                                                    "on the CloudShell")
+@click.option("-r", "--connections-report-file", help="File name for generated report")
+@click.option("-t", "--connections-report-type", type=click.Choice(reports.connections.REPORT_TYPES),
               default=reports.connections.DEFAULT_REPORT_TYPE,
               help="Type for generated report")
-@click.option("--log-file", help="File name for logs")
+@click.option("-l", "--log-file", help="File name for logs")
 def connect_ports(input_file, resources_names, domain, offline, connections_report_file,
                   connections_report_type, log_file):
     """Create connections between CloudShell Port resources based on the "Adjacent" attributes"""
@@ -199,11 +200,12 @@ def connect_ports(input_file, resources_names, domain, offline, connections_repo
 
 
 @cli.command(name="connect-ports-from-report")
-@click.option("--input-file", required=True, help="Input file with CloudShell configuration data. "
-                                                  "Can be generated with a 'echo-input-template' command")
-@click.option("--connections-report-file", required=True, help="File with port connections data. Can be generated with "
-                                                               "'echo-excel-connections-report-template' command")
-@click.option("--log-file", help="File name for logs")
+@click.option("-i", "--input-file", required=True, help="Input file with CloudShell configuration data. "
+                                                        "Can be generated with a 'echo-input-template' command")
+@click.option("-r", "--connections-report-file", required=True, help="File with port connections data. Can be generated"
+                                                                     " with 'echo-excel-connections-report-template' "
+                                                                     "command")
+@click.option("-l", "--log-file", help="File name for logs")
 def connect_ports_from_report(input_file, connections_report_file, log_file):
     """Create connections between CloudShell Port resources specified in the connection file"""
     input_data_parser = get_input_data_parser(input_file)
