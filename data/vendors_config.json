@@ -33,28 +33,14 @@
             ],
             "families": {
                "switch": {
-                  "first_gen": {
-                     "family_name": "Switch",
-                     "model_name": "Cisco IOS Switch",
-                     "driver_name": "Generic Cisco IOS Driver Version3"
-                  },
-                  "second_gen": {
-                     "family_name": "CS_Switch",
-                     "model_name": "Cisco IOS Switch 2G",
-                     "driver_name": "Cisco IOS Switch 2G"
-                  }
+                  "family_name": "CS_Switch",
+                  "model_name": "Cisco IOS Switch 2G",
+                  "driver_name": "Cisco IOS Switch 2G"
                },
                "router": {
-                  "first_gen": {
-                     "family_name": "Router",
-                     "model_name": "Cisco IOS Router",
-                     "driver_name": "Generic Cisco IOS Driver Version3"
-                  },
-                  "second_gen": {
-                     "family_name": "CS_Router",
-                     "model_name": "Cisco IOS Router 2G",
-                     "driver_name": "Cisco IOS Router 2G"
-                  }
+                  "family_name": "CS_Router",
+                  "model_name": "Cisco IOS Router 2G",
+                  "driver_name": "Cisco IOS Router 2G"
                }
             }
          },
@@ -66,13 +52,7 @@
             ],
             "default_model": "router",
             "families": {
-               "router": {
-                  "first_gen": {
-                     "family_name": "Router",
-                     "model_name": "Cisco IOS-XR Router",
-                     "driver_name": "Generic Cisco IOS-XR Driver Version2"
-                  }
-               }
+               "router": {}
             }
          },
          {
@@ -84,16 +64,9 @@
             "default_model": "switch",
             "families": {
                "switch": {
-                  "first_gen": {
-                     "family_name": "Switch",
-                     "model_name": "Cisco NXOS Switch",
-                     "driver_name": "Generic Cisco NXOS Driver Version2"
-                  },
-                  "second_gen": {
-                     "family_name": "CS_Switch",
-                     "model_name": "Cisco NXOS Switch 2G",
-                     "driver_name": "Cisco NXOS Switch 2G"
-                  }
+                  "family_name": "CS_Switch",
+                  "model_name": "Cisco NXOS Switch 2G",
+                  "driver_name": "Cisco NXOS Switch 2G"
                }
             }
          },
@@ -104,13 +77,7 @@
             ],
             "default_model": "firewall",
             "families": {
-               "firewall": {
-                  "first_gen": {
-                     "family_name": "Firewall",
-                     "model_name": "Cisco ASA Firewall",
-                     "driver_name": "Generic Cisco ASA Driver"
-                  }
-               }
+               "firewall": {}
             }
          },
          {
@@ -120,13 +87,7 @@
             ],
             "default_model": "wireless_controller",
             "families": {
-               "wireless_controller": {
-                  "first_gen": {
-                     "family_name": "Wireless Controller",
-                     "model_name": "Cisco AireOS Wireless Controller",
-                     "driver_name": "Cisco AireOS Driver"
-                  }
-               }
+               "wireless_controller": {}
             }
          }
       ]
@@ -148,40 +109,19 @@
             "default_model": "switch",
             "families": {
                "switch": {
-                  "first_gen": {
-                     "family_name": "Switch",
-                     "model_name": "Juniper JunOS Switch",
-                     "driver_name": "Generic Juniper JunOS Driver Version3"
-                  },
-                  "second_gen": {
-                     "family_name": "CS_Switch",
-                     "model_name": "Juniper JunOS Switch 2G",
-                     "driver_name": "Juniper JunOS Switch 2G"
-                  }
+                  "family_name": "CS_Switch",
+                  "model_name": "Juniper JunOS Switch 2G",
+                  "driver_name": "Juniper JunOS Switch 2G"
                },
                "router": {
-                  "first_gen": {
-                     "family_name": "Router",
-                     "model_name": "Juniper JunOS Router",
-                     "driver_name": "Generic Juniper JunOS Driver Version3"
-                  },
-                  "second_gen": {
-                     "family_name": "CS_Router",
-                     "model_name": "Juniper JunOS Router 2G",
-                     "driver_name": "Juniper JunOS Router 2G"
-                  }
+                  "family_name": "CS_Router",
+                  "model_name": "Juniper JunOS Router 2G",
+                  "driver_name": "Juniper JunOS Router 2G"
                },
                "firewall": {
-                  "first_gen": {
-                     "family_name": "Firewall",
-                     "model_name": "Juniper JunOS Firewall",
-                     "driver_name": "Generic Juniper JunOS Firewall Driver Version1"
-                  },
-                  "second_gen": {
-                     "family_name": "CS_Firewall",
-                     "model_name": "Juniper JunOS Firewall 2G",
-                     "driver_name": "Juniper JunOS Firewall 2G"
-                  }
+                  "family_name": "CS_Firewall",
+                  "model_name": "Juniper JunOS Firewall 2G",
+                  "driver_name": "Juniper JunOS Firewall 2G"
                }
             }
          }
@@ -203,13 +143,7 @@
             ],
             "default_model": "router",
             "families": {
-               "router": {
-                  "first_gen": {
-                     "family_name": "Router",
-                     "model_name": "Brocade NetIron Router",
-                     "driver_name": "Generic Brocade NetIron Driver"
-                  }
-               }
+               "router": {}
             }
          },
          {
@@ -219,20 +153,8 @@
             ],
             "default_model": "switch",
             "families": {
-               "switch": {
-                  "first_gen": {
-                     "family_name": "Switch",
-                     "model_name": "Brocade FastIron Switch",
-                     "driver_name": "Generic Brocade FastIron Driver"
-                  }
-               },
-               "router": {
-                  "first_gen": {
-                     "family_name": "Router",
-                     "model_name": "Brocade FastIron Router",
-                     "driver_name": "Generic Brocade FastIron Driver"
-                  }
-               }
+               "switch": {},
+               "router": {}
             }
          }
       ]
@@ -254,13 +176,7 @@
             ],
             "default_model": "router",
             "families": {
-               "router": {
-                  "first_gen": {
-                     "family_name": "Router",
-                     "model_name": "Ericsson IPOS Router",
-                     "driver_name": "Generic Ericsson IPOS Driver"
-                  }
-               }
+               "router": {}
             }
          },
          {
@@ -270,13 +186,7 @@
             ],
             "default_model": "router",
             "families": {
-               "router": {
-                  "first_gen": {
-                     "family_name": "Router",
-                     "model_name": "Ericsson SEOS Router",
-                     "driver_name": "Generic Ericsson SEOS Driver"
-                  }
-               }
+               "router": {}
             }
          }
       ]
@@ -297,20 +207,8 @@
             ],
             "default_model": "switch",
             "families": {
-               "switch": {
-                  "first_gen": {
-                     "family_name": "Switch",
-                     "model_name": "Huawei VRP Switch",
-                     "driver_name": "Generic Huawei VRP Driver"
-                  }
-               },
-               "router": {
-                  "first_gen": {
-                     "family_name": "Router",
-                     "model_name": "Huawei VRP Router",
-                     "driver_name": "Generic Huawei VRP Driver"
-                  }
-               }
+               "switch": {},
+               "router": {}
             }
          }
       ]
@@ -329,20 +227,8 @@
             "name": "EOS",
             "default_model": "switch",
             "families": {
-               "switch": {
-                  "first_gen": {
-                     "family_name": "Switch",
-                     "model_name": "Arista EOS Switch",
-                     "driver_name": "Generic Arista EOS Driver Version1"
-                  }
-               },
-               "router": {
-                  "first_gen": {
-                     "family_name": "Router",
-                     "model_name": "Arista EOS Router",
-                     "driver_name": "Generic Arista EOS Driver Version1"
-                  }
-               }
+               "switch": {},
+               "router": {}
             }
          }
       ]

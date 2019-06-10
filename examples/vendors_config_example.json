@@ -33,28 +33,14 @@
             ],
             "families": {
                "switch": {
-                  "first_gen": {
-                     "family_name": "Switch",
-                     "model_name": "Cisco IOS Switch",
-                     "driver_name": "Generic Cisco IOS Driver Version3"
-                  },
-                  "second_gen": {
-                     "family_name": "CS_Switch",
-                     "model_name": "Cisco IOS Switch 2G",
-                     "driver_name": "Cisco IOS Switch 2G"
-                  }
+                  "family_name": "CS_Switch",
+                  "model_name": "Cisco IOS Switch 2G",
+                  "driver_name": "Cisco IOS Switch 2G"
                },
                "router": {
-                  "first_gen": {
-                     "family_name": "Router",
-                     "model_name": "Cisco IOS Router",
-                     "driver_name": "Generic Cisco IOS Driver Version3"
-                  },
-                  "second_gen": {
-                     "family_name": "CS_Router",
-                     "model_name": "Cisco IOS Router 2G",
-                     "driver_name": "Cisco IOS Router 2G"
-                  }
+                  "family_name": "CS_Router",
+                  "model_name": "Cisco IOS Router 2G",
+                  "driver_name": "Cisco IOS Router 2G"
                }
             }
          }

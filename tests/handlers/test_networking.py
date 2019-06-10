@@ -56,20 +56,12 @@ class TestNetworkingTypeHandler(unittest.TestCase):
         """Check that method will create CloudShell resource 2-nd generation and autoload it"""
         entry = mock.MagicMock()
         device_os = mock.MagicMock()
-        families = {"second_gen": mock.MagicMock()}
-        device_os.families.get.return_value = families
+        family = mock.MagicMock()
+        device_os.families.get.return_value = family
         vendor = mock.MagicMock(get_device_os=mock.MagicMock(return_value=device_os))
-        second_gen = families["second_gen"]
         cs_session = mock.MagicMock()
         resource_name = "test resource name"
         self.networking_handler._upload_resource = mock.MagicMock(return_value=resource_name)
-        attributes = {
-            ResourceModelsAttributes.ENABLE_SNMP: "False",
-            ResourceModelsAttributes.SNMP_READ_COMMUNITY: entry.snmp_community,
-            ResourceModelsAttributes.USER: entry.user,
-            ResourceModelsAttributes.PASSWORD: entry.password,
-            ResourceModelsAttributes.ENABLE_PASSWORD: entry.enable_password
-        }
 
         # act
         self.networking_handler.upload(entry=entry,
@@ -78,76 +70,8 @@ class TestNetworkingTypeHandler(unittest.TestCase):
         # verify
         self.networking_handler._upload_resource.assert_called_once_with(cs_session=cs_session,
                                                                          entry=entry,
-                                                                         resource_family=second_gen["family_name"],
-                                                                         resource_model=second_gen["model_name"],
-                                                                         driver_name=second_gen["driver_name"],
+                                                                         resource_family=family["family_name"],
+                                                                         resource_model=family["model_name"],
+                                                                         driver_name=family["driver_name"],
                                                                          attribute_prefix="{}.".format(
-                                                                             second_gen["model_name"]))
-
-    def test_upload_1_generation_shell(self):
-        """Check that method will create CloudShell resource 1-nd generation and autoload it"""
-        entry = mock.MagicMock()
-        device_os = mock.MagicMock()
-        families = {"first_gen": mock.MagicMock()}
-        device_os.families.get.return_value = families
-        vendor = mock.MagicMock(get_device_os=mock.MagicMock(return_value=device_os))
-        first_gen = families["first_gen"]
-        cs_session = mock.MagicMock()
-        resource_name = "test resource name"
-        self.networking_handler._upload_resource = mock.MagicMock(return_value=resource_name)
-
-        # act
-        self.networking_handler.upload(entry=entry,
-                                       vendor=vendor,
-                                       cs_session=cs_session)
-        # verify
-        self.networking_handler._upload_resource.assert_called_once_with(cs_session=cs_session,
-                                                                         entry=entry,
-                                                                         resource_family=first_gen["family_name"],
-                                                                         resource_model=first_gen["model_name"],
-                                                                         driver_name=first_gen["driver_name"])
-
-    def test_upload_2_generation_shell_failed(self):
-        """Check that method will upload 1-nd generation shell if 2-nd generation one failed"""
-        entry = mock.MagicMock()
-        device_os = mock.MagicMock()
-        families = {"first_gen": mock.MagicMock(),
-                    "second_gen": mock.MagicMock()}
-
-        device_os.families.get.return_value = families
-        vendor = mock.MagicMock(get_device_os=mock.MagicMock(return_value=device_os))
-        first_gen = families["first_gen"]
-        second_gen = families["second_gen"]
-        cs_session = mock.MagicMock()
-        resource_name = "test resource name"
-        self.networking_handler._upload_resource = mock.MagicMock(
-            side_effect=[
-                None,
-                resource_name])
-
-        attributes = {
-            ResourceModelsAttributes.ENABLE_SNMP: "False",
-            ResourceModelsAttributes.SNMP_READ_COMMUNITY: entry.snmp_community,
-            ResourceModelsAttributes.USER: entry.user,
-            ResourceModelsAttributes.PASSWORD: entry.password,
-            ResourceModelsAttributes.ENABLE_PASSWORD: entry.enable_password
-        }
-
-        # act
-        self.networking_handler.upload(entry=entry,
-                                       vendor=vendor,
-                                       cs_session=cs_session)
-        # verify
-        self.networking_handler._upload_resource.assert_any_call(cs_session=cs_session,
-                                                                 entry=entry,
-                                                                 resource_family=second_gen["family_name"],
-                                                                 resource_model=second_gen["model_name"],
-                                                                 driver_name=second_gen["driver_name"],
-                                                                 attribute_prefix="{}.".format(
-                                                                     second_gen["model_name"]))
-
-        self.networking_handler._upload_resource.assert_any_call(cs_session=cs_session,
-                                                                 entry=entry,
-                                                                 resource_family=first_gen["family_name"],
-                                                                 resource_model=first_gen["model_name"],
-                                                                 driver_name=first_gen["driver_name"])
+                                                                             family["model_name"]))

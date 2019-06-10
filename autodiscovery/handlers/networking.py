@@ -55,33 +55,15 @@ class NetworkingTypeHandler(AbstractHandler):
         if device_os is None:
             raise ReportableException("Unable to determine device OS")
 
-        familes_data = device_os.families.get(entry.model_type)
+        family_data = device_os.families.get(entry.model_type)
 
-        if "second_gen" in familes_data:
-            second_gen = familes_data["second_gen"]
-            driver_name = second_gen["driver_name"]
-            resource_name = self._upload_resource(cs_session=cs_session,
-                                                  entry=entry,
-                                                  resource_family=second_gen["family_name"],
-                                                  resource_model=second_gen["model_name"],
-                                                  driver_name=driver_name,
-                                                  attribute_prefix="{}.".format(second_gen["model_name"]))
-            if not resource_name:
-                if "first_gen" in familes_data:
-                    first_gen = familes_data["first_gen"]
-                    resource_name = self._upload_resource(cs_session=cs_session,
-                                                          entry=entry,
-                                                          resource_family=first_gen["family_name"],
-                                                          resource_model=first_gen["model_name"],
-                                                          driver_name=first_gen["driver_name"])
-        else:
-            first_gen = familes_data["first_gen"]
-            driver_name = first_gen["driver_name"]
-            resource_name = self._upload_resource(cs_session=cs_session,
-                                                  entry=entry,
-                                                  resource_family=first_gen["family_name"],
-                                                  resource_model=first_gen["model_name"],
-                                                  driver_name=driver_name)
+        driver_name = family_data["driver_name"]
+        resource_name = self._upload_resource(cs_session=cs_session,
+                                              entry=entry,
+                                              resource_family=family_data["family_name"],
+                                              resource_model=family_data["model_name"],
+                                              driver_name=driver_name,
+                                              attribute_prefix="{}.".format(family_data["model_name"]))
 
         if not resource_name:
             raise ReportableException("Shell {} is not installed".format(driver_name))
