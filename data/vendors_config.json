@@ -10,6 +10,36 @@
       "enable_prompt": "(?:(?!\\)).)#\\s*$",
       "operation_systems": [
          {
+            "name": "IOSXR",
+            "aliases": [
+               "IOS[ -]?XR",
+               "IOSXR"
+            ],
+            "default_model": "router",
+            "families": {
+               "router": {
+                  "family_name": "CS_Router",
+                  "model_name": "Cisco IOSXR Router 2G",
+                  "driver_name": "Cisco IOSXR Router 2G"
+               }
+            }
+         },
+         {
+            "name": "NXOS",
+            "aliases": [
+               "NX[ -]?OS",
+               "NXOS"
+            ],
+            "default_model": "switch",
+            "families": {
+               "switch": {
+                  "family_name": "CS_Switch",
+                  "model_name": "Cisco NXOS Switch 2G",
+                  "driver_name": "Cisco NXOS Switch 2G"
+               }
+            }
+         },
+         {
             "name": "IOS",
             "aliases": [
                "CAT[ -]?OS",
@@ -45,49 +75,31 @@
             }
          },
          {
-            "name": "IOSXR",
-            "aliases": [
-               "IOS[ -]?XR",
-               "IOSXR"
-            ],
-            "default_model": "router",
-            "families": {
-               "router": {}
-            }
-         },
-         {
-            "name": "NXOS",
-            "aliases": [
-               "NX[ -]?OS",
-               "NXOS"
-            ],
-            "default_model": "switch",
-            "families": {
-               "switch": {
-                  "family_name": "CS_Switch",
-                  "model_name": "Cisco NXOS Switch 2G",
-                  "driver_name": "Cisco NXOS Switch 2G"
-               }
-            }
-         },
-         {
             "name": "ASA",
             "aliases": [
                "A(daptive)? ?S(ecurity)? ?A(ppliance)?"
             ],
             "default_model": "firewall",
             "families": {
-               "firewall": {}
+               "firewall": {
+                  "family_name": "CS_Firewall",
+                  "model_name": "Cisco ASA Firewall 2G",
+                  "driver_name": "Cisco ASA Firewall 2G"
+               }
             }
          },
          {
             "name": "AireOS",
             "aliases": [
-               "Controller"
+               "[Cc]isco\\s+[Cc]ontroller"
             ],
             "default_model": "wireless_controller",
             "families": {
-               "wireless_controller": {}
+               "wireless_controller": {
+                  "family_name": "CS_WirelessController",
+                  "model_name": "Cisco AireOS WC 2G",
+                  "driver_name": "Cisco AireOS WC 2G"
+               }
             }
          }
       ]
@@ -124,6 +136,20 @@
                   "driver_name": "Juniper JunOS Firewall 2G"
                }
             }
+         },
+         {
+            "name": "JunOSE",
+            "aliases": [
+               "[Jj]uniper"
+            ],
+            "default_model": "router",
+            "families": {
+               "router": {
+                  "family_name": "CS_Router",
+                  "model_name": "Juniper JunOSE Router 2G",
+                  "driver_name": "Juniper JunOSE Router 2G"
+               }
+            }
          }
       ]
    },
@@ -143,7 +169,11 @@
             ],
             "default_model": "router",
             "families": {
-               "router": {}
+               "router": {
+                  "family_name": "CS_Router",
+                  "model_name": "Brocade NetIron Router 2G",
+                  "driver_name": "Brocade NetIron Router 2G"
+               }
             }
          },
          {
@@ -153,40 +183,11 @@
             ],
             "default_model": "switch",
             "families": {
-               "switch": {},
-               "router": {}
-            }
-         }
-      ]
-   },
-   {
-      "name": "Ericsson",
-      "aliases": [
-         "[Ee]ricsson"
-      ],
-      "type": "networking",
-      "default_os": "IPOS",
-      "default_prompt": "\\].*[>#]\\s*$",
-      "enable_prompt": "#\\s*$",
-      "operation_systems": [
-         {
-            "name": "IPOS",
-            "aliases": [
-               "IP[ -]?OS"
-            ],
-            "default_model": "router",
-            "families": {
-               "router": {}
-            }
-         },
-         {
-            "name": "SEOS",
-            "aliases": [
-               "SE[ -]?OS"
-            ],
-            "default_model": "router",
-            "families": {
-               "router": {}
+               "switch": {
+                  "family_name": "CS_Switch",
+                  "model_name": "Brocade FastIron Switch 2G",
+                  "driver_name": "Brocade FastIron Switch 2G"
+               }
             }
          }
       ]
@@ -207,8 +208,16 @@
             ],
             "default_model": "switch",
             "families": {
-               "switch": {},
-               "router": {}
+               "switch": {
+                  "family_name": "CS_Switch",
+                  "model_name": "Huawei VRP Switch 2G",
+                  "driver_name": "Huawei VRP Switch 2G"
+               },
+               "router": {
+                  "family_name": "CS_Router",
+                  "model_name": "Huawei VRP Router 2G",
+                  "driver_name": "Huawei VRP Router 2G"
+               }
             }
          }
       ]
@@ -221,14 +230,168 @@
       "type": "networking",
       "default_os": "EOS",
       "default_prompt": ">\\s*$",
-      "enable_prompt": "#\\s*$",
+      "enable_prompt": "(?:(?!\\)).)#\\s*$",
       "operation_systems": [
          {
             "name": "EOS",
             "default_model": "switch",
             "families": {
-               "switch": {},
-               "router": {}
+               "switch": {
+                  "family_name": "CS_Switch",
+                  "model_name": "AristaEosSwitchShell2G",
+                  "driver_name": "AristaEosSwitchShell2G"
+               },
+               "router": {
+                  "family_name": "CS_Router",
+                  "model_name": "AristaEosRouterShell2G",
+                  "driver_name": "AristaEosRouterShell2G"
+               }
+            }
+         }
+      ]
+   },
+   {
+      "name": "Alcatel",
+      "aliases": [
+         "[Aa]lcatel"
+      ],
+      "type": "networking",
+      "default_os": "TiMOS",
+      "default_prompt": "((?<=\\n)|^)\\*?[^>\\n]+?#\\s*$",
+      "enable_prompt": "((?<=\\n)|^)\\*?[^>\\n]+?#\\s*$",
+      "operation_systems": [
+         {
+            "name": "TiMOS",
+            "default_model": "router",
+            "families": {
+               "router": {
+                  "family_name": "CS_Router",
+                  "model_name": "AlcatelTimetraRouterShell2G",
+                  "driver_name": "AlcatelTimetraRouterShell2G"
+               }
+            }
+         }
+      ]
+   },
+   {
+      "name": "A10 Networks",
+      "aliases": [
+         "^A10"
+      ],
+      "type": "networking",
+      "default_os": "ACOS",
+      "default_prompt": "(\\n|\\r|^)((?!\\((?i)(loading|#|>)).)+?>\\s*$",
+      "enable_prompt": "(\\n|\\r|^)((?!\\((?i)(loading|config|>|#)).)+?#\\s*$",
+      "operation_systems": [
+         {
+            "name": "ACOS",
+            "default_model": "firewall",
+            "families": {
+               "firewall": {
+                  "family_name": "CS_Firewall",
+                  "model_name": "A10AcosFirewallShell2G",
+                  "driver_name": "A10AcosFirewallShell2G"
+               }
+            }
+         }
+      ]
+   },
+   {
+      "name": "F5",
+      "aliases": [
+         "^F5"
+      ],
+      "type": "networking",
+      "default_os": "BIG IP",
+      "default_prompt": "(?:(?!\\)).)#\\s*$",
+      "enable_prompt": "(?:(?!\\)).)#\\s*$",
+      "operation_systems": [
+         {
+            "name": "BIG IP",
+            "aliases": [
+               "BIG[ -]?IP"
+            ],
+            "default_model": "firewall",
+            "families": {
+               "firewall": {
+                  "family_name": "CS_Firewall",
+                  "model_name": "F5 Big IP Firewall Shell 2G",
+                  "driver_name": "F5 Big IP Firewall Shell 2G"
+               },
+               "load_balancer": {
+                  "family_name": "CS_LoadBalancer",
+                  "model_name": "F5 BigIp LB Shell 2G",
+                  "driver_name": "F5 BigIp LB Shell 2G"
+               }
+            }
+         }
+      ]
+   },
+   {
+      "name": "Dell",
+      "aliases": [
+         "^Dell\\s+"
+      ],
+      "type": "networking",
+      "default_os": "FTOS",
+      "default_prompt": ">\\s*$",
+      "enable_prompt": "(?:(?!\\)).)#\\s*$",
+      "operation_systems": [
+         {
+            "name": "FTOS",
+            "default_model": "switch",
+            "families": {
+               "switch": {
+                  "family_name": "CS_Switch",
+                  "model_name": "Dell FTOS Switch 2G",
+                  "driver_name": "Dell FTOS Switch 2G"
+               }
+            }
+         }
+      ]
+   },
+   {
+      "name": "Fortinet",
+      "aliases": [
+         "[Ff]ortinet"
+      ],
+      "type": "networking",
+      "default_os": "FortiOS",
+      "default_prompt": "(\\n|\\r|^)((?!\\(.*?\\)).)+?\\s#\\s*$",
+      "enable_prompt": "(\\n|\\r|^)((?!\\(.*?\\)).)+?\\s#\\s*$",
+      "operation_systems": [
+         {
+            "name": "FortiOS",
+            "default_model": "firewall",
+            "families": {
+               "firewall": {
+                  "family_name": "CS_Firewall",
+                  "model_name": "FortiGateFortiOSFirewallShell2G",
+                  "driver_name": "FortiGateFortiOSFirewallShell2G"
+               }
+            }
+         }
+      ]
+   },
+   {
+      "name": "Cumulus",
+      "aliases": [
+         "Cumulus"
+      ],
+      "type": "networking",
+      "default_os": "Cumulus Linux",
+      "default_prompt": "\\$\\s*$",
+      "enable_prompt": "#\\s*$",
+      "operation_systems": [
+         {
+            "name": "Cumulus Linux",
+            "default_model": "switch",
+            "families": {
+               "switch": {
+                  "family_name": "CS_Switch",
+                  "model_name": "Cumulus Linux Switch 2G",
+                  "driver_name": "Cumulus Linux Switch 2G"
+               }
             }
          }
       ]
