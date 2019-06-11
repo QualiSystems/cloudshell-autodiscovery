@@ -3,8 +3,6 @@ from autodiscovery.reports.excel import AbstractExcelReport
 
 
 class ExcelReport(AbstractExcelReport, AbstractDiscoveryReport):
-    DEFAULT_REPORT_FILE = "discovery_report{}".format(AbstractExcelReport.FILE_EXTENSION)
-
     @property
     def _header_column_width_map(self):
         """

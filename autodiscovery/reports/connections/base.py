@@ -5,6 +5,7 @@ from autodiscovery.reports.base import AbstractReport
 
 
 class AbstractConnectionsReport(AbstractReport):
+    DEFAULT_REPORT_NAME = "connections-report"
     RESOURCE_NAME_HEADER = "Resource Name"
     SOURCE_PORT_HEADER = "Source Port Full Name"
     ADJACENT_HEADER = "Adjacent"

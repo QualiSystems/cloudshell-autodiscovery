@@ -2,8 +2,22 @@ from autodiscovery.exceptions import ReportableException
 
 
 class AbstractReport(object):
-    def __init__(self):
+    DEFAULT_REPORT_NAME = "report"
+
+    def __init__(self, file_name=None):
+        """
+
+        :param str file_name:
+        """
         self._entries = []
+
+        if file_name is None:
+            file_name = self.DEFAULT_REPORT_NAME
+
+        if not file_name.lower().endswith(self._report_file_extension):
+            file_name += self._report_file_extension
+
+        self.file_name = file_name
 
     def add_entry(self, *args, **kwargs):
         """Add new Entry to the Report
@@ -31,6 +45,10 @@ class AbstractReport(object):
     @property
     def _header(self):
         return self._header_entry_map.keys()
+
+    @property
+    def _report_file_extension(self):
+        raise NotImplementedError("Class {} must implement property '_report_file_extension'".format(type(self)))
 
     @property
     def _header_entry_map(self):

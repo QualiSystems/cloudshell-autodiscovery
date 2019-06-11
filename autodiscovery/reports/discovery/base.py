@@ -5,6 +5,7 @@ from autodiscovery.reports.base import AbstractReport
 
 
 class AbstractDiscoveryReport(AbstractReport):
+    DEFAULT_REPORT_NAME = "discovery-report"
     IP_HEADER = "IP"
     VENDOR_HEADER = "VENDOR"
     SYS_OBJ_ID_HEADER = "sysObjectID"

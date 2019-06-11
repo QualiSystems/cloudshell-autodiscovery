@@ -8,18 +8,10 @@ from autodiscovery.reports.base import AbstractReport
 class AbstractConsoleReport(AbstractReport):
     DESCRIPTION_COLUMN_WIDTH = 60
     COMMENT_COLUMN_WIDTH = 40
-    DEFAULT_REPORT_FILE = "connections-report.txt"
 
-    def __init__(self, file_name=None):
-        """
-
-        :param str file_name:
-        """
-        super(AbstractConsoleReport, self).__init__()
-        if file_name is None:
-            file_name = self.DEFAULT_REPORT_FILE
-
-        self.file_name = file_name
+    @property
+    def _report_file_extension(self):
+        return ".txt"
 
     @property
     def _header_column_width_map(self):

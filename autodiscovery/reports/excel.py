@@ -7,46 +7,6 @@ from autodiscovery.reports.base import AbstractReport
 
 
 class AbstractExcelReport(AbstractReport):
-    FILE_EXTENSION = ".xlsx"
-    DEFAULT_REPORT_FILE = "report{}".format(FILE_EXTENSION)
-
-    def __init__(self, file_name=None):
-        """
-
-        :param str file_name:
-        """
-        super(AbstractExcelReport, self).__init__()
-
-        if file_name is None:
-            file_name = self.DEFAULT_REPORT_FILE
-        elif not file_name.lower().endswith(self.FILE_EXTENSION):
-            file_name += self.FILE_EXTENSION
-
-        self.file_name = file_name
-
-    def generate(self):
-        """Save report for all discovered devices into the excel file"""
-        # todo(A.Piddubny): use one library to read/write xlsx files - openpyxl
-        workbook = xlsxwriter.Workbook(self.file_name)
-        worksheet = workbook.add_worksheet()
-        table_data = [self._header]
-
-        for entry in self._entries:
-            entry_row = [getattr(entry, attr) for attr in self._header_entry_map.values()]
-            table_data.append(entry_row)
-
-        for row_num, row in enumerate(table_data):
-            for col_num, col in enumerate(row):
-                worksheet.write(row_num, col_num, col)
-
-        # set bold header
-        worksheet.set_row(0, None, workbook.add_format({'bold': True}))
-
-        # format columns width
-        self._format_columns_width(worksheet)
-
-        workbook.close()
-
     def _prepare_column(self, start_column, end_column=None):
         """
 
@@ -58,6 +18,10 @@ class AbstractExcelReport(AbstractReport):
             end_column = start_column
 
         return "{}:{}".format(start_column, end_column)
+
+    @property
+    def _report_file_extension(self):
+        return ".xlsx"
 
     @property
     def _header_with_column(self):
@@ -116,3 +80,26 @@ class AbstractExcelReport(AbstractReport):
             entries.append(entry)
 
         return entries
+
+    def generate(self):
+        """Save report for all discovered devices into the excel file"""
+        # todo(A.Piddubny): use one library to read/write xlsx files - openpyxl
+        workbook = xlsxwriter.Workbook(self.file_name)
+        worksheet = workbook.add_worksheet()
+        table_data = [self._header]
+
+        for entry in self._entries:
+            entry_row = [getattr(entry, attr) for attr in self._header_entry_map.values()]
+            table_data.append(entry_row)
+
+        for row_num, row in enumerate(table_data):
+            for col_num, col in enumerate(row):
+                worksheet.write(row_num, col_num, col)
+
+        # set bold header
+        worksheet.set_row(0, None, workbook.add_format({'bold': True}))
+
+        # format columns width
+        self._format_columns_width(worksheet)
+
+        workbook.close()
