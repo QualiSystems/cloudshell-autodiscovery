@@ -141,7 +141,8 @@ def run_from_report(input_file, config_file, log_file, report_file, autoload):
         config_data_parser = get_config_data_parser(config_file)
         additional_vendors_data = config_data_parser.parse(config_file)
 
-    report = reports.discovery.get_report(report_file=report_file)
+    # todo: provide old report instead of creating new one?
+    report = reports.discovery.parse_report(report_file=report_file)
     parsed_entries = report.parse_entries_from_file(report_file)
 
     cs_session_manager = CloudShellSessionManager(cs_ip=input_data_model.cs_ip,
@@ -152,7 +153,7 @@ def run_from_report(input_file, config_file, log_file, report_file, autoload):
     command = commands.RunFromReportCommand(data_processor=JsonDataProcessor(logger=logger),
                                             report=reports.discovery.get_report(
                                                 report_file=report_file,
-                                                report_type=reports.discovery.DEFAULT_REPORT_TYPE),
+                                                report_type=report.FILE_EXTENSION),
                                             logger=logger,
                                             cs_session_manager=cs_session_manager,
                                             output=ConsoleOutput(),
@@ -212,7 +213,8 @@ def connect_ports_from_report(input_file, connections_report_file, log_file):
     input_data_model = input_data_parser.parse(input_file)
     logger = get_logger(log_file)
 
-    report = reports.connections.get_report(report_file=connections_report_file)
+    # todo: provide old report instead of creating new one?
+    report = reports.connections.parse_report(report_file=connections_report_file)
     parsed_entries = report.parse_entries_from_file(connections_report_file)
 
     cs_session_manager = CloudShellSessionManager(cs_ip=input_data_model.cs_ip,
@@ -222,7 +224,8 @@ def connect_ports_from_report(input_file, connections_report_file, log_file):
 
     command = commands.ConnectPortsFromReportCommand(cs_session_manager=cs_session_manager,
                                                      report=reports.connections.get_report(
-                                                         report_file=connections_report_file),
+                                                         report_file=connections_report_file,
+                                                         report_type=report.FILE_EXTENSION),
                                                      logger=logger,
                                                      output=ConsoleOutput())
 

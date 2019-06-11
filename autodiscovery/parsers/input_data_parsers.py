@@ -9,6 +9,7 @@ from autodiscovery import models
 
 def get_input_data_parser(file_name):
     parsers = (JSONInputDataParser, YAMLInputDataParser)
+    file_name = file_name.lower()
 
     for parser_cls in parsers:
         if file_name.endswith(parser_cls.FILE_EXTENSION):

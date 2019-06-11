@@ -3,6 +3,7 @@ from autodiscovery.exceptions import ReportableException
 
 class AbstractReport(object):
     DEFAULT_REPORT_NAME = "report"
+    FILE_EXTENSION = "*"
 
     def __init__(self, file_name=None):
         """
@@ -14,8 +15,10 @@ class AbstractReport(object):
         if file_name is None:
             file_name = self.DEFAULT_REPORT_NAME
 
-        if not file_name.lower().endswith(self._report_file_extension):
-            file_name += self._report_file_extension
+        file_extension = ".{}".format(self.FILE_EXTENSION)
+
+        if not file_name.lower().endswith(file_extension):
+            file_name += file_extension
 
         self.file_name = file_name
 
@@ -47,10 +50,6 @@ class AbstractReport(object):
         return self._header_entry_map.keys()
 
     @property
-    def _report_file_extension(self):
-        raise NotImplementedError("Class {} must implement property '_report_file_extension'".format(type(self)))
-
-    @property
     def _header_entry_map(self):
         raise NotImplementedError("Class {} must implement property '_header_entry_map'".format(type(self)))
 
@@ -65,6 +64,8 @@ class AbstractReport(object):
         """
         raise NotImplementedError("Class {} must implement method 'generate'".format(type(self)))
 
+
+class AbstractParsableReport(AbstractReport):
     def parse_entries_from_file(self, report_file):
         """Parse all discovered devices (entries) from a given file
 

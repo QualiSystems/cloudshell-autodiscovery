@@ -3,10 +3,12 @@ import string
 import xlsxwriter
 from openpyxl import load_workbook
 
-from autodiscovery.reports.base import AbstractReport
+from autodiscovery.reports.base import AbstractParsableReport
 
 
-class AbstractExcelReport(AbstractReport):
+class AbstractExcelReport(AbstractParsableReport):
+    FILE_EXTENSION = "xlsx"
+
     def _prepare_column(self, start_column, end_column=None):
         """
 
@@ -18,10 +20,6 @@ class AbstractExcelReport(AbstractReport):
             end_column = start_column
 
         return "{}:{}".format(start_column, end_column)
-
-    @property
-    def _report_file_extension(self):
-        return ".xlsx"
 
     @property
     def _header_with_column(self):
