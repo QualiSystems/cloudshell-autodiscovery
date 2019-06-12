@@ -141,9 +141,7 @@ def run_from_report(input_file, config_file, log_file, report_file, autoload):
         config_data_parser = get_config_data_parser(config_file)
         additional_vendors_data = config_data_parser.parse(config_file)
 
-    # todo: provide old report instead of creating new one?
     report = reports.discovery.parse_report(report_file=report_file)
-    parsed_entries = report.parse_entries_from_file(report_file)
 
     cs_session_manager = CloudShellSessionManager(cs_ip=input_data_model.cs_ip,
                                                   cs_user=input_data_model.cs_user,
@@ -151,16 +149,13 @@ def run_from_report(input_file, config_file, log_file, report_file, autoload):
                                                   logger=logger)
 
     command = commands.RunFromReportCommand(data_processor=JsonDataProcessor(logger=logger),
-                                            report=reports.discovery.get_report(
-                                                report_file=report_file,
-                                                report_type=report.FILE_EXTENSION),
+                                            report=report,
                                             logger=logger,
                                             cs_session_manager=cs_session_manager,
                                             output=ConsoleOutput(),
                                             autoload=autoload)
 
-    command.execute(parsed_entries=parsed_entries,
-                    additional_vendors_data=additional_vendors_data)
+    command.execute(additional_vendors_data=additional_vendors_data)
 
 
 @cli.command(name="connect-ports")

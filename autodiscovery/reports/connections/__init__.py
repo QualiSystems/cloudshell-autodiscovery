@@ -33,8 +33,10 @@ def parse_report(report_file):
     available_reports = [report_cls for report_cls in REPORTS if issubclass(report_cls, AbstractParsableReport)]
 
     for report_cls in available_reports:
-        if report_file.endswith("{}".format(report_cls.FILE_EXTENSION)):
-            return report_cls(report_file)
+        if report_file.endswith(".{}".format(report_cls.FILE_EXTENSION)):
+            report = report_cls(report_file)
+            report.parse_entries_from_file(report_file)
+            return report
 
     raise AutoDiscoveryException("Invalid Report file format. Available formats are: {}".format(
         ", ".join([report.FILE_EXTENSION for report in available_reports])))

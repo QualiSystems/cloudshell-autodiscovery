@@ -22,6 +22,10 @@ class AbstractReport(object):
 
         self.file_name = file_name
 
+    @property
+    def entries(self):
+        return self._entries
+
     def add_entry(self, *args, **kwargs):
         """Add new Entry to the Report
 
@@ -30,20 +34,6 @@ class AbstractReport(object):
         entry = self.entry_class(*args, **kwargs)
         self._entries.append(entry)
         return entry
-
-    def edit_entry(self, entry):
-        """Add given Entry to the Report
-
-        :param Entry entry:
-        :rtype: Entry
-        """
-        self._entries.append(entry)
-        return entry
-
-    def get_current_entry(self):
-        """Get last added Entry from the Report"""
-        if self._entries:
-            return self._entries[-1]
 
     @property
     def _header(self):

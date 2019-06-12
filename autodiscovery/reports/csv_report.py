@@ -36,4 +36,5 @@ class AbstractCSVReport(AbstractParsableReport):
                 entry = self.entry_class(**entry_attrs)
                 entries.append(entry)
 
+        self._entries = entries
         return entries
