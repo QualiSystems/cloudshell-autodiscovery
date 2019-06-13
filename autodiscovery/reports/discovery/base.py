@@ -61,7 +61,7 @@ class AbstractDiscoveryReport(AbstractReport):
 
 class Entry(AbstractEntry):
     SKIPPED_STATUS = "Skipped"
-    ATTRIBUTES_SEPARATOR = ";"
+    ATTRIBUTES_SEPARATOR = ","
 
     def __init__(self, ip, status, domain, vendor="", device_name="", model_type="", sys_object_id="",
                  snmp_community="", description="", comment="", folder_path="", attributes=None, formatted_attrs=None):
