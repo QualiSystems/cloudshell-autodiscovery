@@ -45,8 +45,7 @@ class TestExcelReport(unittest.TestCase):
         entry = mock.MagicMock()
         self.entry_class.return_value = entry
         # act
-        result = self.excel_report.parse_entries_from_file(report_file=self.file_name)
+        self.excel_report.parse_entries_from_file(report_file=self.file_name)
         # verify
-        self.assertIsInstance(result, list)
-        self.assertEqual(result[0], entry)
+        self.assertEqual(self.excel_report._entries[0], entry)
         load_workbook.assert_called_once_with(self.file_name)

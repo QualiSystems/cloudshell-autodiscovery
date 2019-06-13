@@ -83,7 +83,6 @@ class TestRunCommand(unittest.TestCase):
         ip = "10.10.10.10"
         snmp_community = "snmp community string"
         device_data = mock.MagicMock(ip_range=[ip])
-        handler = mock.MagicMock()
         self.run_command._discover_device = mock.MagicMock(side_effect=Exception())
         # act
         self.run_command.execute(devices_ips=[device_data],

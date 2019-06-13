@@ -24,7 +24,6 @@ class ConnectPortsFromReportCommand(object):
 
         :return:
         """
-
         for entry in self.report.entries:
             self.logger.info("Processing connection between port {} and {}".format(entry.source_port,
                                                                                    entry.target_port))
