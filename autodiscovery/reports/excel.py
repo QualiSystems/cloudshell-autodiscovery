@@ -64,7 +64,6 @@ class AbstractExcelReport(AbstractParsableReport):
         :param str report_file: path to the report file
         :rtype: list[Entry]
         """
-        entries = []
         wb = load_workbook(report_file)
         wb_sheet = wb.active
 
@@ -75,9 +74,7 @@ class AbstractExcelReport(AbstractParsableReport):
                 entry_attrs[entry_attr] = self._get_cell_value(wb_sheet, column, row_num)
 
             entry = self.entry_class(**entry_attrs)
-            entries.append(entry)
-
-        return entries
+            self._entries.append(entry)
 
     def generate(self):
         """Save report for all discovered devices into the excel file"""

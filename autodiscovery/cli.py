@@ -208,20 +208,16 @@ def connect_ports_from_report(input_file, connections_report_file, log_file):
     input_data_model = input_data_parser.parse(input_file)
     logger = get_logger(log_file)
 
-    # todo: provide old report instead of creating new one?
     report = reports.connections.parse_report(report_file=connections_report_file)
-    parsed_entries = report.parse_entries_from_file(connections_report_file)
-
     cs_session_manager = CloudShellSessionManager(cs_ip=input_data_model.cs_ip,
                                                   cs_user=input_data_model.cs_user,
                                                   cs_password=input_data_model.cs_password,
                                                   logger=logger)
 
     command = commands.ConnectPortsFromReportCommand(cs_session_manager=cs_session_manager,
-                                                     report=reports.connections.get_report(
-                                                         report_file=connections_report_file,
-                                                         report_type=report.FILE_EXTENSION),
+                                                     report=report,
                                                      logger=logger,
                                                      output=ConsoleOutput())
 
-    command.execute(parsed_entries=parsed_entries)
+    command.execute()
+

@@ -6,7 +6,6 @@ class RunFromReportCommand(AbstractRunCommand):
     def execute(self, additional_vendors_data):
         """
 
-        :param list[autodiscovery.reports.base.Entry] parsed_entries:
         :param list[dict] additional_vendors_data:
         :return:
         """

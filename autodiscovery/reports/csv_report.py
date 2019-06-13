@@ -24,7 +24,6 @@ class AbstractCSVReport(AbstractParsableReport):
         :param str report_file: path to the report file
         :rtype: list[Entry]
         """
-        entries = []
         with open(self.file_name, "r") as report_file:
             reader = csv.DictReader(report_file, fieldnames=self._header)
 
@@ -34,7 +33,4 @@ class AbstractCSVReport(AbstractParsableReport):
                     entry_attrs[entry_attr] = row[header]
 
                 entry = self.entry_class(**entry_attrs)
-                entries.append(entry)
-
-        self._entries = entries
-        return entries
+                self._entries.append(entry)
