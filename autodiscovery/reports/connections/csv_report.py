@@ -1,6 +1,6 @@
 from autodiscovery.reports.connections.base import AbstractConnectionsReport
-from autodiscovery.reports.excel import AbstractExcelReport
+from autodiscovery.reports.csv_report import AbstractCSVReport
 
 
-class CSVReport(AbstractExcelReport, AbstractConnectionsReport):
+class CSVReport(AbstractCSVReport, AbstractConnectionsReport):
     pass

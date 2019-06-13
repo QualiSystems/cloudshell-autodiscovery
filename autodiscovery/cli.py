@@ -4,7 +4,8 @@ import click
 
 from autodiscovery import commands
 from autodiscovery import config
-from autodiscovery import reports
+from autodiscovery.reports import connections as connections_reports
+from autodiscovery.reports import discovery as discovery_reports
 from autodiscovery.common.cs_session_manager import CloudShellSessionManager
 from autodiscovery.common.utils import get_logger
 from autodiscovery.data_processors import JsonDataProcessor
@@ -60,7 +61,7 @@ def echo_vendors_config_template(template_format, save_to_file):
 @click.option("-f", "--save-to-file", required=True, help="File to save generated template file")
 def echo_excel_report_template(save_to_file):
     """Generate .xlsx report example file for the "run-from-report" command"""
-    report = reports.discovery.ExcelReport(file_name=save_to_file)
+    report = discovery_reports.ExcelReport(file_name=save_to_file)
     echo_report_tpl_command = commands.EchoReportTemplateCommand(report=report)
     echo_report_tpl_command.execute()
 
@@ -69,7 +70,7 @@ def echo_excel_report_template(save_to_file):
 @click.option("-f", "--save-to-file", required=True, help="File to save generated user input template file")
 def echo_excel_connections_template(save_to_file):
     """Generate .xlsx report example file for the "connect-ports" command"""
-    report = reports.connections.ExcelReport(file_name=save_to_file)
+    report = connections_reports.ExcelReport(file_name=save_to_file)
     echo_report_tpl_command = commands.EchoConnectionsTemplateCommand(report=report)
     echo_report_tpl_command.execute()
 
@@ -81,8 +82,8 @@ def echo_excel_connections_template(save_to_file):
                                           "'echo-vendors-configuration-template' command")
 @click.option("-l", "--log-file", help="File name for logs")
 @click.option("-r", "--report-file", help="File name for generated report")
-@click.option("-t", "--report-type", type=click.Choice(reports.discovery.REPORT_TYPES),
-              default=reports.discovery.DEFAULT_REPORT_TYPE,
+@click.option("-t", "--report-type", type=click.Choice(discovery_reports.REPORT_TYPES),
+              default=discovery_reports.DEFAULT_REPORT_TYPE,
               help="Type for generated report")
 @click.option("-o", "--offline", is_flag=True, help="Generate report without creation of any Resource on the CloudShell")
 @click.option("-a/-na", "--autoload/--no-autoload", help="Whether autoload discovered resource on the CloudShell or "
@@ -99,8 +100,7 @@ def run(input_file, config_file, log_file, report_file, report_type, offline, au
         config_data_parser = get_config_data_parser(config_file)
         additional_vendors_data = config_data_parser.parse(config_file)
 
-    report = reports.discovery.get_report(report_file=report_file, report_type=report_type)
-
+    report = discovery_reports.get_report(report_file=report_file, report_type=report_type)
     cs_session_manager = CloudShellSessionManager(cs_ip=input_data_model.cs_ip,
                                                   cs_user=input_data_model.cs_user,
                                                   cs_password=input_data_model.cs_password,
@@ -141,8 +141,7 @@ def run_from_report(input_file, config_file, log_file, report_file, autoload):
         config_data_parser = get_config_data_parser(config_file)
         additional_vendors_data = config_data_parser.parse(config_file)
 
-    report = reports.discovery.parse_report(report_file=report_file)
-
+    report = discovery_reports.parse_report(report_file=report_file)
     cs_session_manager = CloudShellSessionManager(cs_ip=input_data_model.cs_ip,
                                                   cs_user=input_data_model.cs_user,
                                                   cs_password=input_data_model.cs_password,
@@ -168,8 +167,8 @@ def run_from_report(input_file, config_file, log_file, report_file, autoload):
 @click.option("-o", "--offline", is_flag=True, help="Generate report without creation of any connections "
                                                     "on the CloudShell")
 @click.option("-r", "--connections-report-file", help="File name for generated report")
-@click.option("-t", "--connections-report-type", type=click.Choice(reports.connections.REPORT_TYPES),
-              default=reports.connections.DEFAULT_REPORT_TYPE,
+@click.option("-t", "--connections-report-type", type=click.Choice(connections_reports.REPORT_TYPES),
+              default=connections_reports.DEFAULT_REPORT_TYPE,
               help="Type for generated report")
 @click.option("-l", "--log-file", help="File name for logs")
 def connect_ports(input_file, resources_names, domain, offline, connections_report_file,
@@ -185,7 +184,7 @@ def connect_ports(input_file, resources_names, domain, offline, connections_repo
                                                   logger=logger)
 
     command = commands.ConnectPortsCommand(cs_session_manager=cs_session_manager,
-                                           report=reports.connections.get_report(report_file=connections_report_file,
+                                           report=connections_reports.get_report(report_file=connections_report_file,
                                                                                  report_type=connections_report_type),
                                            offline=offline,
                                            logger=logger,
@@ -208,7 +207,7 @@ def connect_ports_from_report(input_file, connections_report_file, log_file):
     input_data_model = input_data_parser.parse(input_file)
     logger = get_logger(log_file)
 
-    report = reports.connections.parse_report(report_file=connections_report_file)
+    report = connections_reports.parse_report(report_file=connections_report_file)
     cs_session_manager = CloudShellSessionManager(cs_ip=input_data_model.cs_ip,
                                                   cs_user=input_data_model.cs_user,
                                                   cs_password=input_data_model.cs_password,
