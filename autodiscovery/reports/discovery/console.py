@@ -3,6 +3,9 @@ from autodiscovery.reports.console import AbstractConsoleReport
 
 
 class ConsoleReport(AbstractConsoleReport, AbstractDiscoveryReport):
+    DESCRIPTION_COLUMN_WIDTH = 60
+    COMMENT_COLUMN_WIDTH = 40
+
     @property
     def _header_column_width_map(self):
         """

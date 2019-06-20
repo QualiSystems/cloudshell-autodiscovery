@@ -3,6 +3,7 @@ from autodiscovery.exceptions import ReportableException
 
 class AbstractReport(object):
     DEFAULT_REPORT_NAME = "report"
+    FILE_EXTENSION = "*"
 
     def __init__(self, file_name=None):
         """
@@ -14,10 +15,16 @@ class AbstractReport(object):
         if file_name is None:
             file_name = self.DEFAULT_REPORT_NAME
 
-        if not file_name.lower().endswith(self._report_file_extension):
-            file_name += self._report_file_extension
+        file_extension = ".{}".format(self.FILE_EXTENSION)
+
+        if not file_name.lower().endswith(file_extension):
+            file_name += file_extension
 
         self.file_name = file_name
+
+    @property
+    def entries(self):
+        return self._entries
 
     def add_entry(self, *args, **kwargs):
         """Add new Entry to the Report
@@ -28,27 +35,9 @@ class AbstractReport(object):
         self._entries.append(entry)
         return entry
 
-    def edit_entry(self, entry):
-        """Add given Entry to the Report
-
-        :param Entry entry:
-        :rtype: Entry
-        """
-        self._entries.append(entry)
-        return entry
-
-    def get_current_entry(self):
-        """Get last added Entry from the Report"""
-        if self._entries:
-            return self._entries[-1]
-
     @property
     def _header(self):
         return self._header_entry_map.keys()
-
-    @property
-    def _report_file_extension(self):
-        raise NotImplementedError("Class {} must implement property '_report_file_extension'".format(type(self)))
 
     @property
     def _header_entry_map(self):
@@ -65,6 +54,8 @@ class AbstractReport(object):
         """
         raise NotImplementedError("Class {} must implement method 'generate'".format(type(self)))
 
+
+class AbstractParsableReport(AbstractReport):
     def parse_entries_from_file(self, report_file):
         """Parse all discovered devices (entries) from a given file
 

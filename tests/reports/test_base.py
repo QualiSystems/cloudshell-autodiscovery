@@ -29,30 +29,6 @@ class TestAbstractReport(unittest.TestCase):
         self.assertIn(result, self.tested_instance._entries)
         self.entry_class.assert_called_once_with()
 
-    def test_edit_entry(self):
-        """Check that method will add entry into the entries list and return given entry"""
-        entry = mock.MagicMock()
-        # act
-        result = self.tested_instance.edit_entry(entry)
-        # verify
-        self.assertEqual(result, entry)
-        self.assertIn(result, self.tested_instance._entries)
-
-    def test_get_current_entry_no_entries(self):
-        """Check that method will return None if there is no any entries"""
-        # act
-        result = self.tested_instance.get_current_entry()
-        # verify
-        self.assertIsNone(result)
-
-    def test_get_current_entry(self):
-        """Check that method will return last entry in the entries list"""
-        self.tested_instance._entries = [mock.MagicMock(), mock.MagicMock()]
-        # act
-        result = self.tested_instance.get_current_entry()
-        # verify
-        self.assertEqual(result, self.tested_instance._entries[-1])
-
     def test_generate(self):
         """Check that method will raise exception if it wasn't implemented in the child class"""
         with self.assertRaises(NotImplementedError):

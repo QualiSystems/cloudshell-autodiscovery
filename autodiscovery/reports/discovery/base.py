@@ -11,8 +11,8 @@ class AbstractDiscoveryReport(AbstractReport):
     SYS_OBJ_ID_HEADER = "sysObjectID"
     DESCRIPTION_HEADER = "DESCRIPTION"
     SNMP_READ_COMMUNITY_HEADER = "SNMP READ COMMUNITY"
-    MODEL_TYPE_HEADER = "MODEL_TYPE"
-    DEVICE_NAME_HEADER = "DEVICE_NAME"
+    MODEL_TYPE_HEADER = "MODEL TYPE"
+    DEVICE_NAME_HEADER = "DEVICE NAME"
     DOMAIN_HEADER = "DOMAIN"
     FOLDER_HEADER = "FOLDER"
     ATTRIBUTES_HEADER = "ATTRIBUTES"
@@ -61,7 +61,7 @@ class AbstractDiscoveryReport(AbstractReport):
 
 class Entry(AbstractEntry):
     SKIPPED_STATUS = "Skipped"
-    ATTRIBUTES_SEPARATOR = ";"
+    ATTRIBUTES_SEPARATOR = ","
 
     def __init__(self, ip, status, domain, vendor="", device_name="", model_type="", sys_object_id="",
                  snmp_community="", description="", comment="", folder_path="", attributes=None, formatted_attrs=None):

@@ -6,16 +6,14 @@ from autodiscovery.reports.base import AbstractReport
 
 
 class AbstractConsoleReport(AbstractReport):
-    DESCRIPTION_COLUMN_WIDTH = 60
-    COMMENT_COLUMN_WIDTH = 40
-
-    @property
-    def _report_file_extension(self):
-        return ".txt"
+    FILE_EXTENSION = "txt"
 
     @property
     def _header_column_width_map(self):
-        """"""
+        """
+
+        :return:
+        """
         return {}
 
     def _format_column_width(self, header, attr_value):

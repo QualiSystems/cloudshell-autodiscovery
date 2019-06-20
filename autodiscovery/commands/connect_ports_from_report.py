@@ -19,48 +19,45 @@ class ConnectPortsFromReportCommand(object):
         self.output = output
         self.logger = logger
 
-    def execute(self, parsed_entries):
+    def execute(self):
         """
 
-        :param list[autodiscovery.reports.connections.base.Entry] parsed_entries:
         :return:
         """
-        for parsed_entry in parsed_entries:
-            self.logger.info("Processing connection between port {} and {}".format(parsed_entry.source_port,
-                                                                                   parsed_entry.target_port))
-
+        for entry in self.report.entries:
+            self.logger.info("Processing connection between port {} and {}".format(entry.source_port,
+                                                                                   entry.target_port))
             try:
-                with self.report.edit_entry(entry=parsed_entry) as entry:
-
+                with entry:
                     if entry.status == entry.SUCCESS_STATUS:
                         continue
 
-                    if not all([entry.source_port, parsed_entry.target_port]):
+                    if not all([entry.source_port, entry.target_port]):
                         raise ReportableException("'Source Port Full Name' and 'Target Port Full Name' fields "
                                                   "cannot be empty")
 
                     entry.status = entry.SUCCESS_STATUS
                     cs_session = self.cs_session_manager.get_session(cs_domain=entry.domain)
 
-                    cs_session.UpdatePhysicalConnection(resourceAFullPath=parsed_entry.source_port,
-                                                        resourceBFullPath=parsed_entry.target_port)
+                    cs_session.UpdatePhysicalConnection(resourceAFullPath=entry.source_port,
+                                                        resourceBFullPath=entry.target_port)
 
             except ReportableException as e:
-                self.output.send("Failed to connect port '{}' and '{}'. {}".format(parsed_entry.source_port,
-                                                                                   parsed_entry.target_port,
+                self.output.send("Failed to connect port '{}' and '{}'. {}".format(entry.source_port,
+                                                                                   entry.target_port,
                                                                                    str(e)), error=True)
                 self.logger.exception("Failed to connect ports due to:")
 
             except Exception:
                 self.output.send("Failed to connect port '{}' and '{}'. See log for details".format(
-                    parsed_entry.source_port,
-                    parsed_entry.target_port), error=True)
+                    entry.source_port,
+                    entry.target_port), error=True)
                 self.logger.exception("Failed to connect ports due to:")
 
             else:
                 msg = "Connection between port '{}' and port '{}' was successfully processed".format(
-                    parsed_entry.source_port,
-                    parsed_entry.target_port)
+                    entry.source_port,
+                    entry.target_port)
 
                 self.output.send(msg)
                 self.logger.info(msg)
