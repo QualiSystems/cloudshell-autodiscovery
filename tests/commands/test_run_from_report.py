@@ -38,8 +38,10 @@ class TestRunFromReportCommand(unittest.TestCase):
 
     def test_execute_handles_exception(self):
         """Check that method will handle Exception and will generate report"""
+        entry = mock.MagicMock()
         handler = mock.MagicMock()
         self.run_command.vendor_type_handlers_map = mock.MagicMock(__getitem__=mock.MagicMock(return_value=handler))
+        self.report.entries = [entry]
         handler.upload = mock.MagicMock(side_effect=Exception())
         # act
         self.run_command.execute(additional_vendors_data=None)
