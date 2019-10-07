@@ -11,7 +11,7 @@ class InputDataModel(object):
         snmp_community_strings,
         vendor_settings,
     ):
-        """
+        """Init command.
 
         :param list[DeviceIPRange] devices_ips:
         :param str cs_ip:
@@ -30,7 +30,7 @@ class InputDataModel(object):
 
 class DeviceIPRange(object):
     def __init__(self, ip_range, domain=None):
-        """
+        """Init command.
 
         :param list[str] ip_range:
         :param str domain:
@@ -44,7 +44,7 @@ class DeviceIPRange(object):
 
 class CLICredentials(object):
     def __init__(self, user=None, password=None, enable_password=None):
-        """
+        """Init command.
 
         :param str user:
         :param str password:
@@ -69,7 +69,7 @@ class CLICredentials(object):
 
 class VendorCLICredentials(object):
     def __init__(self, name, cli_credentials):
-        """
+        """Init command.
 
         :param str name: vendor name
         :param list[CLICredentials] cli_credentials:
@@ -78,7 +78,7 @@ class VendorCLICredentials(object):
         self.cli_credentials = cli_credentials
 
     def update_valid_creds(self, valid_creds):
-        """Set valid credentials to be first in the list of possible CLI credentials for the Vendor
+        """Set valid credentials to be first in the list of possible CLI credentials.
 
         :param CLICredentials valid_creds:
         :return:
@@ -91,7 +91,7 @@ class VendorCLICredentials(object):
 
 class VendorSettingsCollection(object):
     def __init__(self, vendor_settings):
-        """
+        """Init command.
 
         :param dict vendor_settings:
         """
@@ -135,7 +135,7 @@ class VendorSettingsCollection(object):
                 self._folder_paths[vendor_name] = folder_path
 
     def get_creds_by_vendor(self, vendor):
-        """Get CLI credentials by given vendor
+        """Get CLI credentials by given vendor.
 
         :param VendorDefinition vendor:
         :rtype: VendorCLICredentials
@@ -147,7 +147,7 @@ class VendorSettingsCollection(object):
         return self._default_creds
 
     def get_folder_path_by_vendor(self, vendor):
-        """Get folder path by given vendor
+        """Get folder path by given vendor.
 
         :param VendorDefinition vendor:
         :rtype: str

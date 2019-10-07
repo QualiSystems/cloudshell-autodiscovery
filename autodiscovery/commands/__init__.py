@@ -1,9 +1,9 @@
-from connect_ports import ConnectPortsCommand
-from connect_ports_from_report import ConnectPortsFromReportCommand
-from echo_connections_template import EchoConnectionsTemplateCommand
-from echo_report_template import EchoReportTemplateCommand
-from echo_user_input_template import EchoUserInputTemplateCommand
-from echo_vendors_config_template import EchoVendorsConfigTemplateCommand
-from run import RunCommand
-from run_from_report import RunFromReportCommand
-from update_vendors import UpdateVendorsCommand
+from connect_ports import ConnectPortsCommand  # noqa
+from connect_ports_from_report import ConnectPortsFromReportCommand  # noqa
+from echo_connections_template import EchoConnectionsTemplateCommand  # noqa
+from echo_report_template import EchoReportTemplateCommand  # noqa
+from echo_user_input_template import EchoUserInputTemplateCommand  # noqa
+from echo_vendors_config_template import EchoVendorsConfigTemplateCommand  # noqa
+from run import RunCommand  # noqa
+from run_from_report import RunFromReportCommand  # noqa
+from update_vendors import UpdateVendorsCommand  # noqa

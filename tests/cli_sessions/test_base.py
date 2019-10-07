@@ -27,7 +27,7 @@ class TestAbstractDiscoverySession(unittest.TestCase):
         self.tested_instance = TestedClass(self.device_ip)
 
     def test_check_credentials_raises_exception_if_it_was_not_implemented(self):
-        """Check that method will raise exception if it wasn't implemented in the child class"""
+        """Method should raise exception if it wasn't implemented."""
         cli_credentials = mock.MagicMock()
         default_prompt = mock.MagicMock()
         enable_prompt = mock.MagicMock()
@@ -43,7 +43,7 @@ class TestAbstractDiscoverySession(unittest.TestCase):
     @mock.patch("autodiscovery.cli_sessions.base.collections")
     @mock.patch("autodiscovery.cli_sessions.base.re")
     def test_check_enable_password(self, re, collections):
-        """Check that method will return checked valid creds instance"""
+        """Check that method will return checked valid creds instance."""
         cli_credentials = mock.MagicMock()
         valid_creds = mock.MagicMock()
         enable_prompt = "#"
@@ -80,7 +80,7 @@ class TestAbstractDiscoverySession(unittest.TestCase):
 
     @mock.patch("autodiscovery.cli_sessions.base.re")
     def test_check_enable_password_set_enable_password_attr_to_none(self, re):
-        """Check that method will set enable_password attr to None if any Exception occurs in the hardware_expect"""
+        """Method should set enable_password attr to None if any Exception occurs."""
         cli_credentials = mock.MagicMock()
         valid_creds = mock.MagicMock()
         enable_prompt = "#"
@@ -101,7 +101,7 @@ class TestAbstractDiscoverySession(unittest.TestCase):
         self.assertIsNone(valid_creds.enable_password)
 
     def test_prepare_credentials_action_map_returns_callable_object(self):
-        """Check that method will return callable object"""
+        """Check that method will return callable object."""
         cli_credentials = mock.MagicMock()
         valid_creds = mock.MagicMock()
         creds_key = "creds_key"
@@ -115,7 +115,7 @@ class TestAbstractDiscoverySession(unittest.TestCase):
         self.assertTrue(callable(result))
 
     def test_prepare_credentials_action_map_1111(self):
-        """Check that method will update valid_creds object with possible credentials"""
+        """Method should update valid_creds object with possible credentials."""
         valid_creds = mock.MagicMock()
         creds_value = "creds_value"
         cli_credentials = mock.MagicMock(
@@ -136,7 +136,7 @@ class TestAbstractDiscoverySession(unittest.TestCase):
     def test_prepare_credentials_action_map_raise_exception_if_all_creds_arent_valid(
         self
     ):
-        """Check that method will raise AutoDiscoveryException if any credentials aren't valid"""
+        """Method should raise AutoDiscoveryException if credentials aren't valid."""
         valid_creds = mock.MagicMock()
         creds_key = "creds_key"
         cli_credentials = mock.MagicMock(cli_credentials=[])

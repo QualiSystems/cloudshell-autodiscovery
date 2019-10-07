@@ -3,7 +3,6 @@ import unittest
 import mock
 
 from autodiscovery.cli_sessions import TelnetDiscoverySession
-from autodiscovery.exceptions import AutoDiscoveryException
 
 
 class TestTelnetDiscoverySession(unittest.TestCase):

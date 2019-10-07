@@ -4,7 +4,7 @@ from autodiscovery.exceptions import ReportableException
 
 class RunFromReportCommand(AbstractRunCommand):
     def execute(self, additional_vendors_data):
-        """
+        """Execute command.
 
         :param list[dict] additional_vendors_data:
         :return:

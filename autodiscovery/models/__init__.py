@@ -1,2 +1,2 @@
-from input_data import *
-from vendor import *
+from input_data import *  # noqa
+from vendor import *  # noqa

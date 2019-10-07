@@ -3,10 +3,10 @@ import os
 
 
 def get_logger(file_path=None):
-    """
+    """Get logger.
 
     :param file_path:
-    :return:
+    :rtype: logging.Logger
     """
     if file_path is None:
         file_path = "autodiscovery.log"
@@ -22,7 +22,7 @@ def get_logger(file_path=None):
 
 
 def get_full_path(*args):
-    """
+    """Get full path to the file.
 
     :param args:
     :return:

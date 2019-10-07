@@ -1,5 +1,5 @@
 class ResourceModelsAttributes(object):
-    """Container for the CloudShell Resource Model Attributes names"""
+    """Container for the CloudShell Resource Model Attributes names."""
 
     ENABLE_SNMP = "Enable SNMP"
     SNMP_READ_COMMUNITY = "SNMP Read Community"
@@ -9,7 +9,7 @@ class ResourceModelsAttributes(object):
 
 
 class CloudshellAPIErrorCodes(object):
-    """Container for the CloudShell API error codes"""
+    """Container for the CloudShell API error codes."""
 
     INCORRECT_LOGIN = "100"
     INCORRECT_PASSWORD = "118"

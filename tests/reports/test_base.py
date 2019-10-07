@@ -19,7 +19,7 @@ class TestAbstractReport(unittest.TestCase):
         self.tested_instance = TestedClass()
 
     def test_add_entry(self):
-        """Check that method will add entry into the entries list and return given entry"""
+        """Method should add entry into the entries list and return given entry."""
         entry = mock.MagicMock()
         self.entry_class.return_value = entry
         # act
@@ -30,12 +30,12 @@ class TestAbstractReport(unittest.TestCase):
         self.entry_class.assert_called_once_with()
 
     def test_generate(self):
-        """Check that method will raise exception if it wasn't implemented in the child class"""
+        """Method should raise exception if it wasn't implemented in the child class."""
         with self.assertRaises(NotImplementedError):
             self.tested_instance.generate()
 
     def parse_entries_from_file(self):
-        """Check that method will raise exception if it wasn't implemented in the child class"""
+        """Method should raise exception if it wasn't implemented in the child class."""
         with self.assertRaises(NotImplementedError):
             self.tested_instance.parse_entries_from_file(report_file="report.xlsx")
 
@@ -50,12 +50,12 @@ class TestAbstractEntry(unittest.TestCase):
         )
 
     def test_enter_with_statement(self):
-        """Check that with statement will return same entry"""
+        """Check that with statement will return same entry."""
         with self.entry as entry:
             self.assertEqual(self.entry, entry)
 
     def test_exit_with_statement(self):
-        """Check that entry status will be changed to the failed one"""
+        """Check that entry status will be changed to the failed one."""
         with self.assertRaisesRegexp(Exception, "Test Exception"):
             with self.entry as entry:
                 self.assertEqual(self.entry, entry)

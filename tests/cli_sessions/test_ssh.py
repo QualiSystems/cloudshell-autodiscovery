@@ -13,7 +13,7 @@ class TestSSHDiscoverySession(unittest.TestCase):
         self.ssh_session = SSHDiscoverySession(self.device_ip)
 
     def test_check_credentials(self):
-        """Check that method will return valid creds instance"""
+        """Check that method will return valid creds instance."""
         credentials = mock.MagicMock()
         cli_credentials = mock.MagicMock(cli_credentials=[credentials])
         default_prompt = "#"
@@ -51,7 +51,7 @@ class TestSSHDiscoverySession(unittest.TestCase):
         )
 
     def test_check_credentials_no_valid_credentials(self):
-        """Check that method will raise AutoDiscoveryException if any credentials aren't valid"""
+        """Check that method will raise exception if any credentials aren't valid."""
         cli_credentials = mock.MagicMock(cli_credentials=[])
         default_prompt = "#"
         enable_prompt = "$"

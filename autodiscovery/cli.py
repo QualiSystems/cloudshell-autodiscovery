@@ -20,7 +20,7 @@ def cli():
 
 @cli.command()
 def version():
-    """Get version of the CloudShell Autodiscovery CLI tool"""
+    """Get version of the CloudShell Autodiscovery CLI tool."""
     click.echo(pkg_resources.get_distribution("cloudshell-autodiscovery").version)
 
 
@@ -28,7 +28,7 @@ def version():
 @click.option("-u", "--url", help="URL for file with private enterprise numbers")
 @click.option("-l", "--log-file", help="File name for logs")
 def update_vendor_data(url, log_file):
-    """Update file with vendor enterprise numbers data"""
+    """Update file with vendor enterprise numbers data."""
     logger = get_logger(log_file)
 
     update_vendor_data_command = commands.UpdateVendorsCommand(
@@ -49,7 +49,7 @@ def update_vendor_data(url, log_file):
     "-f", "--save-to-file", help="File to save generated user input template file"
 )
 def echo_input_template(template_format, save_to_file):
-    """Generate user input example file in the given format"""
+    """Generate user input example file in the given format."""
     echo_input_tpl_command = commands.EchoUserInputTemplateCommand()
     echo_input_tpl_command.execute(
         template_format=template_format, save_to_file=save_to_file
@@ -68,7 +68,7 @@ def echo_input_template(template_format, save_to_file):
     "-f", "--save-to-file", help="File to save generated user input template file"
 )
 def echo_vendors_config_template(template_format, save_to_file):
-    """Generate vendors configuration example file in the given format"""
+    """Generate vendors configuration example file in the given format."""
     echo_conf_tpl_command = commands.EchoVendorsConfigTemplateCommand()
     echo_conf_tpl_command.execute(
         template_format=template_format, save_to_file=save_to_file
@@ -80,7 +80,7 @@ def echo_vendors_config_template(template_format, save_to_file):
     "-f", "--save-to-file", required=True, help="File to save generated template file"
 )
 def echo_excel_report_template(save_to_file):
-    """Generate .xlsx report example file for the "run-from-report" command"""
+    """Generate .xlsx report example file for the "run-from-report" command."""
     report = discovery_reports.ExcelReport(file_name=save_to_file)
     echo_report_tpl_command = commands.EchoReportTemplateCommand(report=report)
     echo_report_tpl_command.execute()
@@ -94,7 +94,7 @@ def echo_excel_report_template(save_to_file):
     help="File to save generated user input template file",
 )
 def echo_excel_connections_template(save_to_file):
-    """Generate .xlsx report example file for the "connect-ports" command"""
+    """Generate .xlsx report example file for the "connect-ports" command."""
     report = connections_reports.ExcelReport(file_name=save_to_file)
     echo_report_tpl_command = commands.EchoConnectionsTemplateCommand(report=report)
     echo_report_tpl_command.execute()
@@ -136,7 +136,7 @@ def echo_excel_connections_template(save_to_file):
     default=True,
 )
 def run(input_file, config_file, log_file, report_file, report_type, offline, autoload):
-    """Run Auto discovery command with given arguments from the input file"""
+    """Run Auto discovery command with given arguments from the input file."""
     input_data_parser = get_input_data_parser(input_file)
     input_data_model = input_data_parser.parse(input_file)
     logger = get_logger(log_file)
@@ -200,7 +200,7 @@ def run(input_file, config_file, log_file, report_file, report_type, offline, au
     default=True,
 )
 def run_from_report(input_file, config_file, log_file, report_file, autoload):
-    """Create and autoload CloudShell resources from the generated report"""
+    """Create and autoload CloudShell resources from the generated report."""
     input_data_parser = get_input_data_parser(input_file)
     input_data_model = input_data_parser.parse(input_file)
     logger = get_logger(log_file)
@@ -274,7 +274,10 @@ def connect_ports(
     connections_report_type,
     log_file,
 ):
-    """Create connections between CloudShell Port resources based on the "Adjacent" attributes"""
+    """Create connections between CloudShell Port resources.
+
+    Command will create connections based on the "Adjacent" attributes
+    """
     input_data_parser = get_input_data_parser(input_file)
     input_data_model = input_data_parser.parse(input_file)
     logger = get_logger(log_file)
@@ -318,7 +321,7 @@ def connect_ports(
 )
 @click.option("-l", "--log-file", help="File name for logs")
 def connect_ports_from_report(input_file, connections_report_file, log_file):
-    """Create connections between CloudShell Port resources specified in the connection file"""
+    """Create connections between CloudShell Port resources."""
     input_data_parser = get_input_data_parser(input_file)
     input_data_model = input_data_parser.parse(input_file)
     logger = get_logger(log_file)

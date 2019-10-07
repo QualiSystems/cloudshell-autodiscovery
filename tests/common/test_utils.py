@@ -8,7 +8,7 @@ from autodiscovery.common.utils import get_full_path, get_logger
 class TestUtils(unittest.TestCase):
     @mock.patch("autodiscovery.common.utils.logging")
     def test_get_logger(self, logging):
-        """Check that method will return logger instance"""
+        """Check that method will return logger instance."""
         logger = mock.MagicMock()
         logging.getLogger.return_value = logger
         file_handler = mock.MagicMock()
@@ -23,7 +23,7 @@ class TestUtils(unittest.TestCase):
 
     @mock.patch("autodiscovery.common.utils.os")
     def test_get_full_path(self, os):
-        """Check that function will use given arguments to create full path to the file"""
+        """Check that function will use given arguments to create full path."""
         dir1 = "test directory1"
         dir2 = "test directory2"
         filename = "test filename"

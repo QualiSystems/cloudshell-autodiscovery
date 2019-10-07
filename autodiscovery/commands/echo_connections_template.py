@@ -1,13 +1,13 @@
 class EchoConnectionsTemplateCommand(object):
     def __init__(self, report):
-        """
+        """Init command.
 
         :param autodiscovery.reports.connections.ExcelReport report:
         """
         self.report = report
 
     def execute(self):
-        """Execute echo report file command
+        """Execute echo report file command.
 
         :return:
         """

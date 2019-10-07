@@ -6,7 +6,7 @@ class AbstractReport(object):
     FILE_EXTENSION = "*"
 
     def __init__(self, file_name=None):
-        """
+        """Init command.
 
         :param str file_name:
         """
@@ -27,7 +27,7 @@ class AbstractReport(object):
         return self._entries
 
     def add_entry(self, *args, **kwargs):
-        """Add new Entry to the Report
+        """Add new Entry to the Report.
 
         :rtype: Entry
         """
@@ -52,7 +52,7 @@ class AbstractReport(object):
         )
 
     def generate(self):
-        """Generate Report with all entries
+        """Generate Report with all entries.
 
         :return:
         """
@@ -63,7 +63,7 @@ class AbstractReport(object):
 
 class AbstractParsableReport(AbstractReport):
     def parse_entries_from_file(self, report_file):
-        """Parse all discovered devices (entries) from a given file
+        """Parse all discovered devices (entries) from a given file.
 
         :param str report_file: file path to the generated report
         :rtype: list[Entry]
@@ -80,7 +80,7 @@ class AbstractEntry(object):
     FAILED_STATUS = "Failed"
 
     def __init__(self, status=SUCCESS_STATUS, comment="", *args, **kwargs):
-        """
+        """Init command.
 
         :param status:
         :param comment:

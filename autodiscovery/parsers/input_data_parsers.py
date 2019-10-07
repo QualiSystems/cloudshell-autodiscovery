@@ -26,7 +26,7 @@ class AbstractInputDataParser(object):
     FILE_EXTENSION = "*"
 
     def _find_ips(self, start_ip, last_ip):
-        """Find all IPs in the given range
+        """Find all IPs in the given range.
 
         :param unicode start_ip: first IP address in the range
         :param unicode last_ip:  last IP address in the range
@@ -43,7 +43,7 @@ class AbstractInputDataParser(object):
         return result
 
     def _parse_devices_ips(self, devices_ips):
-        """Parse all devices IPs and IP ranges into a single list
+        """Parse all devices IPs and IP ranges into a single list.
 
         :param list[str] devices_ips:
         :rtype: list[models.DeviceIPRange]
@@ -64,7 +64,8 @@ class AbstractInputDataParser(object):
                 last_ip_octets = last_ip.split(".")
                 last_ip = first_ip_octets[: 4 - len(last_ip_octets)] + last_ip_octets
                 ip_range = self._find_ips(
-                    start_ip=unicode(first_ip), last_ip=unicode(".".join(last_ip))
+                    start_ip=unicode(first_ip),  # noqa
+                    last_ip=unicode(".".join(last_ip)),  # noqa
                 )
             else:
                 ip_range = [device_ips]
@@ -74,7 +75,7 @@ class AbstractInputDataParser(object):
         return parsed_ips
 
     def parse(self, input_file):
-        """File with the Input data for the run command
+        """File with the Input data for the run command.
 
         :param str input_file: full path to the input data file
         :rtype: models.InputDataModel
@@ -88,7 +89,7 @@ class YAMLInputDataParser(AbstractInputDataParser):
     FILE_EXTENSION = "yml"
 
     def parse(self, input_file):
-        """File with the Input data for the run command
+        """File with the Input data for the run command.
 
         :param str input_file: full path to the input data file
         :rtype: models.InputDataModel
@@ -117,7 +118,7 @@ class JSONInputDataParser(AbstractInputDataParser):
     FILE_EXTENSION = "json"
 
     def parse(self, input_file):
-        """File with the Input data for the run command
+        """File with the Input data for the run command.
 
         :param str input_file: full path to the input data file
         :rtype: models.InputDataModel

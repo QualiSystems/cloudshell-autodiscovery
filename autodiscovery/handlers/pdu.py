@@ -1,16 +1,11 @@
-from cloudshell.api.common_cloudshell_api import CloudShellAPIError
-
-from autodiscovery.common.consts import (
-    CloudshellAPIErrorCodes,
-    ResourceModelsAttributes,
-)
+from autodiscovery.common.consts import ResourceModelsAttributes
 from autodiscovery.exceptions import ReportableException
 from autodiscovery.handlers.base import AbstractHandler
 
 
 class PDUTypeHandler(AbstractHandler):
     def discover(self, entry, vendor, vendor_settings):
-        """Discover device attributes
+        """Discover device attributes.
 
         :param autodiscovery.reports.base.Entry entry:
         :param autodiscovery.models.vendor.PDUVendorDefinition vendor:
@@ -29,7 +24,7 @@ class PDUTypeHandler(AbstractHandler):
         return entry
 
     def upload(self, entry, vendor, cs_session):
-        """Upload discovered device on the CloudShell
+        """Upload discovered device on the CloudShell.
 
         :param autodiscovery.reports.base.Entry entry:
         :param autodiscovery.models.vendor.PDUVendorDefinition vendor:

@@ -5,10 +5,6 @@ from autodiscovery.reports.excel import AbstractExcelReport
 class ExcelReport(AbstractExcelReport, AbstractConnectionsReport):
     @property
     def _header_column_width_map(self):
-        """
-
-        :return:
-        """
         return {
             self.RESOURCE_NAME_HEADER: 20,
             self.SOURCE_PORT_HEADER: 40,

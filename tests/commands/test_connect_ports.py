@@ -66,7 +66,7 @@ class TestRunCommand(unittest.TestCase):
 
     @mock.patch("autodiscovery.commands.connect_ports.AttributeNameValue")
     def test_find_resource_by_sys_name(self, attribute_name_value_class):
-        """Check that method will return full name if the found resource"""
+        """Check that method will return full name if the found resource."""
         family_name = "Test Family Name"
         sys_name = "Test Sys Name"
         cs_session = mock.MagicMock(
@@ -102,7 +102,7 @@ class TestRunCommand(unittest.TestCase):
         self.assertEqual(result, cs_session.GetResourceDetails())
 
     def test_find_resource_by_sys_name_no_such_resource(self):
-        """Check that method will raise ReportableException if it fails to find resource"""
+        """Method should raise ReportableException if it fails to find resource."""
         sys_name = "Test Sys Name"
         cs_session = mock.MagicMock()
         cs_session.FindResources.return_value.Resources = []
@@ -113,7 +113,7 @@ class TestRunCommand(unittest.TestCase):
             )
 
     def test_find_resource_by_sys_name_finds_several_resources(self):
-        """Check that method will raise ReportableException if it finds several resources"""
+        """Method should raise ReportableException if it finds several resources."""
         sys_name = "Test Sys Name"
         cs_session = mock.MagicMock()
         cs_session.FindResources.return_value.Resources = [
@@ -178,10 +178,10 @@ class TestRunCommand(unittest.TestCase):
             source_port=port_name,
             target_port="",
         )
-
+        port = self.connect_ports_command._find_port_by_adjacent_name()
         cs_session.UpdatePhysicalConnection.assert_called_once_with(
             resourceAFullPath=self.report.add_entry().__enter__().source_port,
-            resourceBFullPath=self.connect_ports_command._find_port_by_adjacent_name().Name,
+            resourceBFullPath=port.Name,
         )
 
         self.report.generate.assert_called_once_with()

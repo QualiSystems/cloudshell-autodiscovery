@@ -1,12 +1,7 @@
 import unittest
 
 import mock
-from cloudshell.api.common_cloudshell_api import CloudShellAPIError
 
-from autodiscovery.common.consts import (
-    CloudshellAPIErrorCodes,
-    ResourceModelsAttributes,
-)
 from autodiscovery.handlers import NetworkingTypeHandler
 
 
@@ -18,7 +13,7 @@ class TestNetworkingTypeHandler(unittest.TestCase):
         )
 
     def test_discover(self):
-        """Check that method will return Entry with updated attributes"""
+        """Check that method will return Entry with updated attributes."""
         entry = mock.MagicMock()
         vendor_settings = mock.MagicMock()
         cli_creds = mock.MagicMock()
@@ -42,7 +37,7 @@ class TestNetworkingTypeHandler(unittest.TestCase):
         self.assertEqual(entry.model_type, model_type)
 
     def test_discover_no_cli_creds(self):
-        """Check that method will add comment to the Entry if there is no valid CLI credentials"""
+        """Check that method will add correct comment to the Entry."""
         entry = mock.MagicMock(user=None, password=None, enable_password=None)
         vendor = mock.MagicMock()
         vendor_settings = mock.MagicMock()
@@ -63,7 +58,7 @@ class TestNetworkingTypeHandler(unittest.TestCase):
         self.assertIsNone(entry.enable_password)
 
     def test_upload_2_generation_shell(self):
-        """Check that method will create CloudShell resource 2-nd generation and autoload it"""
+        """Check that method will create CloudShell resource 2-nd generation."""
         entry = mock.MagicMock()
         device_os = mock.MagicMock()
         family = mock.MagicMock()

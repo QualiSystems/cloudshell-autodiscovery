@@ -15,7 +15,7 @@ REPORT_TYPES = REPORTS_MAP.keys()
 
 
 def get_report(report_file, report_type=DEFAULT_REPORT_TYPE):
-    """Get Report object for the given type
+    """Get Report object for the given type.
 
     :param str report_file:
     :param str report_type:
@@ -27,7 +27,7 @@ def get_report(report_file, report_type=DEFAULT_REPORT_TYPE):
 
 
 def parse_report(report_file):
-    """Parse report file and it's data to the Report object based on it's file extension
+    """Parse report file and it's data to the Report object based on it's file extension.
 
     :param report_file:
     :rtype: autodiscovery.reports.base.AbstractParsableReport

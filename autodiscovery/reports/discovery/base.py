@@ -24,7 +24,7 @@ class AbstractDiscoveryReport(AbstractReport):
 
     @property
     def _header_entry_map(self):
-        """Map between header and Entry attribute name
+        """Map between header and Entry attribute name.
 
         :return:
         """
@@ -46,7 +46,7 @@ class AbstractDiscoveryReport(AbstractReport):
         )
 
     def add_entry(self, offline, **kwargs):
-        """Add new Entry for the device with given IP
+        """Add new Entry for the device with given IP.
 
         :param str ip: IP address of the discovered device
         :param str domain: domain on the CloudShell
@@ -102,7 +102,7 @@ class Entry(AbstractEntry):
         self.attributes = attributes
 
     def add_attribute(self, name, value):
-        """
+        """Add attribute.
 
         :param str name:
         :param str value:
@@ -112,7 +112,7 @@ class Entry(AbstractEntry):
 
     @property
     def formatted_attrs(self):
-        """Return formatted resource attributes
+        """Return formatted resource attributes.
 
         :rtype: str
         """
@@ -122,7 +122,7 @@ class Entry(AbstractEntry):
 
     @staticmethod
     def parse_formatted_attrs(attributes):
-        """Parse attributes from the formatted string
+        """Parse attributes from the formatted string.
 
         :rtype: list[str]
         """

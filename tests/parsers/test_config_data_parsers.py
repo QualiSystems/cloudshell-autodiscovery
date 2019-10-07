@@ -11,14 +11,14 @@ from autodiscovery.parsers.config_data_parsers import (
 
 class TestConfigDataParsers(unittest.TestCase):
     def test_get_config_data_parser(self):
-        """Check that method will return JSONConfigDataParser instance"""
+        """Check that method will return JSONConfigDataParser instance."""
         # act
         result = get_config_data_parser(file_name="test_file.json")
         # verify
         self.assertIsInstance(result, JSONConfigDataParser)
 
     def test_get_config_data_parser_invalid_file_format(self):
-        """Check that method will raise AutoDiscoveryException if provided file is in invalid format"""
+        """Method should raise exception if provided file is in invalid format."""
         with self.assertRaisesRegexp(
             AutoDiscoveryException, "Invalid Additional Config Data file format"
         ):
@@ -32,7 +32,7 @@ class TestJSONConfigDataParser(unittest.TestCase):
 
     @mock.patch("autodiscovery.parsers.config_data_parsers.open")
     @mock.patch("autodiscovery.parsers.config_data_parsers.json")
-    def test_parse(self, json_lib, open):
+    def test_parse(self, json_lib, open_):
         expected_res = mock.MagicMock()
         json_lib.load.return_value = expected_res
         # act

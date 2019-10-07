@@ -19,7 +19,7 @@ class AbstractConnectionsReport(AbstractReport):
 
     @property
     def _header_entry_map(self):
-        """Map between header and Entry attribute name
+        """Map between header and Entry attribute name.
 
         :return:
         """
@@ -36,7 +36,7 @@ class AbstractConnectionsReport(AbstractReport):
         )
 
     def add_entry(self, offline, **kwargs):
-        """
+        """Add entry to the report.
 
         :param bool offline:
         :rtype: Entry
@@ -63,7 +63,7 @@ class Entry(AbstractEntry):
         status,
         comment="",
     ):
-        """
+        """Init command.
 
         :param resource_name:
         :param source_port:

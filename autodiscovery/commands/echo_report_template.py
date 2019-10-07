@@ -3,14 +3,14 @@ from autodiscovery.common.consts import ResourceModelsAttributes
 
 class EchoReportTemplateCommand(object):
     def __init__(self, report):
-        """
+        """Init command.
 
         :param autodiscovery.reports.ExcelReport report:
         """
         self.report = report
 
     def execute(self):
-        """Execute echo report file command
+        """Execute echo report file command.
 
         :return:
         """

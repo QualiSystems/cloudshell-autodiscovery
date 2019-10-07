@@ -20,7 +20,7 @@ class TestConnectPortsFromReportCommand(unittest.TestCase):
         )
 
     def test_execute(self):
-        """Check that method will call UpdatePhysicalConnection API command"""
+        """Check that method will call UpdatePhysicalConnection API command."""
         entry_data = mock.MagicMock()
         cs_session = mock.MagicMock()
         self.cs_session_manager.get_session.return_value = cs_session
@@ -40,7 +40,7 @@ class TestConnectPortsFromReportCommand(unittest.TestCase):
         self.report.generate.assert_called_once_with()
 
     def test_execute_handles_reportable_exception(self):
-        """Check that method will handle ReportableException and will generate report"""
+        """Method should handle ReportableException and generate report."""
         entry = mock.MagicMock()
         self.cs_session_manager.get_session.side_effect = ReportableException()
         self.report.entries = [entry]
@@ -54,7 +54,7 @@ class TestConnectPortsFromReportCommand(unittest.TestCase):
         self.logger.exception.assert_called_once()
 
     def test_execute_handles_exception(self):
-        """Check that method will handle Exception and will generate report"""
+        """Method should handle Exception and generate report."""
         entry = mock.MagicMock()
         self.cs_session_manager.get_session.side_effect = Exception()
         self.report.entries = [entry]

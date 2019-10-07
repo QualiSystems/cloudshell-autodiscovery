@@ -3,7 +3,7 @@ from autodiscovery.reports.base import AbstractParsableReport
 
 
 def get_report(report_file, report_type, reports_map):
-    """Get Report object for the given type
+    """Get Report object for the given type.
 
     :param str report_file:
     :param str report_type:
@@ -15,7 +15,7 @@ def get_report(report_file, report_type, reports_map):
 
 
 def parse_report(report_file, reports):
-    """Parse report file and it's data to the Report object based on it's file extension
+    """Parse report file and it's data to the Report object based on it's file extension.
 
     :param str report_file:
     :param tuple reports:

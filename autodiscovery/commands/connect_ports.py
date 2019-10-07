@@ -10,14 +10,6 @@ PORT_FAMILY = "CS_Port"
 
 class ConnectPortsCommand(object):
     def __init__(self, cs_session_manager, report, offline, logger, output=None):
-        """
-
-        :param cs_session_manager:
-        :param report:
-        :param offline:
-        :param logger:
-        :param output:
-        """
         if output is None:
             output = EmptyOutput()
 
@@ -28,7 +20,7 @@ class ConnectPortsCommand(object):
         self.logger = logger
 
     def _get_resource_attribute_value(self, resource, attribute_name):
-        """
+        """Get resource attribute value.
 
         :param resource cloudshell.api.cloudshell_api.ResourceInfo:
         :param str attribute_name:
@@ -38,7 +30,7 @@ class ConnectPortsCommand(object):
                 return attribute.Value
 
     def _find_ports(self, resource):
-        """
+        """Find ports on the resource.
 
         :param resource:
         :return:
@@ -53,7 +45,7 @@ class ConnectPortsCommand(object):
         return ports
 
     def _find_adjacent_ports(self, resource):
-        """
+        """Find Adjacent ports.
 
         :param resource:
         :return:
@@ -69,16 +61,16 @@ class ConnectPortsCommand(object):
         return adjacent_ports
 
     def _find_resource_by_sys_name(self, cs_session, sys_name):
-        """
+        """Find resource by its system name.
 
         :param cloudshell.api.cloudshell_api.CloudShellAPISession cs_session:
         :param sys_name:
         :return:
         """
         resources = []
-        families = set(
-            [res.ResourceFamilyName for res in cs_session.GetResourceList().Resources]
-        )
+        families = {
+            res.ResourceFamilyName for res in cs_session.GetResourceList().Resources
+        }
 
         for family, sys_attr in [("", SYSTEM_NAME_PORT_ATTRIBUTE)] + [
             (family, "{}.{}".format(family, SYSTEM_NAME_PORT_ATTRIBUTE))
@@ -102,7 +94,8 @@ class ConnectPortsCommand(object):
             )
         elif len(resources) > 1:
             raise ReportableException(
-                "Found several resources: {} with the same 'System Name' attribute: '{}'".format(
+                "Found several resources: {} with the same 'System Name'"
+                " attribute: '{}'".format(
                     [resource.Name for resource in resources], sys_name
                 )
             )
@@ -110,7 +103,7 @@ class ConnectPortsCommand(object):
         return cs_session.GetResourceDetails(resources[0].FullName)
 
     def _find_port_by_adjacent_name(self, adjacent_resource, adjacent_port_name):
-        """
+        """Find port by Adjacent name.
 
         :param cloudshell.api.cloudshell_api.ResourceInfo adjacent_resource:
         :param str adjacent_port_name:
@@ -128,7 +121,7 @@ class ConnectPortsCommand(object):
         )
 
     def execute(self, resources_names, domain):
-        """
+        """Execute command.
 
         :param list[str] resources_names:
         :param str domain:
@@ -187,9 +180,8 @@ class ConnectPortsCommand(object):
 
                     except ReportableException as e:
                         self.output.send(
-                            "\t- Failed to update physical connection for the port '{}'. {}".format(
-                                port, e
-                            ),
+                            "\t- Failed to update physical connection "
+                            "for the port '{}'. {}".format(port, e),
                             error=True,
                         )
                         self.logger.exception(
@@ -198,9 +190,8 @@ class ConnectPortsCommand(object):
 
                     except Exception:
                         self.output.send(
-                            "\t- Failed to update physical connection for the port '{}' ".format(
-                                port
-                            ),
+                            "\t- Failed to update physical connection "
+                            "for the port '{}' ".format(port),
                             error=True,
                         )
                         self.logger.exception(
@@ -209,9 +200,8 @@ class ConnectPortsCommand(object):
 
             except Exception:
                 self.output.send(
-                    "Failed to update physical connections for the resource '{}'. See log for the details".format(
-                        resource_name
-                    ),
+                    "Failed to update physical connections for the resource '{}'. "
+                    "See log for the details".format(resource_name),
                     error=True,
                 )
                 self.logger.exception("Failed to update physical connections due to:")

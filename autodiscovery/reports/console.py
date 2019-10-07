@@ -10,19 +10,9 @@ class AbstractConsoleReport(AbstractReport):
 
     @property
     def _header_column_width_map(self):
-        """
-
-        :return:
-        """
         return {}
 
     def _format_column_width(self, header, attr_value):
-        """
-
-        :param header:
-        :param attr_value:
-        :return:
-        """
         if header in self._header_column_width_map:
             return "\n".join(
                 wrap(str(attr_value), self._header_column_width_map[header])
@@ -31,7 +21,7 @@ class AbstractConsoleReport(AbstractReport):
         return attr_value
 
     def generate(self):
-        """Print report for all discovered devices to the console"""
+        """Print report for all discovered devices to the console."""
         empty_row = ("",) * len(self._header)
         table_data = [self._header]
 

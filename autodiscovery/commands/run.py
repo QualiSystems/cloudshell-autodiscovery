@@ -24,7 +24,7 @@ class AbstractRunCommand(object):
         output=None,
         autoload=True,
     ):
-        """
+        """Init command.
 
         :param autodiscovery.data_processors.JsonDataProcessor data_processor:
         :param autodiscovery.reports.discovery.base.AbstractDiscoveryReport report:
@@ -68,12 +68,12 @@ class RunCommand(AbstractRunCommand):
         autoload=True,
         offline=False,
     ):
-        """
+        """Init command.
 
         :param autodiscovery.data_processors.JsonDataProcessor data_processor:
         :param autodiscovery.reports.discovery.base.AbstractDiscoveryReport report:
         :param logging.Logger logger:
-        :param autodiscovery.common.cs_session_manager.CloudShellSessionManager cs_session_manager:
+        :param autodiscovery.common.cs_session_manager.CloudShellSessionManager cs_session_manager:  # noqa
         :param autodiscovery.output.AbstractOutput output:
         :param bool autoload:
         :param bool offline:
@@ -84,7 +84,7 @@ class RunCommand(AbstractRunCommand):
         self.offline = offline
 
     def _parse_vendor_number(self, sys_obj_id):
-        """Get device vendor number from SNMPv2 mib
+        """Get device vendor number from SNMPv2 mib.
 
         :param: str sys_obj_id:
         :return: device vendor number
@@ -95,7 +95,7 @@ class RunCommand(AbstractRunCommand):
             return match_name.group("vendor")
 
     def _get_snmp_handler(self, device_ip, snmp_comunity_strings):
-        """Get SNMP Handler and valid community string for the device
+        """Get SNMP Handler and valid community string for the device.
 
         :param str device_ip:
         :param list[str] snmp_comunity_strings:
@@ -116,15 +116,14 @@ class RunCommand(AbstractRunCommand):
                 return QualiSnmp(snmp_parameters, self.logger), snmp_community
             except Exception:
                 self.logger.warning(
-                    "SNMP Community string '{}' is not valid for device with IP {}".format(
-                        snmp_community, device_ip
-                    )
+                    "SNMP Community string '{}' is not valid for "
+                    "device with IP {}".format(snmp_community, device_ip)
                 )
 
         raise ReportableException("SNMP timeout - no resource detected")
 
     def _generate_device_name(self, vendor_name):
-        """Generate name for the device model on CloudShell based on vendor name
+        """Generate name for the device model on CloudShell based on vendor name.
 
         :param str vendor_name:
         :rtype: str
@@ -133,10 +132,11 @@ class RunCommand(AbstractRunCommand):
         return "{}-{}".format(vendor_name, uuid.uuid4())
 
     def _discover_device(self, entry, snmp_comunity_strings):
-        """Discover device attributes via SNMP
+        """Discover device attributes via SNMP.
 
         :param autodiscovery.reports.base.Entry entry:
-        :param list snmp_comunity_strings: list of possible SNMP read community strings for the given devices
+        :param snmp_comunity_strings: list of possible SNMP strings
+        :type snmp_comunity_strings: list
         :rtype: autodiscovery.reports.base.Entry
         """
         snmp_handler, snmp_community = self._get_snmp_handler(
@@ -169,11 +169,14 @@ class RunCommand(AbstractRunCommand):
         vendor_settings,
         additional_vendors_data,
     ):
-        """Execute Auto-discovery command
+        """Execute Auto-discovery command.
 
-        :param list[autodiscovery.models.DeviceIPRange] devices_ips: list of devices IPs to discover
-        :param list snmp_comunity_strings: list of possible SNMP read community strings for the given devices
-        :param autodiscovery.models.vendor.VendorSettingsCollection vendor_settings: additional vendor settings
+        :param devices_ips: list of devices IPs to discover
+        :type devices_ips: list[autodiscovery.models.DeviceIPRange]
+        :param snmp_comunity_strings: list of possible SNMP strings
+        :type snmp_comunity_strings: list
+        :param vendor_settings: additional vendor settings
+        :type vendor_settings: autodiscovery.models.vendor.VendorSettingsCollection
         :param list[dict] additional_vendors_data: additional vendors configuration
         :return:
         """
@@ -206,7 +209,8 @@ class RunCommand(AbstractRunCommand):
                             ]
                         except KeyError:
                             raise ReportableException(
-                                "Invalid vendor type '{}'. Possible values are: {}".format(
+                                "Invalid vendor type '{}'. Possible values "
+                                "are: {}".format(
                                     vendor.vendor_type,
                                     self.vendor_type_handlers_map.keys(),
                                 )

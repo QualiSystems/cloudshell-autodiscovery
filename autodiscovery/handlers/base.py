@@ -11,7 +11,7 @@ from autodiscovery.exceptions import ReportableException
 
 class AbstractHandler(object):
     def __init__(self, logger, autoload):
-        """
+        """Init command.
 
         :param logging.Logger logger:
         :param bool autoload:
@@ -20,7 +20,7 @@ class AbstractHandler(object):
         self.autoload = autoload
 
     def discover(self, entry, vendor, vendor_settings):
-        """Discover device attributes
+        """Discover device attributes.
 
         :param autodiscovery.reports.base.Entry entry:
         :param autodiscovery.models.vendor.BaseVendorDefinition vendor:
@@ -32,7 +32,7 @@ class AbstractHandler(object):
         )
 
     def upload(self, entry, vendor, cs_session):
-        """Upload discovered device on the CloudShell
+        """Upload discovered device on the CloudShell.
 
         :param autodiscovery.reports.base.Entry entry:
         :param autodiscovery.models.vendor.BaseVendorDefinition vendor:
@@ -44,7 +44,7 @@ class AbstractHandler(object):
         )
 
     def _get_cli_credentials(self, vendor, vendor_settings, device_ip):
-        """
+        """Get CLI credentials.
 
         :param autodiscovery.models.VendorDefinition vendor:
         :param autodiscovery.models.VendorSettingsCollection vendor_settings:
@@ -77,7 +77,7 @@ class AbstractHandler(object):
                     return valid_creds
 
     def _add_resource_driver(self, cs_session, resource_name, driver_name):
-        """Add appropriate driver to the created CloudShell resource
+        """Add appropriate driver to the created CloudShell resource.
 
         :param cloudshell.api.cloudshell_api.CloudShellAPISession cs_session:
         :param str resource_name:
@@ -105,7 +105,7 @@ class AbstractHandler(object):
         device_ip,
         folder_path,
     ):
-        """Create Resource on CloudShell with appropriate attributes
+        """Create Resource on CloudShell with appropriate attributes.
 
         :param cloudshell.api.cloudshell_api.CloudShellAPISession cs_session:
         :param str resource_name:
@@ -153,7 +153,7 @@ class AbstractHandler(object):
         driver_name,
         attribute_prefix="",
     ):
-        """
+        """Upload resource to the CloudShell.
 
         :param cs_session:
         :param entry:
@@ -164,7 +164,8 @@ class AbstractHandler(object):
         :return:
         """
         if entry.folder_path != "":
-            # create folder before uploading resource. If folder was already created it will return successful result
+            # create folder before uploading resource. If folder
+            # was already created it will return successful result
             cs_session.CreateFolder(folderFullPath=entry.folder_path)
 
         try:

@@ -27,7 +27,7 @@ class TestVendorDefinitionCollection(unittest.TestCase):
         self.vendors_collection = VendorDefinitionCollection(vendors=self.vendors)
 
     def test_get_vendor(self):
-        """Check that method will return correct vendor from the vemdors list"""
+        """Check that method will return correct vendor from the vendors list."""
         vendor_name = "test_vendor_name"
         # act
         result = self.vendors_collection.get_vendor(vendor_name=vendor_name)
@@ -48,7 +48,7 @@ class TestBaseVendorDefinition(unittest.TestCase):
         )
 
     def test_check_vendor_name_names_are_equal(self):
-        """Check that method will check if the names are equals before checking in aliases"""
+        """Check that method will check if the names are equals."""
         self.vendor_definition.check_in_aliases = mock.MagicMock()
         # act
         result = self.vendor_definition.check_vendor_name(vendor_name=self.name)
@@ -57,7 +57,7 @@ class TestBaseVendorDefinition(unittest.TestCase):
         self.vendor_definition.check_in_aliases.assert_not_called()
 
     def test_check_vendor_name_name_is_in_aliases(self):
-        """Check that method will check name in the aliases and return True"""
+        """Check that method will check name in the aliases and return True."""
         vendor_name = "test2"
         self.vendor_definition.check_in_aliases = mock.MagicMock(return_value=True)
         # act
@@ -67,7 +67,7 @@ class TestBaseVendorDefinition(unittest.TestCase):
         self.vendor_definition.check_in_aliases.assert_called_once_with(vendor_name)
 
     def test_check_vendor_name_name_is_not_in_aliases(self):
-        """Check that method will return False if names aren't equal and name is not in the aliases"""
+        """Check that method will return False if names aren't equal."""
         vendor_name = "some vendor"
         self.vendor_definition.check_in_aliases = mock.MagicMock(return_value=False)
         # act
@@ -77,7 +77,7 @@ class TestBaseVendorDefinition(unittest.TestCase):
         self.vendor_definition.check_in_aliases.assert_called_once_with(vendor_name)
 
     def test_check_in_aliases(self):
-        """Check that method will return True if vendor name is in aliases"""
+        """Check that method will return True if vendor name is in aliases."""
         vendor_name = "test2"
         # act
         result = self.vendor_definition.check_in_aliases(vendor_name=vendor_name)
@@ -85,7 +85,7 @@ class TestBaseVendorDefinition(unittest.TestCase):
         self.assertTrue(result)
 
     def test_check_in_aliases_no(self):
-        """Check that method will return False if vendor name is not in aliases"""
+        """Check that method will return False if vendor name is not in aliases."""
         vendor_name = "test10"
         # act
         result = self.vendor_definition.check_in_aliases(vendor_name=vendor_name)
@@ -113,7 +113,7 @@ class TestNetworkingVendorDefinition(unittest.TestCase):
         )
 
     def test_get_device_os_find_os_by_aliases(self):
-        """Check that method will return OS from the list if system description matches one of the aliases"""
+        """Check that method will return OS from the list."""
         expected_os = mock.MagicMock(aliases=["Test OS"])
         system_description = "description for Test OS."
         self.vendor_definition.operation_systems = [
@@ -129,7 +129,7 @@ class TestNetworkingVendorDefinition(unittest.TestCase):
         self.assertEqual(result, expected_os)
 
     def test_get_device_os_calls_get_default_device_os(self):
-        """Check that method will call get_default_device_os method to get default OS if any alias matches"""
+        """Check that method will call get_default_device_os method."""
         expected_os = mock.MagicMock()
         self.vendor_definition.get_default_device_os = mock.MagicMock(
             return_value=expected_os
@@ -143,7 +143,7 @@ class TestNetworkingVendorDefinition(unittest.TestCase):
         self.assertEqual(result, expected_os)
 
     def test_get_default_device_os_no_default_value(self):
-        """Check that method will return None if there is no default device OS"""
+        """Check that method will return None if there is no default device OS."""
         self.vendor_definition.default_os = None
         # act
         result = self.vendor_definition.get_default_device_os()
@@ -151,7 +151,7 @@ class TestNetworkingVendorDefinition(unittest.TestCase):
         self.assertIsNone(result)
 
     def test_get_default_device(self):
-        """Check that method will return OS from the list by its default name"""
+        """Check that method will return OS from the list by its default name."""
         expected_os = mock.MagicMock()
         expected_os.name = self.vendor_definition.default_os
         self.vendor_definition.operation_systems = [
@@ -177,7 +177,7 @@ class TestOperationSystem(unittest.TestCase):
         )
 
     def test_get_device_model_type(self):
-        """Check that method will return correct device model type by its aliases"""
+        """Check that method will return correct device model type by its aliases."""
         system_description = "Test OS"
         expected_model = "expected model"
         self.operation_sys.models_map = [
@@ -196,7 +196,7 @@ class TestOperationSystem(unittest.TestCase):
         self.assertEqual(result, expected_model)
 
     def test_get_device_model_type_return_default_model_type(self):
-        """Check that method will return default model type if any alias matches"""
+        """Check that method will return default model type if any alias matches."""
         system_description = "Test OS"
         self.operation_sys.models_map = [
             {"aliases": ["some alias", "some alias2"], "model": "test model 1"}
@@ -209,7 +209,7 @@ class TestOperationSystem(unittest.TestCase):
         self.assertEqual(result, self.operation_sys.default_model)
 
     def test_get_resource_family(self):
-        """Check that method will retrieve correct resource family name from the families map"""
+        """Check that method will retrieve correct resource family name."""
         model_type = "router"
         expected_family = "router family"
         self.operation_sys.families = {model_type: {"family_name": expected_family}}
@@ -219,7 +219,7 @@ class TestOperationSystem(unittest.TestCase):
         self.assertEqual(result, expected_family)
 
     def test_get_resource_model(self):
-        """Check that method will retrieve correct resource model name from the models map"""
+        """Check that method will retrieve correct resource model name."""
         model_type = "router"
         expected_model = "router model"
         self.operation_sys.families = {model_type: {"model_name": expected_model}}
@@ -231,7 +231,7 @@ class TestOperationSystem(unittest.TestCase):
 
 class TestCLICredentials(unittest.TestCase):
     def test_equality(self):
-        """Check that instances with the same attributes will be equals"""
+        """Check that instances with the same attributes will be equals."""
         self.assertEquals(
             CLICredentials(
                 user="test user",
@@ -254,7 +254,10 @@ class TestVendorCLICredentials(unittest.TestCase):
         )
 
     def test_update_valid_creds(self):
-        """Check that method will add valid_creds to the cli_credentials list at the first place"""
+        """Check that method will update valid credentials.
+
+        It should add valid_creds to the cli_credentials list at the first place
+        """
         valid_creds = mock.MagicMock()
         # act
         self.vendor_creds.update_valid_creds(valid_creds=valid_creds)
@@ -286,7 +289,7 @@ class TestVendorSettingsCollection(unittest.TestCase):
         )
 
     def test_get_creds_by_vendor(self):
-        """Check that method will return credentials with the same vendor name"""
+        """Check that method will return credentials with the same vendor."""
         vendor = mock.MagicMock(check_vendor_name=mock.MagicMock(return_value=True))
         # act
         result = self.cli_creds.get_creds_by_vendor(vendor=vendor)
@@ -294,7 +297,7 @@ class TestVendorSettingsCollection(unittest.TestCase):
         self.assertEqual(result.name, self.vendor_name)
 
     def test_get_creds_by_vendor_default_creds(self):
-        """Check that method will return default credentials"""
+        """Check that method will return default credentials."""
         vendor = mock.MagicMock(check_vendor_name=mock.MagicMock(return_value=False))
         # act
         result = self.cli_creds.get_creds_by_vendor(vendor=vendor)

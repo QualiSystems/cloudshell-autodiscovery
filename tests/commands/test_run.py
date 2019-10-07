@@ -54,7 +54,7 @@ class TestRunCommand(unittest.TestCase):
             )
 
     def test_execute(self):
-        """Check that method will discover and upload entry"""
+        """Check that method will discover and upload entry."""
         vendor_settings = mock.MagicMock()
         ip = "10.10.10.10"
         snmp_community = "snmp community string"
@@ -96,7 +96,7 @@ class TestRunCommand(unittest.TestCase):
         )
 
     def test_execute_handles_exception(self):
-        """Check that method will handle Exception and will generate report"""
+        """Check that method will handle Exception and will generate report."""
         vendor_settings = mock.MagicMock()
         ip = "10.10.10.10"
         snmp_community = "snmp community string"
@@ -118,7 +118,7 @@ class TestRunCommand(unittest.TestCase):
         self.logger.exception.assert_called_once()
 
     def test_execute_handles_reportable_exception(self):
-        """Check that method will handle ReportableException and will generate report"""
+        """Method should handle ReportableException and will generate report."""
         vendor_settings = mock.MagicMock()
         ip = "10.10.10.10"
         snmp_community = "snmp community string"

@@ -7,7 +7,7 @@ class AbstractCSVReport(AbstractParsableReport):
     FILE_EXTENSION = "csv"
 
     def generate(self):
-        """Save report for all discovered devices into the CSV file"""
+        """Save report for all discovered devices into the CSV file."""
         with open(self.file_name, "w") as report_file:
             writer = csv.DictWriter(report_file, fieldnames=self._header)
             writer.writeheader()
@@ -21,7 +21,7 @@ class AbstractCSVReport(AbstractParsableReport):
                 writer.writerow(entry_row)
 
     def parse_entries_from_file(self, report_file):
-        """
+        """Parse entries from file.
 
         :param str report_file: path to the report file
         :rtype: list[Entry]

@@ -7,7 +7,7 @@ from autodiscovery.exceptions import AutoDiscoveryException
 
 class CloudShellSessionManager(object):
     def __init__(self, cs_ip, cs_user, cs_password, logger):
-        """
+        """Init command.
 
         :param str cs_ip:
         :param str cs_user:
@@ -21,7 +21,7 @@ class CloudShellSessionManager(object):
         self._cs_sessions = {}
 
     def _init_cs_session(self, cs_domain):
-        """Initialize CloudShell session
+        """Initialize CloudShell session.
 
         :param str cs_domain:
         :rtype: CloudShellAPISession
@@ -48,7 +48,7 @@ class CloudShellSessionManager(object):
         return cs_session
 
     def get_session(self, cs_domain):
-        """
+        """Get session.
 
         :param str cs_domain: CloudShell Domain
         :return:

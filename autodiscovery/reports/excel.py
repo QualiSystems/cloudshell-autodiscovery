@@ -10,7 +10,7 @@ class AbstractExcelReport(AbstractParsableReport):
     FILE_EXTENSION = "xlsx"
 
     def _prepare_column(self, start_column, end_column=None):
-        """
+        """Prepare column name.
 
         :param str start_column:
         :param str end_column:
@@ -23,22 +23,14 @@ class AbstractExcelReport(AbstractParsableReport):
 
     @property
     def _header_with_column(self):
-        """
-
-        :return:
-        """
         return zip(self._header, string.ascii_uppercase)
 
     @property
     def _header_column_width_map(self):
-        """
-
-        :return:
-        """
         return {}
 
     def _format_columns_width(self, worksheet):
-        """
+        """Format columns width.
 
         :param worksheet:
         :return:
@@ -50,7 +42,7 @@ class AbstractExcelReport(AbstractParsableReport):
                 )
 
     def _get_cell_value(self, wb_sheet, column, row):
-        """
+        """Get cell value.
 
         :param wb_sheet:
         :param column:
@@ -61,7 +53,7 @@ class AbstractExcelReport(AbstractParsableReport):
         return cell.value or ""
 
     def parse_entries_from_file(self, report_file):
-        """
+        """Parse entries from file.
 
         :param str report_file: path to the report file
         :rtype: list[Entry]
@@ -69,7 +61,7 @@ class AbstractExcelReport(AbstractParsableReport):
         wb = load_workbook(report_file)
         wb_sheet = wb.active
 
-        for row_num in xrange(2, wb_sheet.max_row + 1):  # first row is a header
+        for row_num in xrange(2, wb_sheet.max_row + 1):  # first row is a header  # noqa
             entry_attrs = {}
             for header, column in self._header_with_column:
                 entry_attr = self._header_entry_map[header]
@@ -81,7 +73,7 @@ class AbstractExcelReport(AbstractParsableReport):
             self._entries.append(entry)
 
     def generate(self):
-        """Save report for all discovered devices into the excel file"""
+        """Save report for all discovered devices into the excel file."""
         # todo(A.Piddubny): use one library to read/write xlsx files - openpyxl
         workbook = xlsxwriter.Workbook(self.file_name)
         worksheet = workbook.add_worksheet()

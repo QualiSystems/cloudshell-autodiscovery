@@ -3,7 +3,6 @@ import unittest
 import mock
 
 from autodiscovery.commands import RunFromReportCommand
-from autodiscovery.exceptions import ReportableException
 
 
 class TestRunFromReportCommand(unittest.TestCase):
@@ -23,7 +22,7 @@ class TestRunFromReportCommand(unittest.TestCase):
         )
 
     def test_execute(self):
-        """Check that method will upload discovered device"""
+        """Check that method will upload discovered device."""
         entry = mock.MagicMock()
         handler = mock.MagicMock()
         self.run_command.vendor_type_handlers_map = mock.MagicMock(
@@ -45,7 +44,7 @@ class TestRunFromReportCommand(unittest.TestCase):
         self.report.generate.assert_called_once_with()
 
     def test_execute_handles_exception(self):
-        """Check that method will handle Exception and will generate report"""
+        """Check that method will handle Exception and will generate report."""
         entry = mock.MagicMock()
         handler = mock.MagicMock()
         self.run_command.vendor_type_handlers_map = mock.MagicMock(

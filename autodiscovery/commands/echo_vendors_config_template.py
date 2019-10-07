@@ -6,7 +6,7 @@ from autodiscovery.common import utils
 
 class EchoVendorsConfigTemplateCommand(object):
     def execute(self, template_format, save_to_file=None):
-        """Execute echo user input file command
+        """Execute echo user input file command.
 
         :param str template_format: format of the template file (json)
         :param str save_to_file: file name to save generated template in

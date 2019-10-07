@@ -4,7 +4,7 @@ from autodiscovery.output import EmptyOutput
 
 class ConnectPortsFromReportCommand(object):
     def __init__(self, cs_session_manager, report, logger, output=None):
-        """
+        """Init command.
 
         :param cs_session_manager:
         :param report:
@@ -20,7 +20,7 @@ class ConnectPortsFromReportCommand(object):
         self.logger = logger
 
     def execute(self):
-        """
+        """Execute command.
 
         :return:
         """
@@ -37,8 +37,8 @@ class ConnectPortsFromReportCommand(object):
 
                     if not all([entry.source_port, entry.target_port]):
                         raise ReportableException(
-                            "'Source Port Full Name' and 'Target Port Full Name' fields "
-                            "cannot be empty"
+                            "'Source Port Full Name' and 'Target Port Full Name' "
+                            "fields cannot be empty"
                         )
 
                     entry.status = entry.SUCCESS_STATUS
@@ -70,8 +70,11 @@ class ConnectPortsFromReportCommand(object):
                 self.logger.exception("Failed to connect ports due to:")
 
             else:
-                msg = "Connection between port '{}' and port '{}' was successfully processed".format(
-                    entry.source_port, entry.target_port
+                msg = (
+                    "Connection between port '{}' and port '{}'"
+                    " was successfully processed".format(
+                        entry.source_port, entry.target_port
+                    )
                 )
 
                 self.output.send(msg)

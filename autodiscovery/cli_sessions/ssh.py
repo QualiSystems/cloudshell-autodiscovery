@@ -15,9 +15,10 @@ class SSHDiscoverySession(SSHSession, AbstractDiscoverySession):
         self._handler.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
     def check_credentials(self, cli_credentials, default_prompt, enable_prompt, logger):
-        """Connect to device through SSH
+        """Connect to device through SSH.
 
-        :param autodiscovery.models.VendorCLICredentials cli_credentials: list of possible CLI credentials
+        :param cli_credentials: list of possible CLI credentials
+        :type cli_credentials: autodiscovery.models.VendorCLICredentials
         :param str default_prompt: prompt for the "default" mode
         :param str enable_prompt: prompt for the "enable" mode
         :param logging.Logger logger:
@@ -60,7 +61,8 @@ class SSHDiscoverySession(SSHSession, AbstractDiscoverySession):
 
             except paramiko.AuthenticationException:
                 logger.warning(
-                    "Credentials {}/{} aren't valid for the device {} for SSH connection".format(
+                    "Credentials {}/{} aren't valid for the device {} "
+                    "for SSH connection".format(
                         credentials.user, credentials.password, self.host
                     )
                 )
@@ -68,7 +70,6 @@ class SSHDiscoverySession(SSHSession, AbstractDiscoverySession):
                 self._handler.close()
 
         raise AutoDiscoveryException(
-            "All given credentials aren't valid for the device {} for SSH connection".format(
-                self.host
-            )
+            "All given credentials aren't valid for the device {} "
+            "for SSH connection".format(self.host)
         )

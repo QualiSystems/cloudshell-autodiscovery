@@ -6,23 +6,23 @@ from autodiscovery.common import utils
 
 class JsonDataProcessor(object):
     def __init__(self, logger):
-        """
+        """Init command.
 
         :param logging.Logger logger:
         """
         self.logger = logger
 
     def _prepare_file_path(self, filename):
-        """Add full path to the filename
+        """Add full path to the filename.
 
         :param str filename: Name of the file to save ("example.json")
-        :return: Full path to the file ("/var/projects/cloudshell-autodiscovery-tool/example.json")
+        :return: Full path to the file ("/../cloudshell-autodiscovery/example.json")
         :rtype: str
         """
         return utils.get_full_path(config.DATA_FOLDER, filename)
 
     def _save(self, data, filename):
-        """Save JSON Data to the given file
+        """Save JSON Data to the given file.
 
         :param dict data: JSON data that will be saved to the file
         :param str filename: Name of the file to save ("example.com")
@@ -34,7 +34,7 @@ class JsonDataProcessor(object):
             json.dump(data, outfile, indent=4, sort_keys=True)
 
     def _load(self, filename):
-        """Load JSON Data from file
+        """Load JSON Data from file.
 
         :param str filename: Name of the file to save ("example.com")
         :return: JSON data
@@ -45,7 +45,7 @@ class JsonDataProcessor(object):
             return json.load(outfile)
 
     def save_vendor_enterprise_numbers(self, data):
-        """Save Vendors PEN to the file in JSON format
+        """Save Vendors PEN to the file in JSON format.
 
         :param dict data: JSON data that will be saved to the file
         :return:
@@ -53,7 +53,7 @@ class JsonDataProcessor(object):
         return self._save(data=data, filename=config.VENDOR_ENTERPRISE_NUMBERS_FILE)
 
     def load_vendor_enterprise_numbers(self):
-        """Load Vendors PEN data from the file
+        """Load Vendors PEN data from the file.
 
         :return: JSON data
         :rtype: dict
@@ -61,7 +61,7 @@ class JsonDataProcessor(object):
         return self._load(filename=config.VENDOR_ENTERPRISE_NUMBERS_FILE)
 
     def _merge_vendors_data(self, conf_data, additional_data):
-        """Merge default vendors configuration with additional one
+        """Merge default vendors configuration with additional one.
 
         :param list[dict] conf_data: default vendors config data
         :param list[dict] additional_data: additional vendors config data
@@ -88,7 +88,7 @@ class JsonDataProcessor(object):
         return merged_data
 
     def load_vendor_config(self, additional_vendors_data=None):
-        """Load Vendors definitions from JSON file into the corresponding models
+        """Load Vendors definitions from JSON file into the corresponding models.
 
         :rtype: models.VendorDefinitionCollection
         """
@@ -134,9 +134,8 @@ class JsonDataProcessor(object):
                 )
             else:
                 self.logger.warning(
-                    "Unable to parse vendor '{}'. Vendor type '{}' is not supported".format(
-                        vendor_data["name"], vendor_data["type"]
-                    )
+                    "Unable to parse vendor '{}'. Vendor type '{}'"
+                    " is not supported".format(vendor_data["name"], vendor_data["type"])
                 )
                 continue
 

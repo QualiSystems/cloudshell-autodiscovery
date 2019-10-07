@@ -20,12 +20,12 @@ class TestConsoleReport(unittest.TestCase):
 
     @mock.patch("autodiscovery.reports.console.AsciiTable")
     @mock.patch("autodiscovery.reports.console.open")
-    def test_generate(self, open, ascii_table_class):
-        """Check that method will write table data to the report file"""
+    def test_generate(self, open_, ascii_table_class):
+        """Check that method will write table data to the report file."""
         report_file = mock.MagicMock()
         table = mock.MagicMock()
         ascii_table_class.return_value = table
-        open.return_value = mock.MagicMock(
+        open_.return_value = mock.MagicMock(
             __enter__=mock.MagicMock(return_value=report_file)
         )
         # act

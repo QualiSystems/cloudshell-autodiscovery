@@ -18,7 +18,7 @@ class TestAbstractHandler(unittest.TestCase):
         self.tested_instance = TestedClass(logger=self.logger, autoload=True)
 
     def test_discover_method_raises_exception_if_it_was_not_implemented(self):
-        """Check that method will raise exception if it wasn't implemented in the child class"""
+        """Method should raise exception if it wasn't implemented in the child class."""
         with self.assertRaises(NotImplementedError):
             self.tested_instance.discover(
                 entry=mock.MagicMock(),
@@ -27,7 +27,7 @@ class TestAbstractHandler(unittest.TestCase):
             )
 
     def test_upload_method_raises_exception_if_it_was_not_implemented(self):
-        """Check that method will raise exception if it wasn't implemented in the child class"""
+        """Method should raise exception if it wasn't implemented in the child class."""
         with self.assertRaises(NotImplementedError):
             self.tested_instance.upload(
                 entry=mock.MagicMock(),
@@ -36,7 +36,7 @@ class TestAbstractHandler(unittest.TestCase):
             )
 
     def test_add_resource_driver(self):
-        """Check that method will call UpdateResourceDriver method on the CloudShell session instance"""
+        """Method should call UpdateResourceDriver on the CloudShell session."""
         resource_name = "test resource name"
         driver_name = "test driver name"
         # act
@@ -51,7 +51,7 @@ class TestAbstractHandler(unittest.TestCase):
         )
 
     def test_add_resource_driver_raises_reportable_exception(self):
-        """Check that method will raise ReportableException if there is no given driver on the CloudShell"""
+        """Method should raise exception if there is no driver on the CloudShell."""
         resource_name = "test resource name"
         driver_name = "test driver name"
         self.cs_session.UpdateResourceDriver.side_effect = CloudShellAPIError(
@@ -70,11 +70,10 @@ class TestAbstractHandler(unittest.TestCase):
     def test_create_cs_resource(
         self, resource_attributes_update_request_class, attribute_name_value_class
     ):
-        """Check that method will call create resource on the CloudShell and return resource name"""
+        """Method should call create resource on the CloudShell."""
         resource_name = "test resource name"
         resource_family = "test resource family"
         resource_model = "test resource model"
-        driver_name = "test driver name"
         device_ip = "test device IP"
         folder_path = "test folder path"
         resource_attributes = mock.MagicMock()
@@ -102,7 +101,7 @@ class TestAbstractHandler(unittest.TestCase):
         )
 
     def test_create_cs_resource_resource_name_is_taken(self):
-        """Check that method will try to create resource one more time if given resource name is already taken"""
+        """Method should create resource one more time if res name is already taken."""
         resource_name = "test resource name"
         resource_family = "test resource family"
         resource_model = "test resource model"
@@ -149,7 +148,7 @@ class TestAbstractHandler(unittest.TestCase):
     @mock.patch("autodiscovery.handlers.base.SSHDiscoverySession")
     @mock.patch("autodiscovery.handlers.base.TelnetDiscoverySession")
     def test_get_cli_credentials(self, telnet_session_class, ssh_session_class):
-        """Check that method will create valid credentials for first working session"""
+        """Method should create valid credentials for first working session."""
         vendor = mock.MagicMock()
         vendor_cli_creds = mock.MagicMock()
         vendor_settings = mock.MagicMock(
@@ -185,7 +184,7 @@ class TestAbstractHandler(unittest.TestCase):
     def test_get_cli_credentials_handles_exception(
         self, telnet_session_class, ssh_session_class
     ):
-        """Check that method will try another session if first one will raise Exception"""
+        """Method should try another session if first one will raise Exception."""
         vendor = mock.MagicMock()
         vendor_cli_creds = mock.MagicMock()
         vendor_settings = mock.MagicMock(

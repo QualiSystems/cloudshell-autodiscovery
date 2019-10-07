@@ -24,7 +24,7 @@ class TestJsonDataProcessor(unittest.TestCase):
 
     @mock.patch("autodiscovery.data_processors.json")
     @mock.patch("autodiscovery.data_processors.open")
-    def test_save(self, open, json):
+    def test_save(self, open_, json):
         data = mock.MagicMock()
         file_path = mock.MagicMock()
         self.json_data_processor._prepare_file_path = mock.MagicMock(
@@ -36,14 +36,14 @@ class TestJsonDataProcessor(unittest.TestCase):
         self.json_data_processor._prepare_file_path.assert_called_once_with(
             self.filename
         )
-        open.assert_called_once_with(file_path, "w")
+        open_.assert_called_once_with(file_path, "w")
         json.dump.assert_called_once_with(
-            data, open().__enter__(), indent=4, sort_keys=True
+            data, open_().__enter__(), indent=4, sort_keys=True
         )
 
     @mock.patch("autodiscovery.data_processors.json")
     @mock.patch("autodiscovery.data_processors.open")
-    def test_load(self, open, json):
+    def test_load(self, open_, json):
         file_path = mock.MagicMock()
         data = mock.MagicMock()
         json.load.return_value = data
@@ -57,8 +57,8 @@ class TestJsonDataProcessor(unittest.TestCase):
         self.json_data_processor._prepare_file_path.assert_called_once_with(
             self.filename
         )
-        open.assert_called_once_with(file_path, "r")
-        json.load.assert_called_once_with(open().__enter__())
+        open_.assert_called_once_with(file_path, "r")
+        json.load.assert_called_once_with(open_().__enter__())
 
     @mock.patch("autodiscovery.data_processors.config")
     def test_save_vendor_enterprise_numbers(self, config):
@@ -73,7 +73,7 @@ class TestJsonDataProcessor(unittest.TestCase):
 
     @mock.patch("autodiscovery.data_processors.config")
     def test_load_vendor_enterprise_numbers(self, config):
-        """Check that method will properly merge initial vendors config with the additional one"""
+        """Method should merge initial vendors config with the additional one."""
         data = mock.MagicMock()
         self.json_data_processor._load = mock.MagicMock(return_value=data)
         # act
@@ -85,7 +85,7 @@ class TestJsonDataProcessor(unittest.TestCase):
         )
 
     def test_merge_vendors_data(self):
-        """Check that method will properly merge initial vendors config with the additional one"""
+        """Method should merge initial vendors config with the additional one."""
         conf_data = [
             {
                 "name": "Cisco",
@@ -151,7 +151,7 @@ class TestJsonDataProcessor(unittest.TestCase):
     @mock.patch("autodiscovery.data_processors.config")
     @mock.patch("autodiscovery.data_processors.models")
     def test_load_vendor_config(self, models, config):
-        """Check that method will return VendorDefinitionCollection model"""
+        """Check that method will return VendorDefinitionCollection model."""
         vendors_collection = mock.MagicMock()
         models.VendorDefinitionCollection.return_value = vendors_collection
         additional_vendors_data = mock.MagicMock()

@@ -3,14 +3,14 @@ import re
 
 class VendorDefinitionCollection(object):
     def __init__(self, vendors):
-        """
+        """Init command.
 
         :param list[VendorDefinition] vendors:
         """
         self._vendors = vendors
 
     def get_vendor(self, vendor_name):
-        """Find vendor by it name/aliases
+        """Find vendor by it name/aliases.
 
         :param str vendor_name: vendor name from the PEN data file
         :rtype: VendorDefinition
@@ -24,7 +24,7 @@ class BaseVendorDefinition(object):
     def __init__(
         self, name, aliases, vendor_type, default_prompt, enable_prompt, *args, **kwargs
     ):
-        """
+        """Init command.
 
         :param str name:
         :param list aliases:
@@ -39,7 +39,7 @@ class BaseVendorDefinition(object):
         self.enable_prompt = enable_prompt
 
     def check_in_aliases(self, vendor_name):
-        """Check in given vendor name is in aliases for current Vendor
+        """Check in given vendor name is in aliases for current Vendor.
 
         :param str vendor_name: vendor name from the PEN data file
         :rtype: bool
@@ -48,7 +48,7 @@ class BaseVendorDefinition(object):
         return bool(re.search(aliases_regexp, vendor_name, flags=re.DOTALL))
 
     def check_vendor_name(self, vendor_name):
-        """Check if given name is a name for the Vendor
+        """Check if given name is a name for the Vendor.
 
         :param str vendor_name: vendor name from the PEN data file
         :rtype: bool
@@ -69,7 +69,7 @@ class NetworkingVendorDefinition(BaseVendorDefinition):
         default_os,
         operation_systems,
     ):
-        """
+        """Init command.
 
         :param str name:
         :param list aliases:
@@ -86,9 +86,10 @@ class NetworkingVendorDefinition(BaseVendorDefinition):
         self.operation_systems = operation_systems
 
     def get_device_os(self, system_description):
-        """Find device Operation System by its system description
+        """Find device Operation System by its system description.
 
-        :param str system_description: device system description from SNMPv2-MIB.sysDescr
+        :param system_description: device system description from SNMPv2-MIB.sysDescr
+        :type system_description: str
         :rtype: OperationSystem
         """
         for os in self.operation_systems:
@@ -100,7 +101,7 @@ class NetworkingVendorDefinition(BaseVendorDefinition):
         return self.get_default_device_os()
 
     def get_default_device_os(self):
-        """Get default Operation System for Vendor
+        """Get default Operation System for Vendor.
 
         :rtype: OperationSystem
         """
@@ -124,7 +125,7 @@ class PDUVendorDefinition(BaseVendorDefinition):
         model_name,
         driver_name,
     ):
-        """
+        """Init command.
 
         :param str name:
         :param list aliases:
@@ -145,7 +146,7 @@ class PDUVendorDefinition(BaseVendorDefinition):
 
 class OperationSystem(object):
     def __init__(self, name, aliases, default_model, models_map, families):
-        """
+        """Init command.
 
         :param str name:
         :param list aliases:
@@ -160,9 +161,10 @@ class OperationSystem(object):
         self.families = families
 
     def get_device_model_type(self, system_description):
-        """Find device model (switch, router, etc.) by device system description
+        """Find device model (switch, router, etc.) by device sys description.
 
-        :param str system_description: device system description from SNMPv2-MIB.sysDescr
+        :param system_description: device system description from SNMPv2-MIB.sysDescr
+        :type system_description: str
         :return:
         """
         for model_map in self.models_map:
@@ -173,7 +175,7 @@ class OperationSystem(object):
         return self.default_model
 
     def get_resource_family(self, model_type):
-        """Get Resource Family for the given model type
+        """Get Resource Family for the given model type.
 
         :param str model_type:
         :rtype: str
@@ -181,7 +183,7 @@ class OperationSystem(object):
         return self.families[model_type]["family_name"]
 
     def get_resource_model(self, model_type):
-        """Get Resource Model for the given model type
+        """Get Resource Model for the given model type.
 
         :param str model_type:
         :rtype: str

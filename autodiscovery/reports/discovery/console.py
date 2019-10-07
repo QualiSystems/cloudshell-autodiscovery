@@ -8,8 +8,4 @@ class ConsoleReport(AbstractConsoleReport, AbstractDiscoveryReport):
 
     @property
     def _header_column_width_map(self):
-        """
-
-        :return:
-        """
         return {self.COMMENT_HEADER: 40, self.DESCRIPTION_HEADER: 60}

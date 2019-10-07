@@ -13,21 +13,21 @@ from autodiscovery.parsers.input_data_parsers import (
 
 class TestInputDataParsers(unittest.TestCase):
     def test_get_input_data_parser_for_json_format(self):
-        """Check that method will return JSONInputDataParser instance"""
+        """Check that method will return JSONInputDataParser instance."""
         # act
         result = get_input_data_parser(file_name="test_file.json")
         # verify
         self.assertIsInstance(result, JSONInputDataParser)
 
     def test_get_input_data_parser_for_yaml_format(self):
-        """Check that method will return YAMLInputDataParser instance"""
+        """Check that method will return YAMLInputDataParser instance."""
         # act
         result = get_input_data_parser(file_name="test_file.yml")
         # verify
         self.assertIsInstance(result, YAMLInputDataParser)
 
     def test_get_input_data_parser_invalid_file_format(self):
-        """Check that method will raise AutoDiscoveryException if provided file is in invalid format"""
+        """Method should raise AutoDiscoveryException if file is in invalid format."""
         with self.assertRaisesRegexp(
             AutoDiscoveryException, "Invalid Input Data file format"
         ):
@@ -43,7 +43,7 @@ class TestAbstractInputDataParser(unittest.TestCase):
         self.input_file = mock.MagicMock()
 
     def test_find_ips(self):
-        """Check that method will return range of IPs between start IP and last IP"""
+        """Check that method will return range of IPs between start IP and last IP."""
         expected_res = ["10.0.0.1", "10.0.0.2", "10.0.0.3", "10.0.0.4"]
         # act
         result = self.tested_instance._find_ips(
@@ -54,7 +54,7 @@ class TestAbstractInputDataParser(unittest.TestCase):
 
     @mock.patch("autodiscovery.parsers.input_data_parsers.models.DeviceIPRange")
     def test_parse_devices_ips(self, device_ip_range_class):
-        """Check that method will return list of DeviceIPRange models"""
+        """Check that method will return list of DeviceIPRange models."""
         first_parsed_ips = mock.MagicMock()
         second_parsed_ips = mock.MagicMock()
         self.tested_instance._find_ips = mock.MagicMock(
@@ -88,7 +88,7 @@ class TestAbstractInputDataParser(unittest.TestCase):
         )
 
     def test_parse_method_raises_exception_if_it_was_not_implemented(self):
-        """Check that method will raise exception if it wasn't implemented in the child class"""
+        """Method should raise exception if it wasn't implemented."""
         with self.assertRaises(NotImplementedError):
             self.tested_instance.parse(input_file=self.input_file)
 
@@ -101,8 +101,8 @@ class TestYAMLInputDataParser(unittest.TestCase):
     @mock.patch("autodiscovery.parsers.input_data_parsers.open")
     @mock.patch("autodiscovery.parsers.input_data_parsers.yaml")
     @mock.patch("autodiscovery.parsers.input_data_parsers.models.InputDataModel")
-    def test_parse(self, input_data_model_class, yaml, open):
-        """Check that method returns InputDataModel instance"""
+    def test_parse(self, input_data_model_class, yaml, open_):
+        """Check that method returns InputDataModel instance."""
         expected_res = mock.MagicMock()
         input_data_model_class.return_value = expected_res
         self.input_parser._parse_devices_ips = mock.MagicMock()
@@ -122,8 +122,8 @@ class TestJSONInputDataParser(unittest.TestCase):
     @mock.patch("autodiscovery.parsers.input_data_parsers.open")
     @mock.patch("autodiscovery.parsers.input_data_parsers.json")
     @mock.patch("autodiscovery.parsers.input_data_parsers.models.InputDataModel")
-    def test_parse(self, input_data_model_class, json, open):
-        """Check that method returns InputDataModel instance"""
+    def test_parse(self, input_data_model_class, json, open_):
+        """Check that method returns InputDataModel instance."""
         expected_res = mock.MagicMock()
         input_data_model_class.return_value = expected_res
         self.input_parser._parse_devices_ips = mock.MagicMock()

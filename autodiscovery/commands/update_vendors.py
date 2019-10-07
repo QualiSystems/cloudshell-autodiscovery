@@ -5,7 +5,7 @@ from autodiscovery import config
 
 class UpdateVendorsCommand(object):
     def __init__(self, data_processor, logger):
-        """
+        """Init command.
 
         :param autodiscovery.data_processors.JsonDataProcessor data_processor:
         :param logging.Logger logger:
@@ -14,7 +14,7 @@ class UpdateVendorsCommand(object):
         self.logger = logger
 
     def _parse_vendor_numbers(self, data_string):
-        """Parse vendor PEN into dict
+        """Parse vendor PEN into dict.
 
         :return: dictionary {"vendpor PEN": "vendor name"}
         :rtype: dict
@@ -24,7 +24,8 @@ class UpdateVendorsCommand(object):
 
         for i, line in enumerate(resp_lines):
             try:
-                # if line can be parsed to integer and it doesn't contain spaces - it's the enterprise number
+                # if line can be parsed to integer and it doesn't contain
+                # spaces - it's the enterprise number
                 if " " in line:
                     continue
                 int(line)
@@ -37,7 +38,7 @@ class UpdateVendorsCommand(object):
         return res_dict
 
     def execute(self, url=None):
-        """Execute Update vendors command
+        """Execute Update vendors command.
 
         :param str url: URL for the vendor private enterprise numbers
         :return:

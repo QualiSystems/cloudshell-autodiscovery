@@ -15,9 +15,10 @@ class TelnetDiscoverySession(TelnetSession, AbstractDiscoverySession):
         self._handler = telnetlib.Telnet()
 
     def check_credentials(self, cli_credentials, default_prompt, enable_prompt, logger):
-        """Connect to device through telnet
+        """Connect to device through telnet.
 
-        :param autodiscovery.models.VendorCLICredentials cli_credentials: list of possible CLI credentials
+        :param cli_credentials: list of possible CLI credentials
+        :type cli_credentials: autodiscovery.models.VendorCLICredentials
         :param str default_prompt: prompt for the "default" mode
         :param str enable_prompt: prompt for the "enable" mode
         :param logging.Logger logger:

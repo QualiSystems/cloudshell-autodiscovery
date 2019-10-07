@@ -1,12 +1,7 @@
 import unittest
 
 import mock
-from cloudshell.api.common_cloudshell_api import CloudShellAPIError
 
-from autodiscovery.common.consts import (
-    CloudshellAPIErrorCodes,
-    ResourceModelsAttributes,
-)
 from autodiscovery.handlers import PDUTypeHandler
 
 
@@ -16,7 +11,7 @@ class TestPDUTypeHandler(unittest.TestCase):
         self.pdu_handler = PDUTypeHandler(logger=self.logger, autoload=True)
 
     def test_discover(self):
-        """Check that method will return Entry with updated attributes"""
+        """Check that method will return Entry with updated attributes."""
         entry = mock.MagicMock()
         vendor_settings = mock.MagicMock()
         cli_creds = mock.MagicMock()
@@ -32,7 +27,7 @@ class TestPDUTypeHandler(unittest.TestCase):
         self.assertEqual(result, entry)
 
     def test_discover_no_cli_creds(self):
-        """Check that method will add comment to the Entry if there is no valid CLI credentials"""
+        """Check that comment will be added to the Entry."""
         entry = mock.MagicMock(user=None, password=None)
         vendor = mock.MagicMock()
         vendor_settings = mock.MagicMock()
@@ -50,7 +45,7 @@ class TestPDUTypeHandler(unittest.TestCase):
         self.assertIsNone(entry.password)
 
     def test_upload(self):
-        """Check that method will create CloudShell resource and autoload it"""
+        """Check that method will create CloudShell resource and autoload it."""
         entry = mock.MagicMock()
         vendor = mock.MagicMock()
         cs_session = mock.MagicMock()

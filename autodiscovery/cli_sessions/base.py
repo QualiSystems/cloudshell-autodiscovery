@@ -10,9 +10,10 @@ class AbstractDiscoverySession(ExpectSession):
     ENABLE_MODE_COMMAND = "enable"
 
     def check_credentials(self, cli_credentials, default_prompt, enable_prompt, logger):
-        """Connect to the device and check possible credentials
+        """Connect to the device and check possible credentials.
 
-        :param autodiscovery.models.VendorCLICredentials cli_credentials: list of possible CLI credentials
+        :param cli_credentials: list of possible CLI credentials
+        :type cli_credentials: autodiscovery.models.VendorCLICredentials
         :param str default_prompt: expected string in output
         :param str enable_prompt: expected string in output for Enable mode
         :param logging.Logger logger:
@@ -26,11 +27,13 @@ class AbstractDiscoverySession(ExpectSession):
     def _check_enable_password(
         self, enable_prompt, cli_credentials, valid_creds, output_str, logger
     ):
-        """Check password for the "enable" mode
+        """Check password for the "enable" mode.
 
         :param str enable_prompt: prompt for the "enable" mode
-        :param autodiscovery.models.VendorCLICredentials cli_credentials: list of possible CLI credentials
-        :param autodiscovery.models.CLICredentials valid_creds: credentials with a valid user/password
+        :type cli_credentials: autodiscovery.models.VendorCLICredentials
+        :param cli_credentials: list of possible CLI credentials
+        :param valid_creds: credentials with a valid user/password
+        :type valid_creds: autodiscovery.models.CLICredentials
         :param str output_str: last output from the Device CLI
         :param logging.Logger logger:
         :return object with valid user and password for the given device
@@ -64,11 +67,14 @@ class AbstractDiscoverySession(ExpectSession):
 
     @staticmethod
     def prepare_credentials_action_map(cli_credentials, valid_creds, creds_key=""):
-        """Send user/password/enable_password from credentials list and add valid one to the valid_creds object
+        """Add valid user/password/enable_password to the valid_creds object.
 
-        :param autodiscovery.models.VendorCLICredentials cli_credentials: list of possible CLI credentials
-        :param autodiscovery.models.CLICredentials valid_creds: object where valid credentials should be added
-        :param str creds_key: key to use in credentials object: user/password/enable_password
+        :param cli_credentials: list of possible CLI credentials
+        :type cli_credentials: autodiscovery.models.VendorCLICredentials
+        :param valid_creds: object where valid credentials should be added
+        :type valid_creds: autodiscovery.models.CLICredentials
+        :param creds_key: key to use in creds object: user/password/enable_password
+        :type creds_key: str
         :rtype function
         """
         possible_values = (

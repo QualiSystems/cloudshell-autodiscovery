@@ -27,7 +27,7 @@ class TestExcelReport(unittest.TestCase):
 
     @mock.patch("autodiscovery.reports.excel.xlsxwriter")
     def test_generate(self, xlsxwriter):
-        """Check that method will create Workbook and close it in the end"""
+        """Check that method will create Workbook and close it in the end."""
         workbook = mock.MagicMock()
         worksheet = mock.MagicMock()
         workbook.add_worksheet.return_value = worksheet

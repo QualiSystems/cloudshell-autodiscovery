@@ -12,26 +12,26 @@ class TestEchoVendorsConfigTemplateCommand(unittest.TestCase):
     @mock.patch("autodiscovery.commands.echo_vendors_config_template.click")
     @mock.patch("autodiscovery.commands.echo_vendors_config_template.open")
     @mock.patch("autodiscovery.commands.echo_vendors_config_template.utils")
-    def test_execute(self, utils, open, click):
-        """Check that method will generate input data example in JSON format"""
+    def test_execute(self, utils, open_, click):
+        """Check that method will generate input data example in JSON format."""
         template_format = "json"
         example_file = "example template.json"
         utils.get_full_path.return_value = example_file
         file_data = mock.MagicMock()
         opened_file = mock.MagicMock()
-        open.return_value = opened_file
+        open_.return_value = opened_file
         opened_file.__enter__().read.return_value = file_data
         # act
         self.echo_command.execute(template_format=template_format)
         # verify
-        open.assert_called_once_with(example_file)
+        open_.assert_called_once_with(example_file)
         click.echo.assert_called_once_with(file_data)
 
     @mock.patch("autodiscovery.commands.echo_vendors_config_template.click")
     @mock.patch("autodiscovery.commands.echo_vendors_config_template.open")
     @mock.patch("autodiscovery.commands.echo_vendors_config_template.utils")
-    def test_execute_save_to_file(self, utils, open, click):
-        """Check that method will save to file example template data"""
+    def test_execute_save_to_file(self, utils, open_, click):
+        """Check that method will save to file example template data."""
         template_format = "json"
         example_filename = "example template.json"
         utils.get_full_path.return_value = example_filename
@@ -39,7 +39,7 @@ class TestEchoVendorsConfigTemplateCommand(unittest.TestCase):
         save_to_filename = "additional_config.json"
         example_file = mock.MagicMock()
         save_to_file = mock.MagicMock()
-        open.side_effect = [example_file, save_to_file]
+        open_.side_effect = [example_file, save_to_file]
         # act
         self.echo_command.execute(
             template_format=template_format, save_to_file=save_to_filename
