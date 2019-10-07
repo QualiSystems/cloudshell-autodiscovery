@@ -41,18 +41,24 @@ class AbstractReport(object):
 
     @property
     def _header_entry_map(self):
-        raise NotImplementedError("Class {} must implement property '_header_entry_map'".format(type(self)))
+        raise NotImplementedError(
+            "Class {} must implement property '_header_entry_map'".format(type(self))
+        )
 
     @property
     def entry_class(self):
-        raise NotImplementedError("Class {} must implement property 'entry_class'".format(type(self)))
+        raise NotImplementedError(
+            "Class {} must implement property 'entry_class'".format(type(self))
+        )
 
     def generate(self):
         """Generate Report with all entries
 
         :return:
         """
-        raise NotImplementedError("Class {} must implement method 'generate'".format(type(self)))
+        raise NotImplementedError(
+            "Class {} must implement method 'generate'".format(type(self))
+        )
 
 
 class AbstractParsableReport(AbstractReport):
@@ -62,7 +68,11 @@ class AbstractParsableReport(AbstractReport):
         :param str report_file: file path to the generated report
         :rtype: list[Entry]
         """
-        raise NotImplementedError("Class {} must implement method 'parse_entries_from_file'".format(type(self)))
+        raise NotImplementedError(
+            "Class {} must implement method 'parse_entries_from_file'".format(
+                type(self)
+            )
+        )
 
 
 class AbstractEntry(object):

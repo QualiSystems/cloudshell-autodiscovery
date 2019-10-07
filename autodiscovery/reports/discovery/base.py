@@ -1,7 +1,6 @@
 import collections
 
-from autodiscovery.reports.base import AbstractEntry
-from autodiscovery.reports.base import AbstractReport
+from autodiscovery.reports.base import AbstractEntry, AbstractReport
 
 
 class AbstractDiscoveryReport(AbstractReport):
@@ -29,18 +28,22 @@ class AbstractDiscoveryReport(AbstractReport):
 
         :return:
         """
-        return collections.OrderedDict([(self.IP_HEADER, "ip"),
-                                        (self.VENDOR_HEADER, "vendor"),
-                                        (self.SYS_OBJ_ID_HEADER, "sys_object_id"),
-                                        (self.DESCRIPTION_HEADER, "description"),
-                                        (self.SNMP_READ_COMMUNITY_HEADER, "snmp_community"),
-                                        (self.MODEL_TYPE_HEADER, "model_type"),
-                                        (self.DEVICE_NAME_HEADER, "device_name"),
-                                        (self.DOMAIN_HEADER, "domain"),
-                                        (self.FOLDER_HEADER, "folder_path"),
-                                        (self.ATTRIBUTES_HEADER, "formatted_attrs"),
-                                        (self.ADDED_TO_CLOUDSHELL_HEADER, "status"),
-                                        (self.COMMENT_HEADER, "comment")])
+        return collections.OrderedDict(
+            [
+                (self.IP_HEADER, "ip"),
+                (self.VENDOR_HEADER, "vendor"),
+                (self.SYS_OBJ_ID_HEADER, "sys_object_id"),
+                (self.DESCRIPTION_HEADER, "description"),
+                (self.SNMP_READ_COMMUNITY_HEADER, "snmp_community"),
+                (self.MODEL_TYPE_HEADER, "model_type"),
+                (self.DEVICE_NAME_HEADER, "device_name"),
+                (self.DOMAIN_HEADER, "domain"),
+                (self.FOLDER_HEADER, "folder_path"),
+                (self.ATTRIBUTES_HEADER, "formatted_attrs"),
+                (self.ADDED_TO_CLOUDSHELL_HEADER, "status"),
+                (self.COMMENT_HEADER, "comment"),
+            ]
+        )
 
     def add_entry(self, offline, **kwargs):
         """Add new Entry for the device with given IP
@@ -63,8 +66,22 @@ class Entry(AbstractEntry):
     SKIPPED_STATUS = "Skipped"
     ATTRIBUTES_SEPARATOR = ","
 
-    def __init__(self, ip, status, domain, vendor="", device_name="", model_type="", sys_object_id="",
-                 snmp_community="", description="", comment="", folder_path="", attributes=None, formatted_attrs=None):
+    def __init__(
+        self,
+        ip,
+        status,
+        domain,
+        vendor="",
+        device_name="",
+        model_type="",
+        sys_object_id="",
+        snmp_community="",
+        description="",
+        comment="",
+        folder_path="",
+        attributes=None,
+        formatted_attrs=None,
+    ):
         super(Entry, self).__init__(status=status)
         self.ip = ip
         self.domain = domain
@@ -99,8 +116,9 @@ class Entry(AbstractEntry):
 
         :rtype: str
         """
-        return self.ATTRIBUTES_SEPARATOR.join(["{}={}".format(key, val)
-                                               for key, val in self.attributes.iteritems()])
+        return self.ATTRIBUTES_SEPARATOR.join(
+            ["{}={}".format(key, val) for key, val in self.attributes.iteritems()]
+        )
 
     @staticmethod
     def parse_formatted_attrs(attributes):
@@ -108,5 +126,11 @@ class Entry(AbstractEntry):
 
         :rtype: list[str]
         """
-        return {key.strip(): val.strip() for key, val in
-                (attr.split("=") for attr in attributes.split(Entry.ATTRIBUTES_SEPARATOR) if attr)}
+        return {
+            key.strip(): val.strip()
+            for key, val in (
+                attr.split("=")
+                for attr in attributes.split(Entry.ATTRIBUTES_SEPARATOR)
+                if attr
+            )
+        }

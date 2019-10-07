@@ -1,9 +1,16 @@
-from autodiscovery.config import DEFAULT_CLOUDSHELL_DOMAIN
-from autodiscovery.config import DEFAULT_RESOURCE_FOLDER_PATH
+from autodiscovery.config import DEFAULT_CLOUDSHELL_DOMAIN, DEFAULT_RESOURCE_FOLDER_PATH
 
 
 class InputDataModel(object):
-    def __init__(self, devices_ips, cs_ip, cs_user, cs_password, snmp_community_strings, vendor_settings):
+    def __init__(
+        self,
+        devices_ips,
+        cs_ip,
+        cs_user,
+        cs_password,
+        snmp_community_strings,
+        vendor_settings,
+    ):
         """
 
         :param list[DeviceIPRange] devices_ips:
@@ -49,9 +56,13 @@ class CLICredentials(object):
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
-            return all([self.user == other.user,
-                        self.password == other.password,
-                        self.enable_password == other.enable_password])
+            return all(
+                [
+                    self.user == other.user,
+                    self.password == other.password,
+                    self.enable_password == other.enable_password,
+                ]
+            )
 
         return False
 
@@ -88,22 +99,36 @@ class VendorSettingsCollection(object):
         self._folder_paths = {}
 
         default_settings = vendor_settings.pop("default", {})
-        default_creds = [CLICredentials(user=creds.get("user"),
-                                        password=creds.get("password"),
-                                        enable_password=creds.get("enable password"))
-                         for creds in default_settings.get("cli-credentials", [])]
+        default_creds = [
+            CLICredentials(
+                user=creds.get("user"),
+                password=creds.get("password"),
+                enable_password=creds.get("enable password"),
+            )
+            for creds in default_settings.get("cli-credentials", [])
+        ]
 
-        self._default_creds = VendorCLICredentials(name="default", cli_credentials=default_creds)
-        self._default_folder = default_settings.get("folder-path", DEFAULT_RESOURCE_FOLDER_PATH)
+        self._default_creds = VendorCLICredentials(
+            name="default", cli_credentials=default_creds
+        )
+        self._default_folder = default_settings.get(
+            "folder-path", DEFAULT_RESOURCE_FOLDER_PATH
+        )
 
         for vendor_name, vendor_settings in vendor_settings.iteritems():
             vendor_creds = vendor_settings.get("cli-credentials", [])
-            cli_creds = [CLICredentials(user=creds.get("user"),
-                                        password=creds.get("password"),
-                                        enable_password=creds.get("enable password"))
-                         for creds in vendor_creds]
+            cli_creds = [
+                CLICredentials(
+                    user=creds.get("user"),
+                    password=creds.get("password"),
+                    enable_password=creds.get("enable password"),
+                )
+                for creds in vendor_creds
+            ]
             cli_creds.extend(default_creds)
-            self._cli_creds.append(VendorCLICredentials(name=vendor_name, cli_credentials=cli_creds))
+            self._cli_creds.append(
+                VendorCLICredentials(name=vendor_name, cli_credentials=cli_creds)
+            )
 
             folder_path = vendor_settings.get("folder-path")
             if folder_path is not None:

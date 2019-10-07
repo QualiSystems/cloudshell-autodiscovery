@@ -11,9 +11,9 @@ def get_logger(file_path=None):
     if file_path is None:
         file_path = "autodiscovery.log"
 
-    logger = logging.getLogger('autodiscovery')
+    logger = logging.getLogger("autodiscovery")
     handler = logging.FileHandler(file_path)
-    formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+    formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s")
     handler.setFormatter(formatter)
     logger.addHandler(handler)
     logger.setLevel(logging.DEBUG)

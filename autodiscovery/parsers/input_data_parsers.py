@@ -1,10 +1,10 @@
 import json
-
-import yaml
 from ipaddress import ip_address
 
-from autodiscovery.exceptions import AutoDiscoveryException
+import yaml
+
 from autodiscovery import models
+from autodiscovery.exceptions import AutoDiscoveryException
 
 
 def get_input_data_parser(file_name):
@@ -15,8 +15,11 @@ def get_input_data_parser(file_name):
         if file_name.endswith(parser_cls.FILE_EXTENSION):
             return parser_cls()
 
-    raise AutoDiscoveryException("Invalid Input Data file format. Available formats are: {}".format(
-        ", ".join([parser.FILE_EXTENSION for parser in parsers])))
+    raise AutoDiscoveryException(
+        "Invalid Input Data file format. Available formats are: {}".format(
+            ", ".join([parser.FILE_EXTENSION for parser in parsers])
+        )
+    )
 
 
 class AbstractInputDataParser(object):
@@ -59,8 +62,10 @@ class AbstractInputDataParser(object):
                 first_ip, last_ip = device_ips.split("-")
                 first_ip_octets = first_ip.split(".")
                 last_ip_octets = last_ip.split(".")
-                last_ip = first_ip_octets[:4-len(last_ip_octets)] + last_ip_octets
-                ip_range = self._find_ips(start_ip=unicode(first_ip), last_ip=unicode(".".join(last_ip)))
+                last_ip = first_ip_octets[: 4 - len(last_ip_octets)] + last_ip_octets
+                ip_range = self._find_ips(
+                    start_ip=unicode(first_ip), last_ip=unicode(".".join(last_ip))
+                )
             else:
                 ip_range = [device_ips]
 
@@ -74,7 +79,9 @@ class AbstractInputDataParser(object):
         :param str input_file: full path to the input data file
         :rtype: models.InputDataModel
         """
-        raise NotImplementedError("Class {} must implement method 'parse'".format(type(self)))
+        raise NotImplementedError(
+            "Class {} must implement method 'parse'".format(type(self))
+        )
 
 
 class YAMLInputDataParser(AbstractInputDataParser):
@@ -91,15 +98,19 @@ class YAMLInputDataParser(AbstractInputDataParser):
 
         data = yaml.load(file_data)
         devices_ips = self._parse_devices_ips(data["devices-ips"])
-        vendor_settings = models.VendorSettingsCollection(data.get("vendor-settings", {}))
+        vendor_settings = models.VendorSettingsCollection(
+            data.get("vendor-settings", {})
+        )
         cs_data = data.get("cloudshell", {})
 
-        return models.InputDataModel(devices_ips=devices_ips,
-                                     cs_ip=cs_data.get("ip"),
-                                     cs_user=cs_data.get("user"),
-                                     cs_password=cs_data.get("password"),
-                                     snmp_community_strings=data["community-strings"],
-                                     vendor_settings=vendor_settings)
+        return models.InputDataModel(
+            devices_ips=devices_ips,
+            cs_ip=cs_data.get("ip"),
+            cs_user=cs_data.get("user"),
+            cs_password=cs_data.get("password"),
+            snmp_community_strings=data["community-strings"],
+            vendor_settings=vendor_settings,
+        )
 
 
 class JSONInputDataParser(AbstractInputDataParser):
@@ -115,12 +126,16 @@ class JSONInputDataParser(AbstractInputDataParser):
             data = json.load(input_f)
 
         devices_ips = self._parse_devices_ips(data["devices-ips"])
-        vendor_settings = models.VendorSettingsCollection(data.get("vendor-settings", {}))
+        vendor_settings = models.VendorSettingsCollection(
+            data.get("vendor-settings", {})
+        )
         cs_data = data.get("cloudshell", {})
 
-        return models.InputDataModel(devices_ips=devices_ips,
-                                     cs_ip=cs_data.get("ip"),
-                                     cs_user=cs_data.get("user"),
-                                     cs_password=cs_data.get("password"),
-                                     snmp_community_strings=data["community-strings"],
-                                     vendor_settings=vendor_settings)
+        return models.InputDataModel(
+            devices_ips=devices_ips,
+            cs_ip=cs_data.get("ip"),
+            cs_user=cs_data.get("user"),
+            cs_password=cs_data.get("password"),
+            snmp_community_strings=data["community-strings"],
+            vendor_settings=vendor_settings,
+        )

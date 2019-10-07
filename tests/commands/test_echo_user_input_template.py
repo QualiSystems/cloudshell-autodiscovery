@@ -29,7 +29,9 @@ class TestEchoUserInputTemplateCommand(unittest.TestCase):
         self.echo_command.execute(template_format=template_format)
         # verify
         open.assert_called_once_with(example_file)
-        json.dumps.assert_called_once_with(yaml.load(file_data), indent=4, sort_keys=True)
+        json.dumps.assert_called_once_with(
+            yaml.load(file_data), indent=4, sort_keys=True
+        )
         click.echo.assert_called_once_with(json_data)
 
     @mock.patch("autodiscovery.commands.echo_user_input_template.click")
@@ -63,9 +65,13 @@ class TestEchoUserInputTemplateCommand(unittest.TestCase):
         save_to_file = mock.MagicMock()
         open.side_effect = [example_file, save_to_file]
         # act
-        self.echo_command.execute(template_format=template_format, save_to_file=save_to_filename)
+        self.echo_command.execute(
+            template_format=template_format, save_to_file=save_to_filename
+        )
         # verify
         open.assert_any_call(example_filename)
         open.assert_any_call(save_to_filename, "w")
         example_file.__enter__().read.assert_called_once_with()
-        save_to_file.__enter__().write.assert_called_once_with(example_file.__enter__().read())
+        save_to_file.__enter__().write.assert_called_once_with(
+            example_file.__enter__().read()
+        )

@@ -1,12 +1,10 @@
 import json
 
-from autodiscovery import config
-from autodiscovery import models
+from autodiscovery import config, models
 from autodiscovery.common import utils
 
 
 class JsonDataProcessor(object):
-
     def __init__(self, logger):
         """
 
@@ -32,7 +30,7 @@ class JsonDataProcessor(object):
         """
         file_path = self._prepare_file_path(filename)
 
-        with open(file_path, 'w') as outfile:
+        with open(file_path, "w") as outfile:
             json.dump(data, outfile, indent=4, sort_keys=True)
 
     def _load(self, filename):
@@ -43,7 +41,7 @@ class JsonDataProcessor(object):
         """
         file_path = self._prepare_file_path(filename)
 
-        with open(file_path, 'r') as outfile:
+        with open(file_path, "r") as outfile:
             return json.load(outfile)
 
     def save_vendor_enterprise_numbers(self, data):
@@ -97,41 +95,49 @@ class JsonDataProcessor(object):
         vendors_data = self._load(filename=config.VENDORS_CONFIG_FILE)
         vendors = []
 
-        for vendor_data in self._merge_vendors_data(conf_data=vendors_data,
-                                                    additional_data=additional_vendors_data):
+        for vendor_data in self._merge_vendors_data(
+            conf_data=vendors_data, additional_data=additional_vendors_data
+        ):
 
             if vendor_data["type"].lower() == "networking":
                 operation_systems = []
                 for os_data in vendor_data.get("operation_systems", []):
-                    operating_sys = models.OperationSystem(name=os_data["name"],
-                                                           aliases=os_data.get("aliases", []),
-                                                           default_model=os_data.get("default_model"),
-                                                           models_map=os_data.get("models_map", []),
-                                                           families=os_data.get("families"))
+                    operating_sys = models.OperationSystem(
+                        name=os_data["name"],
+                        aliases=os_data.get("aliases", []),
+                        default_model=os_data.get("default_model"),
+                        models_map=os_data.get("models_map", []),
+                        families=os_data.get("families"),
+                    )
                     operation_systems.append(operating_sys)
 
-                vendor = models.NetworkingVendorDefinition(name=vendor_data["name"],
-                                                           aliases=vendor_data.get("aliases", []),
-                                                           vendor_type=vendor_data["type"],
-                                                           default_os=vendor_data.get("default_os"),
-                                                           default_prompt=vendor_data.get("default_prompt"),
-                                                           enable_prompt=vendor_data.get("enable_prompt"),
-                                                           operation_systems=operation_systems)
+                vendor = models.NetworkingVendorDefinition(
+                    name=vendor_data["name"],
+                    aliases=vendor_data.get("aliases", []),
+                    vendor_type=vendor_data["type"],
+                    default_os=vendor_data.get("default_os"),
+                    default_prompt=vendor_data.get("default_prompt"),
+                    enable_prompt=vendor_data.get("enable_prompt"),
+                    operation_systems=operation_systems,
+                )
 
             elif vendor_data["type"].upper() == "PDU":
-                vendor = models.PDUVendorDefinition(name=vendor_data["name"],
-                                                    aliases=vendor_data.get("aliases", []),
-                                                    vendor_type=vendor_data["type"],
-                                                    default_prompt=vendor_data.get("default_prompt"),
-                                                    enable_prompt=vendor_data.get("enable_prompt"),
-                                                    family_name=vendor_data["family_name"],
-                                                    model_name=vendor_data["model_name"],
-                                                    driver_name=vendor_data["driver_name"])
+                vendor = models.PDUVendorDefinition(
+                    name=vendor_data["name"],
+                    aliases=vendor_data.get("aliases", []),
+                    vendor_type=vendor_data["type"],
+                    default_prompt=vendor_data.get("default_prompt"),
+                    enable_prompt=vendor_data.get("enable_prompt"),
+                    family_name=vendor_data["family_name"],
+                    model_name=vendor_data["model_name"],
+                    driver_name=vendor_data["driver_name"],
+                )
             else:
-                self.logger.warning("Unable to parse vendor '{}'. Vendor type '{}' is not supported".format(
-                    vendor_data["name"],
-                    vendor_data["type"]
-                ))
+                self.logger.warning(
+                    "Unable to parse vendor '{}'. Vendor type '{}' is not supported".format(
+                        vendor_data["name"], vendor_data["type"]
+                    )
+                )
                 continue
 
             vendors.append(vendor)

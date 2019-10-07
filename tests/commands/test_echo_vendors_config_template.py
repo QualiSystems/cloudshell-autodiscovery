@@ -41,7 +41,11 @@ class TestEchoVendorsConfigTemplateCommand(unittest.TestCase):
         save_to_file = mock.MagicMock()
         open.side_effect = [example_file, save_to_file]
         # act
-        self.echo_command.execute(template_format=template_format, save_to_file=save_to_filename)
+        self.echo_command.execute(
+            template_format=template_format, save_to_file=save_to_filename
+        )
         # verify
         example_file.__enter__().read.assert_called_once_with()
-        save_to_file.__enter__().write.assert_called_once_with(example_file.__enter__().read())
+        save_to_file.__enter__().write.assert_called_once_with(
+            example_file.__enter__().read()
+        )

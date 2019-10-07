@@ -2,12 +2,10 @@ import unittest
 
 import mock
 
-from autodiscovery.common.utils import get_full_path
-from autodiscovery.common.utils import get_logger
+from autodiscovery.common.utils import get_full_path, get_logger
 
 
 class TestUtils(unittest.TestCase):
-
     @mock.patch("autodiscovery.common.utils.logging")
     def test_get_logger(self, logging):
         """Check that method will return logger instance"""
@@ -37,4 +35,6 @@ class TestUtils(unittest.TestCase):
         result = get_full_path(dir1, dir2, filename)
         # verify
         self.assertEqual(result, joined_path)
-        os.path.join.assert_called_once_with(base_dir, os.pardir, os.pardir, dir1, dir2, filename)
+        os.path.join.assert_called_once_with(
+            base_dir, os.pardir, os.pardir, dir1, dir2, filename
+        )

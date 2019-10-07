@@ -21,7 +21,9 @@ class VendorDefinitionCollection(object):
 
 
 class BaseVendorDefinition(object):
-    def __init__(self, name, aliases, vendor_type, default_prompt, enable_prompt, *args, **kwargs):
+    def __init__(
+        self, name, aliases, vendor_type, default_prompt, enable_prompt, *args, **kwargs
+    ):
         """
 
         :param str name:
@@ -51,11 +53,22 @@ class BaseVendorDefinition(object):
         :param str vendor_name: vendor name from the PEN data file
         :rtype: bool
         """
-        return self.name.lower() == vendor_name.lower() or self.check_in_aliases(vendor_name)
+        return self.name.lower() == vendor_name.lower() or self.check_in_aliases(
+            vendor_name
+        )
 
 
 class NetworkingVendorDefinition(BaseVendorDefinition):
-    def __init__(self, name, aliases, vendor_type, default_prompt, enable_prompt, default_os, operation_systems):
+    def __init__(
+        self,
+        name,
+        aliases,
+        vendor_type,
+        default_prompt,
+        enable_prompt,
+        default_os,
+        operation_systems,
+    ):
         """
 
         :param str name:
@@ -66,7 +79,9 @@ class NetworkingVendorDefinition(BaseVendorDefinition):
         :param str default_os:
         :param list[OperationSystem] operation_systems:
         """
-        super(NetworkingVendorDefinition, self).__init__(name, aliases, vendor_type, default_prompt, enable_prompt)
+        super(NetworkingVendorDefinition, self).__init__(
+            name, aliases, vendor_type, default_prompt, enable_prompt
+        )
         self.default_os = default_os
         self.operation_systems = operation_systems
 
@@ -98,7 +113,17 @@ class NetworkingVendorDefinition(BaseVendorDefinition):
 
 
 class PDUVendorDefinition(BaseVendorDefinition):
-    def __init__(self, name, aliases, vendor_type, default_prompt, enable_prompt, family_name, model_name, driver_name):
+    def __init__(
+        self,
+        name,
+        aliases,
+        vendor_type,
+        default_prompt,
+        enable_prompt,
+        family_name,
+        model_name,
+        driver_name,
+    ):
         """
 
         :param str name:
@@ -110,7 +135,9 @@ class PDUVendorDefinition(BaseVendorDefinition):
         :param str model_name:
         :param str driver_name:
         """
-        super(PDUVendorDefinition, self).__init__(name, aliases, vendor_type, default_prompt, enable_prompt)
+        super(PDUVendorDefinition, self).__init__(
+            name, aliases, vendor_type, default_prompt, enable_prompt
+        )
         self.family_name = family_name
         self.model_name = model_name
         self.driver_name = driver_name

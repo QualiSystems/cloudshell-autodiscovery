@@ -12,10 +12,12 @@ class TestConnectPortsFromReportCommand(unittest.TestCase):
         self.logger = mock.MagicMock()
         self.cs_session_manager = mock.MagicMock()
         self.output = mock.MagicMock()
-        self.connect_ports_command = ConnectPortsFromReportCommand(cs_session_manager=self.cs_session_manager,
-                                                                   report=self.report,
-                                                                   logger=self.logger,
-                                                                   output=self.output)
+        self.connect_ports_command = ConnectPortsFromReportCommand(
+            cs_session_manager=self.cs_session_manager,
+            report=self.report,
+            logger=self.logger,
+            output=self.output,
+        )
 
     def test_execute(self):
         """Check that method will call UpdatePhysicalConnection API command"""
@@ -27,11 +29,13 @@ class TestConnectPortsFromReportCommand(unittest.TestCase):
         self.connect_ports_command.execute()
         # verify
         self.cs_session_manager.get_session.assert_called_once_with(
-            cs_domain=entry_data.domain)
+            cs_domain=entry_data.domain
+        )
 
         cs_session.UpdatePhysicalConnection.assert_called_once_with(
             resourceAFullPath=entry_data.source_port,
-            resourceBFullPath=entry_data.target_port)
+            resourceBFullPath=entry_data.target_port,
+        )
 
         self.report.generate.assert_called_once_with()
 
@@ -43,7 +47,9 @@ class TestConnectPortsFromReportCommand(unittest.TestCase):
         # act
         self.connect_ports_command.execute()
         # verify
-        self.cs_session_manager.get_session.assert_called_once_with(cs_domain=entry.domain)
+        self.cs_session_manager.get_session.assert_called_once_with(
+            cs_domain=entry.domain
+        )
         self.report.generate.assert_called_once_with()
         self.logger.exception.assert_called_once()
 
@@ -56,6 +62,7 @@ class TestConnectPortsFromReportCommand(unittest.TestCase):
         self.connect_ports_command.execute()
         # verify
         self.cs_session_manager.get_session.assert_called_once_with(
-            cs_domain=entry.domain)
+            cs_domain=entry.domain
+        )
         self.report.generate.assert_called_once_with()
         self.logger.exception.assert_called_once()

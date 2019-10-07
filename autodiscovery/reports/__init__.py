@@ -21,7 +21,11 @@ def parse_report(report_file, reports):
     :param tuple reports:
     :rtype: autodiscovery.reports.base.AbstractParsableReport
     """
-    available_reports = [report_cls for report_cls in reports if issubclass(report_cls, AbstractParsableReport)]
+    available_reports = [
+        report_cls
+        for report_cls in reports
+        if issubclass(report_cls, AbstractParsableReport)
+    ]
 
     for report_cls in available_reports:
         if report_file.endswith(".{}".format(report_cls.FILE_EXTENSION)):
@@ -29,5 +33,8 @@ def parse_report(report_file, reports):
             report.parse_entries_from_file(report_file)
             return report
 
-    raise AutoDiscoveryException("Invalid Report file format. Available formats are: {}".format(
-        ", ".join([report.FILE_EXTENSION for report in available_reports])))
+    raise AutoDiscoveryException(
+        "Invalid Report file format. Available formats are: {}".format(
+            ", ".join([report.FILE_EXTENSION for report in available_reports])
+        )
+    )

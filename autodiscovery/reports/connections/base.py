@@ -1,7 +1,6 @@
 import collections
 
-from autodiscovery.reports.base import AbstractEntry
-from autodiscovery.reports.base import AbstractReport
+from autodiscovery.reports.base import AbstractEntry, AbstractReport
 
 
 class AbstractConnectionsReport(AbstractReport):
@@ -24,13 +23,17 @@ class AbstractConnectionsReport(AbstractReport):
 
         :return:
         """
-        return collections.OrderedDict([(self.RESOURCE_NAME_HEADER, "resource_name"),
-                                        (self.SOURCE_PORT_HEADER, "source_port"),
-                                        (self.ADJACENT_HEADER, "adjacent"),
-                                        (self.TARGET_PORT_HEADER, "target_port"),
-                                        (self.DOMAIN_HEADER, "domain"),
-                                        (self.STATUS_HEADER, "status"),
-                                        (self.COMMENT_HEADER, "comment")])
+        return collections.OrderedDict(
+            [
+                (self.RESOURCE_NAME_HEADER, "resource_name"),
+                (self.SOURCE_PORT_HEADER, "source_port"),
+                (self.ADJACENT_HEADER, "adjacent"),
+                (self.TARGET_PORT_HEADER, "target_port"),
+                (self.DOMAIN_HEADER, "domain"),
+                (self.STATUS_HEADER, "status"),
+                (self.COMMENT_HEADER, "comment"),
+            ]
+        )
 
     def add_entry(self, offline, **kwargs):
         """
@@ -50,8 +53,16 @@ class AbstractConnectionsReport(AbstractReport):
 class Entry(AbstractEntry):
     SKIPPED_STATUS = "Skipped"
 
-    def __init__(self, resource_name, source_port, adjacent, target_port, domain,
-                 status, comment=""):
+    def __init__(
+        self,
+        resource_name,
+        source_port,
+        adjacent,
+        target_port,
+        domain,
+        status,
+        comment="",
+    ):
         """
 
         :param resource_name:

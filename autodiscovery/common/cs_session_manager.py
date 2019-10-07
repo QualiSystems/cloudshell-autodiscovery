@@ -27,12 +27,17 @@ class CloudShellSessionManager(object):
         :rtype: CloudShellAPISession
         """
         try:
-            cs_session = CloudShellAPISession(host=self._cs_ip,
-                                              username=self._cs_user,
-                                              password=self._cs_password,
-                                              domain=cs_domain)
+            cs_session = CloudShellAPISession(
+                host=self._cs_ip,
+                username=self._cs_user,
+                password=self._cs_password,
+                domain=cs_domain,
+            )
         except CloudShellAPIError as e:
-            if e.code in (CloudshellAPIErrorCodes.INCORRECT_LOGIN, CloudshellAPIErrorCodes.INCORRECT_PASSWORD):
+            if e.code in (
+                CloudshellAPIErrorCodes.INCORRECT_LOGIN,
+                CloudshellAPIErrorCodes.INCORRECT_PASSWORD,
+            ):
                 self._logger.exception("Unable to login to the CloudShell API")
                 raise AutoDiscoveryException("Wrong CloudShell user/password")
             raise

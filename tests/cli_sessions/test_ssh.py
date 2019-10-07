@@ -20,27 +20,35 @@ class TestSSHDiscoverySession(unittest.TestCase):
         enable_prompt = "$"
         valid_creds = mock.MagicMock()
         output_str = mock.MagicMock()
-        self.ssh_session._check_enable_password = mock.MagicMock(return_value=valid_creds)
+        self.ssh_session._check_enable_password = mock.MagicMock(
+            return_value=valid_creds
+        )
         self.ssh_session._handler = mock.MagicMock()
         self.ssh_session.hardware_expect = mock.MagicMock(return_value=output_str)
         # act
-        result = self.ssh_session.check_credentials(cli_credentials=cli_credentials,
-                                                    default_prompt=default_prompt,
-                                                    enable_prompt=enable_prompt,
-                                                    logger=self.logger)
+        result = self.ssh_session.check_credentials(
+            cli_credentials=cli_credentials,
+            default_prompt=default_prompt,
+            enable_prompt=enable_prompt,
+            logger=self.logger,
+        )
         # verify
         self.assertEqual(result, valid_creds)
         self.ssh_session._handler.close.assert_called_once_with()
-        self.ssh_session.hardware_expect.assert_called_once_with(None,
-                                                                 expected_string="#|$",
-                                                                 timeout=self.ssh_session._timeout,
-                                                                 logger=self.logger)
+        self.ssh_session.hardware_expect.assert_called_once_with(
+            None,
+            expected_string="#|$",
+            timeout=self.ssh_session._timeout,
+            logger=self.logger,
+        )
 
-        self.ssh_session._check_enable_password.assert_called_once_with(enable_prompt=enable_prompt,
-                                                                        cli_credentials=cli_credentials,
-                                                                        valid_creds=credentials,
-                                                                        output_str=output_str,
-                                                                        logger=self.logger)
+        self.ssh_session._check_enable_password.assert_called_once_with(
+            enable_prompt=enable_prompt,
+            cli_credentials=cli_credentials,
+            valid_creds=credentials,
+            output_str=output_str,
+            logger=self.logger,
+        )
 
     def test_check_credentials_no_valid_credentials(self):
         """Check that method will raise AutoDiscoveryException if any credentials aren't valid"""
@@ -49,8 +57,12 @@ class TestSSHDiscoverySession(unittest.TestCase):
         enable_prompt = "$"
 
         # verify
-        with self.assertRaisesRegexp(AutoDiscoveryException, "All given credentials aren't valid"):
-            self.ssh_session.check_credentials(cli_credentials=cli_credentials,
-                                               default_prompt=default_prompt,
-                                               enable_prompt=enable_prompt,
-                                               logger=self.logger)
+        with self.assertRaisesRegexp(
+            AutoDiscoveryException, "All given credentials aren't valid"
+        ):
+            self.ssh_session.check_credentials(
+                cli_credentials=cli_credentials,
+                default_prompt=default_prompt,
+                enable_prompt=enable_prompt,
+                logger=self.logger,
+            )

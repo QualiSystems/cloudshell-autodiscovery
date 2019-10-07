@@ -14,7 +14,9 @@ class EchoReportTemplateCommand(object):
 
         :return:
         """
-        with self.report.add_entry(ip="192.168.42.235", domain="Global", offline=True) as entry:
+        with self.report.add_entry(
+            ip="192.168.42.235", domain="Global", offline=True
+        ) as entry:
             entry.snmp_community = "Cisco"
             entry.sys_object_id = "-"
             entry.description = "-"

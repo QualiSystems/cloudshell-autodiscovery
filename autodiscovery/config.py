@@ -1,4 +1,6 @@
-VENDOR_ENTERPRISE_NUMBERS_URL = "https://www.iana.org/assignments/enterprise-numbers/enterprise-numbers"
+VENDOR_ENTERPRISE_NUMBERS_URL = (
+    "https://www.iana.org/assignments/enterprise-numbers/enterprise-numbers"
+)
 DATA_FOLDER = "data"
 EXAMPLES_FOLDER = "examples"
 VENDOR_ENTERPRISE_NUMBERS_FILE = "vendor_enterprise_numbers.json"

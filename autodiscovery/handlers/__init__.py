@@ -1,4 +1,4 @@
-from networking import NetworkingTypeHandler
 from layer1 import Layer1TypeHandler
+from networking import NetworkingTypeHandler
 from pdu import PDUTypeHandler
 from traffic_generator import TrafficGeneratorTypeHandler

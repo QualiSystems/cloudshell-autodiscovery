@@ -9,6 +9,4 @@ class ConsoleReport(AbstractConsoleReport, AbstractConnectionsReport):
 
         :return:
         """
-        return {
-            self.COMMENT_HEADER: 40,
-        }
+        return {self.COMMENT_HEADER: 40}

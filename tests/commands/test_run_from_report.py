@@ -13,34 +13,44 @@ class TestRunFromReportCommand(unittest.TestCase):
         self.logger = mock.MagicMock()
         self.cs_session_manager = mock.MagicMock()
         self.output = mock.MagicMock()
-        self.run_command = RunFromReportCommand(data_processor=self.data_processor,
-                                                report=self.report,
-                                                logger=self.logger,
-                                                cs_session_manager=self.cs_session_manager,
-                                                output=self.output,
-                                                autoload=True)
+        self.run_command = RunFromReportCommand(
+            data_processor=self.data_processor,
+            report=self.report,
+            logger=self.logger,
+            cs_session_manager=self.cs_session_manager,
+            output=self.output,
+            autoload=True,
+        )
 
     def test_execute(self):
         """Check that method will upload discovered device"""
         entry = mock.MagicMock()
         handler = mock.MagicMock()
-        self.run_command.vendor_type_handlers_map = mock.MagicMock(__getitem__=mock.MagicMock(return_value=handler))
+        self.run_command.vendor_type_handlers_map = mock.MagicMock(
+            __getitem__=mock.MagicMock(return_value=handler)
+        )
         self.report.entries = [entry]
         # act
         self.run_command.execute(additional_vendors_data=None)
         # verify
-        self.cs_session_manager.get_session.assert_called_once_with(cs_domain=entry.domain)
+        self.cs_session_manager.get_session.assert_called_once_with(
+            cs_domain=entry.domain
+        )
 
-        handler.upload.assert_called_once_with(entry=entry,
-                                               vendor=self.data_processor.load_vendor_config().get_vendor(),
-                                               cs_session=self.cs_session_manager.get_session())
+        handler.upload.assert_called_once_with(
+            entry=entry,
+            vendor=self.data_processor.load_vendor_config().get_vendor(),
+            cs_session=self.cs_session_manager.get_session(),
+        )
         self.report.generate.assert_called_once_with()
 
     def test_execute_handles_exception(self):
         """Check that method will handle Exception and will generate report"""
         entry = mock.MagicMock()
         handler = mock.MagicMock()
-        self.run_command.vendor_type_handlers_map = mock.MagicMock(__getitem__=mock.MagicMock(return_value=handler))
+        self.run_command.vendor_type_handlers_map = mock.MagicMock(
+            __getitem__=mock.MagicMock(return_value=handler)
+        )
         self.report.entries = [entry]
         handler.upload = mock.MagicMock(side_effect=Exception())
         # act

@@ -13,8 +13,10 @@ class AbstractCSVReport(AbstractParsableReport):
             writer.writeheader()
 
             for entry in self._entries:
-                entry_row = {header: getattr(entry, entry_attr) for header, entry_attr
-                             in self._header_entry_map.iteritems()}
+                entry_row = {
+                    header: getattr(entry, entry_attr)
+                    for header, entry_attr in self._header_entry_map.iteritems()
+                }
 
                 writer.writerow(entry_row)
 

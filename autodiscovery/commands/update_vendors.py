@@ -32,7 +32,7 @@ class UpdateVendorsCommand(object):
                 continue
 
             # next line after the enterprise number is vendor name
-            res_dict[line] = resp_lines[i+1].strip()
+            res_dict[line] = resp_lines[i + 1].strip()
 
         return res_dict
 

@@ -45,7 +45,9 @@ class AbstractExcelReport(AbstractParsableReport):
         """
         for header, column in self._header_with_column:
             if header in self._header_column_width_map:
-                worksheet.set_column(self._prepare_column(column), self._header_column_width_map[header])
+                worksheet.set_column(
+                    self._prepare_column(column), self._header_column_width_map[header]
+                )
 
     def _get_cell_value(self, wb_sheet, column, row):
         """
@@ -67,11 +69,13 @@ class AbstractExcelReport(AbstractParsableReport):
         wb = load_workbook(report_file)
         wb_sheet = wb.active
 
-        for row_num in xrange(2, wb_sheet.max_row+1):  # first row is a header
+        for row_num in xrange(2, wb_sheet.max_row + 1):  # first row is a header
             entry_attrs = {}
             for header, column in self._header_with_column:
                 entry_attr = self._header_entry_map[header]
-                entry_attrs[entry_attr] = self._get_cell_value(wb_sheet, column, row_num)
+                entry_attrs[entry_attr] = self._get_cell_value(
+                    wb_sheet, column, row_num
+                )
 
             entry = self.entry_class(**entry_attrs)
             self._entries.append(entry)
@@ -84,7 +88,9 @@ class AbstractExcelReport(AbstractParsableReport):
         table_data = [self._header]
 
         for entry in self._entries:
-            entry_row = [getattr(entry, attr) for attr in self._header_entry_map.values()]
+            entry_row = [
+                getattr(entry, attr) for attr in self._header_entry_map.values()
+            ]
             table_data.append(entry_row)
 
         for row_num, row in enumerate(table_data):
@@ -92,7 +98,7 @@ class AbstractExcelReport(AbstractParsableReport):
                 worksheet.write(row_num, col_num, col)
 
         # set bold header
-        worksheet.set_row(0, None, workbook.add_format({'bold': True}))
+        worksheet.set_row(0, None, workbook.add_format({"bold": True}))
 
         # format columns width
         self._format_columns_width(worksheet)

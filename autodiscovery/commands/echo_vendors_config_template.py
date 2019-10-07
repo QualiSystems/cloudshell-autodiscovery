@@ -12,7 +12,9 @@ class EchoVendorsConfigTemplateCommand(object):
         :param str save_to_file: file name to save generated template in
         :return:
         """
-        file_name = utils.get_full_path(config.EXAMPLES_FOLDER, config.VENDORS_CONFIG_EXAMPLE_FILE)
+        file_name = utils.get_full_path(
+            config.EXAMPLES_FOLDER, config.VENDORS_CONFIG_EXAMPLE_FILE
+        )
 
         with open(file_name) as template_file:
             file_data = template_file.read()

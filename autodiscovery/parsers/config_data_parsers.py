@@ -10,8 +10,11 @@ def get_config_data_parser(file_name):
         if file_name.endswith(parser_cls.FILE_EXTENSION):
             return parser_cls()
 
-    raise AutoDiscoveryException("Invalid Additional Config Data file format. Available formats are: {}".format(
-        ", ".join([parser.FILE_EXTENSION for parser in parsers])))
+    raise AutoDiscoveryException(
+        "Invalid Additional Config Data file format. Available formats are: {}".format(
+            ", ".join([parser.FILE_EXTENSION for parser in parsers])
+        )
+    )
 
 
 class JSONConfigDataParser(object):

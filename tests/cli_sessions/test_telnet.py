@@ -21,27 +21,35 @@ class TestTelnetDiscoverySession(unittest.TestCase):
         enable_prompt = "$"
         valid_creds = mock.MagicMock()
         output_str = mock.MagicMock()
-        self.telnet_session._check_enable_password = mock.MagicMock(return_value=valid_creds)
+        self.telnet_session._check_enable_password = mock.MagicMock(
+            return_value=valid_creds
+        )
         self.telnet_session._handler = mock.MagicMock()
         self.telnet_session.hardware_expect = mock.MagicMock(return_value=output_str)
         cli_credentials_class.return_value = valid_creds
         # act
-        result = self.telnet_session.check_credentials(cli_credentials=cli_credentials,
-                                                       default_prompt=default_prompt,
-                                                       enable_prompt=enable_prompt,
-                                                       logger=self.logger)
+        result = self.telnet_session.check_credentials(
+            cli_credentials=cli_credentials,
+            default_prompt=default_prompt,
+            enable_prompt=enable_prompt,
+            logger=self.logger,
+        )
         # verify
         self.assertEqual(result, valid_creds)
         self.telnet_session._handler.close.assert_called_once_with()
-        self.telnet_session.hardware_expect.assert_called_once_with(None,
-                                                                    expected_string="#|$",
-                                                                    timeout=self.telnet_session._timeout,
-                                                                    logger=self.logger,
-                                                                    action_map=ordered_dict_class(),
-                                                                    check_action_loop_detector=False)
+        self.telnet_session.hardware_expect.assert_called_once_with(
+            None,
+            expected_string="#|$",
+            timeout=self.telnet_session._timeout,
+            logger=self.logger,
+            action_map=ordered_dict_class(),
+            check_action_loop_detector=False,
+        )
 
-        self.telnet_session._check_enable_password.assert_called_once_with(enable_prompt=enable_prompt,
-                                                                           cli_credentials=cli_credentials,
-                                                                           valid_creds=valid_creds,
-                                                                           output_str=output_str,
-                                                                           logger=self.logger)
+        self.telnet_session._check_enable_password.assert_called_once_with(
+            enable_prompt=enable_prompt,
+            cli_credentials=cli_credentials,
+            valid_creds=valid_creds,
+            output_str=output_str,
+            logger=self.logger,
+        )

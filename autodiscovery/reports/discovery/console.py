@@ -1,5 +1,5 @@
-from autodiscovery.reports.discovery.base import AbstractDiscoveryReport
 from autodiscovery.reports.console import AbstractConsoleReport
+from autodiscovery.reports.discovery.base import AbstractDiscoveryReport
 
 
 class ConsoleReport(AbstractConsoleReport, AbstractDiscoveryReport):
@@ -12,7 +12,4 @@ class ConsoleReport(AbstractConsoleReport, AbstractDiscoveryReport):
 
         :return:
         """
-        return {
-            self.COMMENT_HEADER: 40,
-            self.DESCRIPTION_HEADER: 60
-        }
+        return {self.COMMENT_HEADER: 40, self.DESCRIPTION_HEADER: 60}

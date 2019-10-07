@@ -24,7 +24,9 @@ class AbstractConsoleReport(AbstractReport):
         :return:
         """
         if header in self._header_column_width_map:
-            return '\n'.join(wrap(str(attr_value), self._header_column_width_map[header]))
+            return "\n".join(
+                wrap(str(attr_value), self._header_column_width_map[header])
+            )
 
         return attr_value
 
@@ -34,10 +36,16 @@ class AbstractConsoleReport(AbstractReport):
         table_data = [self._header]
 
         for entry in self._entries:
-            entry_row = [self._format_column_width(header=header, attr_value=getattr(entry, attr))
-                         for header, attr in self._header_entry_map.iteritems()]
+            entry_row = [
+                self._format_column_width(
+                    header=header, attr_value=getattr(entry, attr)
+                )
+                for header, attr in self._header_entry_map.iteritems()
+            ]
 
-            table_data.extend([entry_row, empty_row])  # add an empty row between records
+            table_data.extend(
+                [entry_row, empty_row]
+            )  # add an empty row between records
 
         table = AsciiTable(table_data)
 

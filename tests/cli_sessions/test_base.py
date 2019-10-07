@@ -33,10 +33,12 @@ class TestAbstractDiscoverySession(unittest.TestCase):
         enable_prompt = mock.MagicMock()
 
         with self.assertRaises(NotImplementedError):
-            self.tested_instance.check_credentials(cli_credentials=cli_credentials,
-                                                   default_prompt=default_prompt,
-                                                   enable_prompt=enable_prompt,
-                                                   logger=self.logger)
+            self.tested_instance.check_credentials(
+                cli_credentials=cli_credentials,
+                default_prompt=default_prompt,
+                enable_prompt=enable_prompt,
+                logger=self.logger,
+            )
 
     @mock.patch("autodiscovery.cli_sessions.base.collections")
     @mock.patch("autodiscovery.cli_sessions.base.re")
@@ -50,17 +52,20 @@ class TestAbstractDiscoverySession(unittest.TestCase):
         self.tested_instance.hardware_expect = mock.MagicMock()
         re.search.return_value = False
         # act
-        result = self.tested_instance._check_enable_password(enable_prompt=enable_prompt,
-                                                             cli_credentials=cli_credentials,
-                                                             valid_creds=valid_creds,
-                                                             output_str=output_str,
-                                                             logger=self.logger)
+        result = self.tested_instance._check_enable_password(
+            enable_prompt=enable_prompt,
+            cli_credentials=cli_credentials,
+            valid_creds=valid_creds,
+            output_str=output_str,
+            logger=self.logger,
+        )
         # verify
         self.assertEqual(result, valid_creds)
         self.tested_instance.prepare_credentials_action_map.assert_called_once_with(
             cli_credentials=cli_credentials,
             creds_key="enable_password",
-            valid_creds=valid_creds)
+            valid_creds=valid_creds,
+        )
 
         self.tested_instance.hardware_expect.assert_called_once_with(
             self.tested_instance.ENABLE_MODE_COMMAND,
@@ -68,7 +73,8 @@ class TestAbstractDiscoverySession(unittest.TestCase):
             timeout=self.tested_instance._timeout,
             logger=self.logger,
             action_map=collections.OrderedDict(),
-            check_action_loop_detector=False)
+            check_action_loop_detector=False,
+        )
 
         self.assertIsNotNone(valid_creds.enable_password)
 
@@ -83,11 +89,13 @@ class TestAbstractDiscoverySession(unittest.TestCase):
         self.tested_instance.hardware_expect = mock.MagicMock(side_effect=Exception)
         re.search.return_value = False
         # act
-        result = self.tested_instance._check_enable_password(enable_prompt=enable_prompt,
-                                                             cli_credentials=cli_credentials,
-                                                             valid_creds=valid_creds,
-                                                             output_str=output_str,
-                                                             logger=self.logger)
+        result = self.tested_instance._check_enable_password(
+            enable_prompt=enable_prompt,
+            cli_credentials=cli_credentials,
+            valid_creds=valid_creds,
+            output_str=output_str,
+            logger=self.logger,
+        )
         # verify
         self.assertEqual(result, valid_creds)
         self.assertIsNone(valid_creds.enable_password)
@@ -98,9 +106,11 @@ class TestAbstractDiscoverySession(unittest.TestCase):
         valid_creds = mock.MagicMock()
         creds_key = "creds_key"
         # act
-        result = self.tested_class.prepare_credentials_action_map(cli_credentials=cli_credentials,
-                                                                  valid_creds=valid_creds,
-                                                                  creds_key=creds_key)
+        result = self.tested_class.prepare_credentials_action_map(
+            cli_credentials=cli_credentials,
+            valid_creds=valid_creds,
+            creds_key=creds_key,
+        )
         # verify
         self.assertTrue(callable(result))
 
@@ -108,27 +118,37 @@ class TestAbstractDiscoverySession(unittest.TestCase):
         """Check that method will update valid_creds object with possible credentials"""
         valid_creds = mock.MagicMock()
         creds_value = "creds_value"
-        cli_credentials = mock.MagicMock(cli_credentials=[mock.MagicMock(creds_key=creds_value)])
+        cli_credentials = mock.MagicMock(
+            cli_credentials=[mock.MagicMock(creds_key=creds_value)]
+        )
         session = mock.MagicMock()
         # act
-        wrapped = self.tested_class.prepare_credentials_action_map(cli_credentials=cli_credentials,
-                                                                   valid_creds=valid_creds,
-                                                                   creds_key="creds_key")
+        wrapped = self.tested_class.prepare_credentials_action_map(
+            cli_credentials=cli_credentials,
+            valid_creds=valid_creds,
+            creds_key="creds_key",
+        )
         # verify
         wrapped(session=session, logger=self.logger)
         session.send_line.assert_called_once_with(creds_value, self.logger)
         self.assertEqual(valid_creds.creds_key, creds_value)
 
-    def test_prepare_credentials_action_map_raise_exception_if_all_creds_arent_valid(self):
+    def test_prepare_credentials_action_map_raise_exception_if_all_creds_arent_valid(
+        self
+    ):
         """Check that method will raise AutoDiscoveryException if any credentials aren't valid"""
         valid_creds = mock.MagicMock()
         creds_key = "creds_key"
         cli_credentials = mock.MagicMock(cli_credentials=[])
         session = mock.MagicMock()
         # act
-        wrapped = self.tested_class.prepare_credentials_action_map(cli_credentials=cli_credentials,
-                                                                   valid_creds=valid_creds,
-                                                                   creds_key=creds_key)
+        wrapped = self.tested_class.prepare_credentials_action_map(
+            cli_credentials=cli_credentials,
+            valid_creds=valid_creds,
+            creds_key=creds_key,
+        )
         # verify
-        with self.assertRaisesRegexp(AutoDiscoveryException, "All given credentials aren't valid"):
+        with self.assertRaisesRegexp(
+            AutoDiscoveryException, "All given credentials aren't valid"
+        ):
             wrapped(session=session, logger=self.logger)

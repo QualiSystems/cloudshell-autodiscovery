@@ -2,9 +2,11 @@ import unittest
 
 import mock
 
-from autodiscovery.parsers.config_data_parsers import JSONConfigDataParser
-from autodiscovery.parsers.config_data_parsers import get_config_data_parser
-from autodiscovery.parsers.config_data_parsers import AutoDiscoveryException
+from autodiscovery.parsers.config_data_parsers import (
+    AutoDiscoveryException,
+    JSONConfigDataParser,
+    get_config_data_parser,
+)
 
 
 class TestConfigDataParsers(unittest.TestCase):
@@ -17,7 +19,9 @@ class TestConfigDataParsers(unittest.TestCase):
 
     def test_get_config_data_parser_invalid_file_format(self):
         """Check that method will raise AutoDiscoveryException if provided file is in invalid format"""
-        with self.assertRaisesRegexp(AutoDiscoveryException, "Invalid Additional Config Data file format"):
+        with self.assertRaisesRegexp(
+            AutoDiscoveryException, "Invalid Additional Config Data file format"
+        ):
             get_config_data_parser(file_name="test_file.invalid")
 
 
@@ -35,4 +39,3 @@ class TestJSONConfigDataParser(unittest.TestCase):
         result = self.json_config_parser.parse(config_file=self.config_file)
         # verify
         self.assertEqual(result, expected_res)
-

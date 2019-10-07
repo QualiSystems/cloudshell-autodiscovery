@@ -9,10 +9,13 @@ from autodiscovery.reports.excel import AbstractExcelReport
 class TestExcelReport(unittest.TestCase):
     def setUp(self):
         with mock.patch("autodiscovery.reports.base.AbstractEntry") as entry_class:
+
             class TestedClass(AbstractExcelReport):
                 @property
                 def _header_entry_map(self):
-                    return collections.OrderedDict([("SNMP READ COMMUNITY", "snmp_read_community")])
+                    return collections.OrderedDict(
+                        [("SNMP READ COMMUNITY", "snmp_read_community")]
+                    )
 
                 @property
                 def entry_class(self):

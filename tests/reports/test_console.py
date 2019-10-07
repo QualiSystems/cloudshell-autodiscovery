@@ -11,7 +11,9 @@ class TestConsoleReport(unittest.TestCase):
         class TestedClass(AbstractConsoleReport):
             @property
             def _header_entry_map(self):
-                return collections.OrderedDict([("SNMP READ COMMUNITY", "snmp_read_community")])
+                return collections.OrderedDict(
+                    [("SNMP READ COMMUNITY", "snmp_read_community")]
+                )
 
         self.file_name = "test_filename"
         self.console_report = TestedClass(file_name=self.file_name)
@@ -23,7 +25,9 @@ class TestConsoleReport(unittest.TestCase):
         report_file = mock.MagicMock()
         table = mock.MagicMock()
         ascii_table_class.return_value = table
-        open.return_value = mock.MagicMock(__enter__=mock.MagicMock(return_value=report_file))
+        open.return_value = mock.MagicMock(
+            __enter__=mock.MagicMock(return_value=report_file)
+        )
         # act
         self.console_report.generate()
         # verify

@@ -3,13 +3,13 @@ import unittest
 import mock
 
 from autodiscovery.exceptions import ReportableException
-from autodiscovery.reports.base import AbstractReport
-from autodiscovery.reports.base import AbstractEntry
+from autodiscovery.reports.base import AbstractEntry, AbstractReport
 
 
 class TestAbstractReport(unittest.TestCase):
     def setUp(self):
         with mock.patch("autodiscovery.reports.base.AbstractEntry") as entry_class:
+
             class TestedClass(AbstractReport):
                 @property
                 def entry_class(self):
@@ -45,7 +45,9 @@ class TestAbstractEntry(unittest.TestCase):
         class TestedClass(AbstractEntry):
             pass
 
-        self.entry = TestedClass(ip="test_ip", status=AbstractEntry.SUCCESS_STATUS, domain="Tets domain")
+        self.entry = TestedClass(
+            ip="test_ip", status=AbstractEntry.SUCCESS_STATUS, domain="Tets domain"
+        )
 
     def test_enter_with_statement(self):
         """Check that with statement will return same entry"""

@@ -3,8 +3,10 @@ import unittest
 import mock
 from cloudshell.api.common_cloudshell_api import CloudShellAPIError
 
-from autodiscovery.common.consts import CloudshellAPIErrorCodes
-from autodiscovery.common.consts import ResourceModelsAttributes
+from autodiscovery.common.consts import (
+    CloudshellAPIErrorCodes,
+    ResourceModelsAttributes,
+)
 from autodiscovery.handlers import PDUTypeHandler
 
 
@@ -22,9 +24,9 @@ class TestPDUTypeHandler(unittest.TestCase):
         self.pdu_handler._get_cli_credentials = mock.MagicMock(return_value=cli_creds)
 
         # act
-        result = self.pdu_handler.discover(entry=entry,
-                                           vendor=vendor,
-                                           vendor_settings=vendor_settings)
+        result = self.pdu_handler.discover(
+            entry=entry, vendor=vendor, vendor_settings=vendor_settings
+        )
 
         # verify
         self.assertEqual(result, entry)
@@ -37,9 +39,9 @@ class TestPDUTypeHandler(unittest.TestCase):
         self.pdu_handler._get_cli_credentials = mock.MagicMock(return_value=None)
 
         # act
-        result = self.pdu_handler.discover(entry=entry,
-                                           vendor=vendor,
-                                           vendor_settings=vendor_settings)
+        result = self.pdu_handler.discover(
+            entry=entry, vendor=vendor, vendor_settings=vendor_settings
+        )
 
         # verify
         self.assertEqual(result, entry)
@@ -56,12 +58,12 @@ class TestPDUTypeHandler(unittest.TestCase):
         self.pdu_handler._upload_resource = mock.MagicMock(return_value=resource_name)
 
         # act
-        self.pdu_handler.upload(entry=entry,
-                                vendor=vendor,
-                                cs_session=cs_session)
+        self.pdu_handler.upload(entry=entry, vendor=vendor, cs_session=cs_session)
         # verify
-        self.pdu_handler._upload_resource.assert_called_once_with(cs_session=cs_session,
-                                                                  entry=entry,
-                                                                  resource_family=vendor.family_name,
-                                                                  resource_model=vendor.model_name,
-                                                                  driver_name=vendor.driver_name)
+        self.pdu_handler._upload_resource.assert_called_once_with(
+            cs_session=cs_session,
+            entry=entry,
+            resource_family=vendor.family_name,
+            resource_model=vendor.model_name,
+            driver_name=vendor.driver_name,
+        )
