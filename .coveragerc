@@ -1,0 +1,7 @@
+[report]
+omit =
+    data/*
+    docs/*
+    examples/*
+    json_schemes/*
+    *__init__*
