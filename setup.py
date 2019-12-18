@@ -8,11 +8,14 @@ def get_file_content(file_name):
 
 setup(
     name="cloudshell-autodiscovery",
-    version="1.0.1",
-    description="",
-    long_description=get_file_content("README.md"),
+    url="http://www.qualisystems.com",
     author="Quali",
     author_email="anton.p@qualisystems.com",
+    version="2.0.0",
+    description="",
+    long_description=get_file_content("README.md"),
+    tests_require=get_file_content("test_requirements.txt"),
+    test_suite="nose.collector",
     packages=find_packages() + ["examples", "data", "json_schemes"],
     include_package_data=True,
     install_requires=get_file_content("requirements.txt"),

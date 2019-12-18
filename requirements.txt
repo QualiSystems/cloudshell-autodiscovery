@@ -5,6 +5,6 @@ PyYAML==3.12
 terminaltables==3.1.0
 openpyxl==2.4.5
 xlsxwriter==0.9.6
-cloudshell-snmp==3.0.136
-cloudshell-automation-api==8.0.0.77
-cloudshell-cli==3.0.203
+cloudshell-snmp==4.0.0
+cloudshell-automation-api>=9.3,<9.4
+cloudshell-cli==4.0.1
