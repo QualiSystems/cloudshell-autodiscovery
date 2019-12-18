@@ -1,4 +1,4 @@
-class ResourceModelsAttributes(object):
+class ResourceModelsAttributes:
     """Container for the CloudShell Resource Model Attributes names."""
 
     ENABLE_SNMP = "Enable SNMP"
@@ -8,7 +8,7 @@ class ResourceModelsAttributes(object):
     ENABLE_PASSWORD = "Enable Password"
 
 
-class CloudshellAPIErrorCodes(object):
+class CloudshellAPIErrorCodes:
     """Container for the CloudShell API error codes."""
 
     INCORRECT_LOGIN = "100"

@@ -22,7 +22,7 @@ def get_input_data_parser(file_name):
     )
 
 
-class AbstractInputDataParser(object):
+class AbstractInputDataParser:
     FILE_EXTENSION = "*"
 
     def _find_ips(self, start_ip, last_ip):
@@ -37,7 +37,7 @@ class AbstractInputDataParser(object):
         result = []
 
         while start_ip <= last_ip:
-            result.append(str(start_ip))
+            result.append(start_ip)
             start_ip += 1
 
         return result
@@ -64,8 +64,8 @@ class AbstractInputDataParser(object):
                 last_ip_octets = last_ip.split(".")
                 last_ip = first_ip_octets[: 4 - len(last_ip_octets)] + last_ip_octets
                 ip_range = self._find_ips(
-                    start_ip=unicode(first_ip),  # noqa
-                    last_ip=unicode(".".join(last_ip)),  # noqa
+                    start_ip=first_ip,
+                    last_ip=".".join(last_ip),
                 )
             else:
                 ip_range = [device_ips]

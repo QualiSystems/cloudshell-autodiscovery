@@ -5,7 +5,7 @@ from autodiscovery.common.consts import CloudshellAPIErrorCodes
 from autodiscovery.exceptions import AutoDiscoveryException
 
 
-class CloudShellSessionManager(object):
+class CloudShellSessionManager:
     def __init__(self, cs_ip, cs_user, cs_password, logger):
         """Init command.
 

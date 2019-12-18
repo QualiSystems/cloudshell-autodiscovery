@@ -17,7 +17,7 @@ def get_config_data_parser(file_name):
     )
 
 
-class JSONConfigDataParser(object):
+class JSONConfigDataParser:
     FILE_EXTENSION = "json"
 
     def parse(self, config_file):

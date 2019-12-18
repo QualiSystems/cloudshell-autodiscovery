@@ -99,8 +99,8 @@ class RunCommand(AbstractRunCommand):
 
         :param str device_ip:
         :param list[str] snmp_comunity_strings:
-        :return: tuple with QualiSnmp instance and valid SNMP community string
-        :rtype: (QualiSnmp, str)
+        :return: tuple with Snmp instance and valid SNMP community string
+        :rtype: (Snmp, str)
         """
         for snmp_community in snmp_comunity_strings:
             self.logger.info(

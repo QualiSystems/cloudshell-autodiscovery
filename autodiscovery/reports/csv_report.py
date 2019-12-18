@@ -15,7 +15,7 @@ class AbstractCSVReport(AbstractParsableReport):
             for entry in self._entries:
                 entry_row = {
                     header: getattr(entry, entry_attr)
-                    for header, entry_attr in self._header_entry_map.iteritems()
+                    for header, entry_attr in self._header_entry_map.items()
                 }
 
                 writer.writerow(entry_row)
@@ -31,7 +31,7 @@ class AbstractCSVReport(AbstractParsableReport):
 
             for row in list(reader)[1:]:  # first row is a header
                 entry_attrs = {}
-                for header, entry_attr in self._header_entry_map.iteritems():
+                for header, entry_attr in self._header_entry_map.items():
                     entry_attrs[entry_attr] = row[header]
 
                 entry = self.entry_class(**entry_attrs)

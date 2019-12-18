@@ -117,14 +117,14 @@ class Entry(AbstractEntry):
         :rtype: str
         """
         return self.ATTRIBUTES_SEPARATOR.join(
-            ["{}={}".format(key, val) for key, val in self.attributes.iteritems()]
+            ["{}={}".format(key, val) for key, val in self.attributes.items()]
         )
 
     @staticmethod
     def parse_formatted_attrs(attributes):
         """Parse attributes from the formatted string.
 
-        :rtype: list[str]
+        :rtype: dict[str, str]
         """
         return {
             key.strip(): val.strip()

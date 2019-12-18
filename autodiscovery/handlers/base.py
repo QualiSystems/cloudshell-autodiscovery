@@ -9,7 +9,7 @@ from autodiscovery.common.consts import CloudshellAPIErrorCodes
 from autodiscovery.exceptions import ReportableException
 
 
-class AbstractHandler(object):
+class AbstractHandler:
     def __init__(self, logger, autoload):
         """Init command.
 
@@ -186,7 +186,7 @@ class AbstractHandler(object):
         self.logger.info("Adding attributes to the resource {}".format(resource_name))
         attributes = [
             AttributeNameValue("{}{}".format(attribute_prefix, key), value)
-            for key, value in entry.attributes.iteritems()
+            for key, value in entry.attributes.items()
         ]
 
         cs_session.SetAttributesValues(
