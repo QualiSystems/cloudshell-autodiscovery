@@ -1,92 +1,7 @@
+from dataclasses import dataclass
+from typing import List
+
 from autodiscovery.config import DEFAULT_CLOUDSHELL_DOMAIN, DEFAULT_RESOURCE_FOLDER_PATH
-
-
-class InputDataModel(object):
-    def __init__(
-        self,
-        devices_ips,
-        cs_ip,
-        cs_user,
-        cs_password,
-        snmp_community_strings,
-        vendor_settings,
-    ):
-        """Init command.
-
-        :param list[DeviceIPRange] devices_ips:
-        :param str cs_ip:
-        :param str cs_user:
-        :param str cs_password:
-        :param list[str] snmp_community_strings:
-        :param autodiscovery.models.VendorSettingsCollection vendor_settings:
-        """
-        self.devices_ips = devices_ips
-        self.cs_ip = cs_ip
-        self.cs_user = cs_user
-        self.cs_password = cs_password
-        self.snmp_community_strings = snmp_community_strings
-        self.vendor_settings = vendor_settings
-
-
-class DeviceIPRange(object):
-    def __init__(self, ip_range, domain=None):
-        """Init command.
-
-        :param list[str] ip_range:
-        :param str domain:
-        """
-        self.ip_range = ip_range
-        if domain is None:
-            domain = DEFAULT_CLOUDSHELL_DOMAIN
-
-        self.domain = domain
-
-
-class CLICredentials(object):
-    def __init__(self, user=None, password=None, enable_password=None):
-        """Init command.
-
-        :param str user:
-        :param str password:
-        :param str enable_password:
-        """
-        self.user = user
-        self.password = password
-        self.enable_password = enable_password
-
-    def __eq__(self, other):
-        if isinstance(other, self.__class__):
-            return all(
-                [
-                    self.user == other.user,
-                    self.password == other.password,
-                    self.enable_password == other.enable_password,
-                ]
-            )
-
-        return False
-
-
-class VendorCLICredentials(object):
-    def __init__(self, name, cli_credentials):
-        """Init command.
-
-        :param str name: vendor name
-        :param list[CLICredentials] cli_credentials:
-        """
-        self.name = name
-        self.cli_credentials = cli_credentials
-
-    def update_valid_creds(self, valid_creds):
-        """Set valid credentials to be first in the list of possible CLI credentials.
-
-        :param CLICredentials valid_creds:
-        :return:
-        """
-        if valid_creds in self.cli_credentials:
-            self.cli_credentials.remove(valid_creds)
-
-        self.cli_credentials.insert(0, valid_creds)
 
 
 class VendorSettingsCollection(object):
@@ -115,7 +30,7 @@ class VendorSettingsCollection(object):
             "folder-path", DEFAULT_RESOURCE_FOLDER_PATH
         )
 
-        for vendor_name, vendor_settings in vendor_settings.iteritems():
+        for vendor_name, vendor_settings in vendor_settings.items():
             vendor_creds = vendor_settings.get("cli-credentials", [])
             cli_creds = [
                 CLICredentials(
@@ -152,8 +67,48 @@ class VendorSettingsCollection(object):
         :param VendorDefinition vendor:
         :rtype: str
         """
-        for vendor_name, folder_path in self._folder_paths.iteritems():
+        for vendor_name, folder_path in self._folder_paths.items():
             if vendor.check_vendor_name(vendor_name):
                 return folder_path
 
         return self._default_folder
+
+
+@dataclass
+class CLICredentials:
+    user: str = None
+    password: str = None
+    enable_password: str = None
+
+
+@dataclass
+class VendorCLICredentials:
+    name: str
+    cli_credentials: List[CLICredentials]
+
+    def update_valid_creds(self, valid_creds):
+        """Set valid credentials to be first in the list of possible CLI credentials.
+
+        :param CLICredentials valid_creds:
+        :return:
+        """
+        if valid_creds in self.cli_credentials:
+            self.cli_credentials.remove(valid_creds)
+
+        self.cli_credentials.insert(0, valid_creds)
+
+
+@dataclass
+class DeviceIPRange:
+    ip_range: List[str]
+    domain: str = DEFAULT_CLOUDSHELL_DOMAIN
+
+
+@dataclass
+class InputDataModel:
+    devices_ips: List[DeviceIPRange]
+    cs_ip: str
+    cs_user: str
+    cs_password: str
+    snmp_community_strings: List[str]
+    vendor_settings: VendorSettingsCollection
