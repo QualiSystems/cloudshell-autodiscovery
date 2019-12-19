@@ -1,8 +1,9 @@
 import re
 import uuid
 
-from cloudshell.snmp.quali_snmp import QualiSnmp
-from cloudshell.snmp.snmp_parameters import SNMPV2Parameters
+from cloudshell.snmp.cloudshell_snmp import Snmp
+from cloudshell.snmp.core.domain.snmp_oid import SnmpMibObject
+from cloudshell.snmp.snmp_parameters import SNMPReadParameters
 
 from autodiscovery.exceptions import ReportableException
 from autodiscovery.handlers import (
@@ -94,6 +95,26 @@ class RunCommand(AbstractRunCommand):
         if match_name:
             return match_name.group("vendor")
 
+    def _is_snmp_valid(self, snmp, snmp_community, ip_address):
+        """Verify that SNMP credentials are correct and service is working.
+
+        :param cloudshell.snmp.cloudshell_snmp.Snmp snmp:
+        :param str snmp_community:
+        :param str ip_address:
+        """
+        try:
+            snmp.get(
+                SnmpMibObject("SNMPv2-MIB", "sysDescr", "0")
+            )
+        except Exception:
+            self.logger.warning(
+                f"SNMP Community string '{snmp_community}' is not valid for "
+                f"device with IP {ip_address}"
+            )
+            return False
+
+        return True
+
     def _get_snmp_handler(self, device_ip, snmp_comunity_strings):
         """Get SNMP Handler and valid community string for the device.
 
@@ -108,17 +129,13 @@ class RunCommand(AbstractRunCommand):
                     snmp_community, device_ip
                 )
             )
-            snmp_parameters = SNMPV2Parameters(
+            snmp_parameters = SNMPReadParameters(
                 ip=device_ip, snmp_community=snmp_community
             )
 
-            try:
-                return QualiSnmp(snmp_parameters, self.logger), snmp_community
-            except Exception:
-                self.logger.warning(
-                    "SNMP Community string '{}' is not valid for "
-                    "device with IP {}".format(snmp_community, device_ip)
-                )
+            with Snmp().get_snmp_service(snmp_parameters=snmp_parameters, logger=self.logger) as snmp:
+                if self._is_snmp_valid(snmp=snmp, snmp_community=snmp_community, ip_address=device_ip):
+                    return snmp, snmp_community
 
         raise ReportableException("SNMP timeout - no resource detected")
 
@@ -148,13 +165,21 @@ class RunCommand(AbstractRunCommand):
 
         vendor_enterprise_numbers = self.data_processor.load_vendor_enterprise_numbers()
         entry.snmp_community = snmp_community
+
         entry.sys_object_id = snmp_handler.get_property(
-            "SNMPv2-MIB", "sysObjectID", "0"
-        )
+            SnmpMibObject("SNMPv2-MIB", "sysObjectID", "0")
+        ).safe_value
+
         vendor_number = self._parse_vendor_number(entry.sys_object_id)
         entry.vendor = vendor_enterprise_numbers[vendor_number]
-        entry.description = snmp_handler.get_property("SNMPv2-MIB", "sysDescr", "0")
-        sys_name = snmp_handler.get_property("SNMPv2-MIB", "sysName", "0")
+
+        entry.description = snmp_handler.get_property(
+            SnmpMibObject("SNMPv2-MIB", "sysDescr", "0")
+        ).safe_value
+
+        sys_name = snmp_handler.get_property(
+            SnmpMibObject("SNMPv2-MIB", "sysName", "0")
+        ).safe_value
 
         if not sys_name:
             sys_name = self._generate_device_name(vendor_name=entry.vendor)
