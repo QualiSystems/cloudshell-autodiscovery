@@ -53,9 +53,7 @@ class AbstractRunCommand(object):
         }
 
     def execute(self, *args, **kwargs):
-        raise NotImplementedError(
-            "Class {} must implement method 'execute'".format(type(self))
-        )
+        raise NotImplementedError(f"Class {type(self)} must implement method 'execute'")
 
 
 class RunCommand(AbstractRunCommand):
@@ -103,9 +101,7 @@ class RunCommand(AbstractRunCommand):
         :param str ip_address:
         """
         try:
-            snmp.get(
-                SnmpMibObject("SNMPv2-MIB", "sysDescr", "0")
-            )
+            snmp.get(SnmpMibObject("SNMPv2-MIB", "sysDescr", "0"))
         except Exception:
             self.logger.warning(
                 f"SNMP Community string '{snmp_community}' is not valid for "
@@ -125,16 +121,19 @@ class RunCommand(AbstractRunCommand):
         """
         for snmp_community in snmp_comunity_strings:
             self.logger.info(
-                "Trying community string '{}' for device with IP {}".format(
-                    snmp_community, device_ip
-                )
+                f"Trying community string '{snmp_community}' "
+                f"for device with IP {device_ip}"
             )
             snmp_parameters = SNMPReadParameters(
                 ip=device_ip, snmp_community=snmp_community
             )
 
-            with Snmp().get_snmp_service(snmp_parameters=snmp_parameters, logger=self.logger) as snmp:
-                if self._is_snmp_valid(snmp=snmp, snmp_community=snmp_community, ip_address=device_ip):
+            with Snmp().get_snmp_service(
+                snmp_parameters=snmp_parameters, logger=self.logger
+            ) as snmp:
+                if self._is_snmp_valid(
+                    snmp=snmp, snmp_community=snmp_community, ip_address=device_ip
+                ):
                     return snmp, snmp_community
 
         raise ReportableException("SNMP timeout - no resource detected")
@@ -146,7 +145,7 @@ class RunCommand(AbstractRunCommand):
         :rtype: str
         """
         vendor_name = re.sub("[^a-zA-Z0-9 .-]", "", vendor_name)
-        return "{}-{}".format(vendor_name, uuid.uuid4())
+        return f"{vendor_name}-{uuid.uuid4()}"
 
     def _discover_device(self, entry, snmp_comunity_strings):
         """Discover device attributes via SNMP.
@@ -212,8 +211,9 @@ class RunCommand(AbstractRunCommand):
         for devices_ip_range in devices_ips:
             cs_domain = devices_ip_range.domain
             for device_ip in devices_ip_range.ip_range:
-                self.logger.info("Discovering device with IP {}".format(device_ip))
-                self.output.send("Discovering device with IP {}".format(device_ip))
+                msg = f"Discovering device with IP {device_ip}"
+                self.logger.info(msg)
+                self.output.send(msg)
                 try:
                     with self.report.add_entry(
                         ip=device_ip, domain=cs_domain, offline=self.offline
@@ -225,7 +225,7 @@ class RunCommand(AbstractRunCommand):
 
                         if vendor is None:
                             raise ReportableException(
-                                "Unsupported vendor {}".format(entry.vendor)
+                                f"Unsupported vendor {entry.vendor}"
                             )
 
                         try:
@@ -234,11 +234,8 @@ class RunCommand(AbstractRunCommand):
                             ]
                         except KeyError:
                             raise ReportableException(
-                                "Invalid vendor type '{}'. Possible values "
-                                "are: {}".format(
-                                    vendor.vendor_type,
-                                    self.vendor_type_handlers_map.keys(),
-                                )
+                                f"Invalid vendor type '{vendor.vendor_type}'. Possible "
+                                f"values are: {self.vendor_type_handlers_map.keys()}"
                             )
 
                         discovered_entry = handler.discover(
@@ -257,34 +254,27 @@ class RunCommand(AbstractRunCommand):
 
                 except ReportableException as e:
                     self.output.send(
-                        "Failed to discover {} device. {}".format(device_ip, str(e)),
-                        error=True,
+                        f"Failed to discover {device_ip} device. {str(e)}", error=True
                     )
                     self.logger.exception(
-                        "Failed to discover {} device due to:".format(device_ip)
+                        f"Failed to discover {device_ip} device due to:"
                     )
 
                 except Exception:
                     self.output.send(
-                        "Failed to discover {} device. See log for details".format(
-                            device_ip
-                        ),
+                        f"Failed to discover {device_ip} device. See log for details",
                         error=True,
                     )
                     self.logger.exception(
-                        "Failed to discover {} device due to:".format(device_ip)
+                        f"Failed to discover {device_ip} device due to:"
                     )
 
                 else:
                     self.output.send(
-                        "Device with IP {} was successfully discovered".format(
-                            device_ip
-                        )
+                        f"Device with IP {device_ip} was successfully discovered"
                     )
                     self.logger.info(
-                        "Device with IP {} was successfully discovered".format(
-                            device_ip
-                        )
+                        f"Device with IP {device_ip} was successfully discovered"
                     )
 
         self.report.generate()

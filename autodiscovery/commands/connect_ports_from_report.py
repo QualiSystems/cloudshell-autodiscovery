@@ -26,9 +26,8 @@ class ConnectPortsFromReportCommand(object):
         """
         for entry in self.report.entries:
             self.logger.info(
-                "Processing connection between port {} and {}".format(
-                    entry.source_port, entry.target_port
-                )
+                f"Processing connection between port {entry.source_port} "
+                f"and {entry.target_port}"
             )
             try:
                 with entry:
@@ -53,28 +52,24 @@ class ConnectPortsFromReportCommand(object):
 
             except ReportableException as e:
                 self.output.send(
-                    "Failed to connect port '{}' and '{}'. {}".format(
-                        entry.source_port, entry.target_port, str(e)
-                    ),
+                    f"Failed to connect port '{entry.source_port}' "
+                    f"and '{entry.target_port}'. {str(e)}",
                     error=True,
                 )
                 self.logger.exception("Failed to connect ports due to:")
 
             except Exception:
                 self.output.send(
-                    "Failed to connect port '{}' and '{}'. See log for details".format(
-                        entry.source_port, entry.target_port
-                    ),
+                    f"Failed to connect port '{entry.source_port}' and "
+                    f"'{entry.target_port}'. See log for details",
                     error=True,
                 )
                 self.logger.exception("Failed to connect ports due to:")
 
             else:
                 msg = (
-                    "Connection between port '{}' and port '{}'"
-                    " was successfully processed".format(
-                        entry.source_port, entry.target_port
-                    )
+                    f"Connection between port '{entry.source_port}' and port "
+                    f"'{entry.target_port}' was successfully processed"
                 )
 
                 self.output.send(msg)

@@ -73,8 +73,7 @@ class ConnectPortsCommand(object):
         }
 
         for family, sys_attr in [("", SYSTEM_NAME_PORT_ATTRIBUTE)] + [
-            (family, "{}.{}".format(family, SYSTEM_NAME_PORT_ATTRIBUTE))
-            for family in families
+            (family, f"{family}.{SYSTEM_NAME_PORT_ATTRIBUTE}") for family in families
         ]:
 
             for res in cs_session.FindResources(
@@ -88,16 +87,12 @@ class ConnectPortsCommand(object):
 
         if not resources:
             raise ReportableException(
-                "Unable to find resource with 'System Name' attribute: '{}'".format(
-                    sys_name
-                )
+                f"Unable to find resource with 'System Name' attribute: '{sys_name}'"
             )
         elif len(resources) > 1:
             raise ReportableException(
-                "Found several resources: {} with the same 'System Name'"
-                " attribute: '{}'".format(
-                    [resource.Name for resource in resources], sys_name
-                )
+                f"Found several resources: {[resource.Name for resource in resources]} "
+                f"with the same 'System Name' attribute: '{sys_name}'"
             )
 
         return cs_session.GetResourceDetails(resources[0].FullName)
@@ -117,7 +112,7 @@ class ConnectPortsCommand(object):
                 return port
 
         raise ReportableException(
-            "Unable to find Adjacent port '{}'".format(adjacent_port_name)
+            f"Unable to find Adjacent port '{adjacent_port_name}'"
         )
 
     def execute(self, resources_names, domain):
@@ -130,9 +125,7 @@ class ConnectPortsCommand(object):
         cs_session = self.cs_session_manager.get_session(cs_domain=domain)
 
         for resource_name in resources_names:
-            msg = "Updating physical connections for the resource '{}': ".format(
-                resource_name
-            )
+            msg = f"Updating physical connections for the resource '{resource_name}': "
             self.output.send(msg)
             self.logger.info(msg)
 
@@ -140,12 +133,10 @@ class ConnectPortsCommand(object):
                 resource = cs_session.GetResourceDetails(resource_name)
                 for port, adjacent in self._find_adjacent_ports(resource):
                     self.output.send(
-                        "\t- Updating physical connection for the port '{}' ".format(
-                            port
-                        )
+                        f"\t- Updating physical connection for the port '{port}' "
                     )
                     self.logger.info(
-                        "Processing port '{}' with adjacent '{}'".format(port, adjacent)
+                        f"Processing port '{port}' with adjacent '{adjacent}'"
                     )
 
                     try:
@@ -180,8 +171,8 @@ class ConnectPortsCommand(object):
 
                     except ReportableException as e:
                         self.output.send(
-                            "\t- Failed to update physical connection "
-                            "for the port '{}'. {}".format(port, e),
+                            f"\t- Failed to update physical connection "
+                            f"for the port '{port}'. {e}",
                             error=True,
                         )
                         self.logger.exception(
@@ -191,7 +182,7 @@ class ConnectPortsCommand(object):
                     except Exception:
                         self.output.send(
                             "\t- Failed to update physical connection "
-                            "for the port '{}' ".format(port),
+                            f"for the port '{port}' ",
                             error=True,
                         )
                         self.logger.exception(
@@ -200,15 +191,16 @@ class ConnectPortsCommand(object):
 
             except Exception:
                 self.output.send(
-                    "Failed to update physical connections for the resource '{}'. "
-                    "See log for the details".format(resource_name),
+                    f"Failed to update physical connections for the resource "
+                    f"'{resource_name}'. See log for the details",
                     error=True,
                 )
                 self.logger.exception("Failed to update physical connections due to:")
 
             else:
-                msg = "Physical connections for the resource '{}' were updated".format(
-                    resource_name
+                msg = (
+                    f"Physical connections for the resource '{resource_name}' "
+                    "were updated"
                 )
                 self.output.send(msg)
                 self.logger.info(msg)

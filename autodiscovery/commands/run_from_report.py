@@ -14,8 +14,9 @@ class RunFromReportCommand(AbstractRunCommand):
         )
 
         for entry in self.report.entries:
-            self.logger.info("Uploading device with IP {}".format(entry.ip))
-            self.output.send("Uploading device with IP {}".format(entry.ip))
+            msg = f"Uploading device with IP {entry.ip}"
+            self.logger.info(msg)
+            self.output.send(msg)
 
             try:
                 with entry:
@@ -27,9 +28,7 @@ class RunFromReportCommand(AbstractRunCommand):
                     vendor = vendor_config.get_vendor(vendor_name=entry.vendor)
 
                     if vendor is None:
-                        raise ReportableException(
-                            "Unsupported vendor {}".format(entry.vendor)
-                        )
+                        raise ReportableException(f"Unsupported vendor {entry.vendor}")
 
                     try:
                         handler = self.vendor_type_handlers_map[
@@ -37,9 +36,9 @@ class RunFromReportCommand(AbstractRunCommand):
                         ]
                     except KeyError:
                         raise ReportableException(
-                            "Invalid vendor type '{}'. Possible values are: {}".format(
-                                vendor.vendor_type, self.vendor_type_handlers_map.keys()
-                            )
+                            f"Invalid vendor type '{vendor.vendor_type}'. "
+                            f"Possible values are: "
+                            f"{self.vendor_type_handlers_map.keys()}"
                         )
 
                     cs_session = self.cs_session_manager.get_session(
@@ -49,18 +48,11 @@ class RunFromReportCommand(AbstractRunCommand):
 
             except Exception:
                 self.output.send(
-                    "Failed to discover {} device. {}".format(entry.ip, entry.comment),
-                    error=True,
+                    f"Failed to discover {entry.ip} device. {entry.comment}", error=True
                 )
-                self.logger.exception(
-                    "Failed to upload {} device due to:".format(entry.ip)
-                )
+                self.logger.exception(f"Failed to upload {entry.ip} device due to:")
             else:
-                self.output.send(
-                    "Device with IP {} was successfully uploaded".format(entry.ip)
-                )
-                self.logger.info(
-                    "Device with IP {} was successfully uploaded".format(entry.ip)
-                )
+                self.output.send(f"Device with IP {entry.ip} was successfully uploaded")
+                self.logger.info(f"Device with IP {entry.ip} was successfully uploaded")
 
         self.report.generate()

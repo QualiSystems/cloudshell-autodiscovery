@@ -16,9 +16,8 @@ def get_input_data_parser(file_name):
             return parser_cls()
 
     raise AutoDiscoveryException(
-        "Invalid Input Data file format. Available formats are: {}".format(
-            ", ".join([parser.FILE_EXTENSION for parser in parsers])
-        )
+        f"Invalid Input Data file format. Available formats are: "
+        f"{', '.join([parser.FILE_EXTENSION for parser in parsers])}"
     )
 
 
@@ -63,10 +62,7 @@ class AbstractInputDataParser:
                 first_ip_octets = first_ip.split(".")
                 last_ip_octets = last_ip.split(".")
                 last_ip = first_ip_octets[: 4 - len(last_ip_octets)] + last_ip_octets
-                ip_range = self._find_ips(
-                    start_ip=first_ip,
-                    last_ip=".".join(last_ip),
-                )
+                ip_range = self._find_ips(start_ip=first_ip, last_ip=".".join(last_ip))
             else:
                 ip_range = [device_ips]
 
@@ -80,9 +76,7 @@ class AbstractInputDataParser:
         :param str input_file: full path to the input data file
         :rtype: models.InputDataModel
         """
-        raise NotImplementedError(
-            "Class {} must implement method 'parse'".format(type(self))
-        )
+        raise NotImplementedError(f"Class {type(self)} must implement method 'parse'")
 
 
 class YAMLInputDataParser(AbstractInputDataParser):

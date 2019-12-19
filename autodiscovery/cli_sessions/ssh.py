@@ -61,15 +61,13 @@ class SSHDiscoverySession(SSHSession, AbstractDiscoverySession):
 
             except paramiko.AuthenticationException:
                 logger.warning(
-                    "Credentials {}/{} aren't valid for the device {} "
-                    "for SSH connection".format(
-                        credentials.user, credentials.password, self.host
-                    )
+                    f"Credentials {credentials.user}/{credentials.password} "
+                    f"aren't valid for the device {self.host} "
                 )
             finally:
                 self._handler.close()
 
         raise AutoDiscoveryException(
-            "All given credentials aren't valid for the device {} "
-            "for SSH connection".format(self.host)
+            f"All given credentials aren't valid for the device "
+            f"{self.host} for SSH connection"
         )

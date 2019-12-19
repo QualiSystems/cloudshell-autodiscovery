@@ -28,7 +28,7 @@ class AbstractHandler:
         :rtype: autodiscovery.reports.base.Entry
         """
         raise NotImplementedError(
-            "Class {} must implement method 'discover'".format(type(self))
+            f"Class {type(self)} must implement method 'discover'"
         )
 
     def upload(self, entry, vendor, cs_session):
@@ -39,9 +39,7 @@ class AbstractHandler:
         :param cloudshell.api.cloudshell_api.CloudShellAPISession cs_session:
         :return:
         """
-        raise NotImplementedError(
-            "Class {} must implement method 'upload'".format(type(self))
-        )
+        raise NotImplementedError(f"Class {type(self)} must implement method 'upload'")
 
     def _get_cli_credentials(self, vendor, vendor_settings, device_ip):
         """Get CLI credentials.
@@ -67,9 +65,8 @@ class AbstractHandler:
                     )
                 except Exception:
                     self.logger.warning(
-                        "{} Credentials aren't valid for the device with IP {}".format(
-                            session.SESSION_TYPE, device_ip
-                        ),
+                        f"{session.SESSION_TYPE} Credentials aren't valid "
+                        f"for the device with IP {device_ip}",
                         exc_info=True,
                     )
                 else:
@@ -90,9 +87,9 @@ class AbstractHandler:
             )
         except CloudShellAPIError as e:
             if e.code == CloudshellAPIErrorCodes.UNABLE_TO_LOCATE_DRIVER:
-                self.logger.exception("Unable to locate driver {}".format(driver_name))
+                self.logger.exception(f"Unable to locate driver {driver_name}")
                 raise ReportableException(
-                    "Shell {} is not installed on the CloudShell".format(driver_name)
+                    f"Shell {driver_name} is not installed on the CloudShell"
                 )
             raise
 
@@ -126,7 +123,7 @@ class AbstractHandler:
             )
         except CloudShellAPIError as e:
             if e.code == CloudshellAPIErrorCodes.RESOURCE_ALREADY_EXISTS:
-                resource_name = "{}-1".format(resource_name)
+                resource_name = f"{resource_name}-1"
                 cs_session.CreateResource(
                     resourceFamily=resource_family,
                     resourceModel=resource_model,
@@ -136,9 +133,8 @@ class AbstractHandler:
                 )
             else:
                 self.logger.exception(
-                    "Unable to locate Shell with Resource Family/Name: {}/{}".format(
-                        resource_family, resource_model
-                    )
+                    f"Unable to locate Shell with Resource Family/Name: "
+                    f"{resource_family}/{resource_model}"
                 )
                 raise
 
@@ -183,9 +179,9 @@ class AbstractHandler:
             else:
                 raise
 
-        self.logger.info("Adding attributes to the resource {}".format(resource_name))
+        self.logger.info(f"Adding attributes to the resource {resource_name}")
         attributes = [
-            AttributeNameValue("{}{}".format(attribute_prefix, key), value)
+            AttributeNameValue(f"{attribute_prefix}{key}", value)
             for key, value in entry.attributes.items()
         ]
 
@@ -193,13 +189,13 @@ class AbstractHandler:
             [ResourceAttributesUpdateRequest(resource_name, attributes)]
         )
 
-        self.logger.info("Attaching driver to the resource {}".format(resource_name))
+        self.logger.info(f"Attaching driver to the resource {resource_name}")
         self._add_resource_driver(
             cs_session=cs_session, resource_name=resource_name, driver_name=driver_name
         )
 
         if self.autoload:
-            self.logger.info("Autoloading resource {}".format(resource_name))
+            self.logger.info(f"Autoloading resource {resource_name}")
             cs_session.AutoLoad(resource_name)
 
         return resource_name

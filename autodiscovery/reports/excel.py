@@ -19,7 +19,7 @@ class AbstractExcelReport(AbstractParsableReport):
         if end_column is None:
             end_column = start_column
 
-        return "{}:{}".format(start_column, end_column)
+        return f"{start_column}:{end_column}"
 
     @property
     def _header_with_column(self):
@@ -49,7 +49,7 @@ class AbstractExcelReport(AbstractParsableReport):
         :param row:
         :return:
         """
-        cell = wb_sheet["{}{}".format(column, row)]
+        cell = wb_sheet[f"{column}{row}"]
         return cell.value or ""
 
     def parse_entries_from_file(self, report_file):

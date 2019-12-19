@@ -28,13 +28,12 @@ def parse_report(report_file, reports):
     ]
 
     for report_cls in available_reports:
-        if report_file.endswith(".{}".format(report_cls.FILE_EXTENSION)):
+        if report_file.endswith(f".{report_cls.FILE_EXTENSION}"):
             report = report_cls(report_file)
             report.parse_entries_from_file(report_file)
             return report
 
     raise AutoDiscoveryException(
-        "Invalid Report file format. Available formats are: {}".format(
-            ", ".join([report.FILE_EXTENSION for report in available_reports])
-        )
+        f"Invalid Report file format. Available formats are: "
+        f"{', '.join([report.FILE_EXTENSION for report in available_reports])}"
     )

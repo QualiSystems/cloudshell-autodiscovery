@@ -15,7 +15,7 @@ class AbstractReport(object):
         if file_name is None:
             file_name = self.DEFAULT_REPORT_NAME
 
-        file_extension = ".{}".format(self.FILE_EXTENSION)
+        file_extension = f".{self.FILE_EXTENSION}"
 
         if not file_name.lower().endswith(file_extension):
             file_name += file_extension
@@ -42,13 +42,13 @@ class AbstractReport(object):
     @property
     def _header_entry_map(self):
         raise NotImplementedError(
-            "Class {} must implement property '_header_entry_map'".format(type(self))
+            f"Class {type(self)} must implement property '_header_entry_map'"
         )
 
     @property
     def entry_class(self):
         raise NotImplementedError(
-            "Class {} must implement property 'entry_class'".format(type(self))
+            f"Class {type(self)} must implement property 'entry_class'"
         )
 
     def generate(self):
@@ -56,9 +56,7 @@ class AbstractReport(object):
 
         :return:
         """
-        raise NotImplementedError(
-            "Class {} must implement method 'generate'".format(type(self))
-        )
+        raise NotImplementedError("Class {type(self)} must implement method 'generate'")
 
 
 class AbstractParsableReport(AbstractReport):
@@ -69,9 +67,7 @@ class AbstractParsableReport(AbstractReport):
         :rtype: list[Entry]
         """
         raise NotImplementedError(
-            "Class {} must implement method 'parse_entries_from_file'".format(
-                type(self)
-            )
+            f"Class {type(self)} must implement method 'parse_entries_from_file'"
         )
 
 

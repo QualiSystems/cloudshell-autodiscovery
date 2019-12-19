@@ -40,6 +40,4 @@ class PDUTypeHandler(AbstractHandler):
         )
 
         if not resource_name:
-            raise ReportableException(
-                "Shell {} is not installed".format(vendor.driver_name)
-            )
+            raise ReportableException(f"Shell {vendor.driver_name} is not installed")

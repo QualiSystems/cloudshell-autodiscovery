@@ -11,9 +11,8 @@ def get_config_data_parser(file_name):
             return parser_cls()
 
     raise AutoDiscoveryException(
-        "Invalid Additional Config Data file format. Available formats are: {}".format(
-            ", ".join([parser.FILE_EXTENSION for parser in parsers])
-        )
+        f"Invalid Additional Config Data file format. Available formats are: "
+        f"{', '.join([parser.FILE_EXTENSION for parser in parsers])}"
     )
 
 

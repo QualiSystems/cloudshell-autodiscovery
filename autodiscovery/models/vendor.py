@@ -1,5 +1,5 @@
-from dataclasses import dataclass
 import re
+from dataclasses import dataclass
 from typing import List
 
 
@@ -19,7 +19,7 @@ class OperationSystem(object):
         :return:
         """
         for model_map in self.models_map:
-            aliases_regexp = r"({})".format("|".join(model_map["aliases"]))
+            aliases_regexp = fr"({'|'.join(model_map['aliases'])})"
             if re.search(aliases_regexp, system_description, flags=re.DOTALL):
                 return model_map["model"]
 
@@ -56,7 +56,7 @@ class BaseVendorDefinition:
         :param str vendor_name: vendor name from the PEN data file
         :rtype: bool
         """
-        aliases_regexp = r"({})".format("|".join(self.aliases))
+        aliases_regexp = fr"({'|'.join(self.aliases)})"
         return bool(re.search(aliases_regexp, vendor_name, flags=re.DOTALL))
 
     def check_vendor_name(self, vendor_name):
@@ -84,7 +84,7 @@ class NetworkingVendorDefinition(BaseVendorDefinition):
         """
         for os in self.operation_systems:
             if os.aliases:
-                aliases_regexp = r"({})".format("|".join(os.aliases))
+                aliases_regexp = fr"({'|'.join(os.aliases)})"
                 if re.search(aliases_regexp, system_description, flags=re.DOTALL):
                     return os
 

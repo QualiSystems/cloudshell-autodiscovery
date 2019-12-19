@@ -66,8 +66,8 @@ class NetworkingTypeHandler(AbstractHandler):
             resource_family=family_data["family_name"],
             resource_model=family_data["model_name"],
             driver_name=driver_name,
-            attribute_prefix="{}.".format(family_data["model_name"]),
+            attribute_prefix=f"{family_data['model_name']}.",
         )
 
         if not resource_name:
-            raise ReportableException("Shell {} is not installed".format(driver_name))
+            raise ReportableException(f"Shell {driver_name} is not installed")

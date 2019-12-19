@@ -21,7 +21,7 @@ class AbstractDiscoverySession(ExpectSession):
         :rtype: autodiscovery.models.CLICredentials
         """
         raise NotImplementedError(
-            "Class {} must implement method 'check_credentials'".format(type(self))
+            f"Class {type(self)} must implement method 'check_credentials'"
         )
 
     def _check_enable_password(
@@ -88,9 +88,8 @@ class AbstractDiscoverySession(ExpectSession):
                 val = next(possible_values)
             except StopIteration:
                 raise AutoDiscoveryException(
-                    "All given credentials aren't valid for the {} connection".format(
-                        session.session_type
-                    )
+                    f"All given credentials aren't valid for the "
+                    f"{session.session_type} connection"
                 )
 
             setattr(valid_creds, creds_key, val)
