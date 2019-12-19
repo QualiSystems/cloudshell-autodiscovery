@@ -103,6 +103,10 @@ class DeviceIPRange:
     ip_range: List[str]
     domain: str = DEFAULT_CLOUDSHELL_DOMAIN
 
+    def __post_init__(self):
+        if self.domain is None:
+            self.domain = DEFAULT_CLOUDSHELL_DOMAIN
+
 
 @dataclass
 class InputDataModel:

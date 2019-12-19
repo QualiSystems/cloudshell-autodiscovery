@@ -36,7 +36,7 @@ class AbstractInputDataParser:
         result = []
 
         while start_ip <= last_ip:
-            result.append(start_ip)
+            result.append(str(start_ip))
             start_ip += 1
 
         return result
