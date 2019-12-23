@@ -75,27 +75,45 @@ def echo_vendors_config_template(template_format, save_to_file):
     )
 
 
-@cli.command(name="echo-excel-report-template")
+@cli.command(name="echo-discovery-report-template")
 @click.option(
     "-f", "--save-to-file", required=True, help="File to save generated template file"
 )
-def echo_excel_report_template(save_to_file):
-    """Generate .xlsx report example file for the "run-from-report" command."""
-    report = discovery_reports.ExcelReport(file_name=save_to_file)
+@click.option(
+    "-t",
+    "--report-type",
+    type=click.Choice(discovery_reports.EDITABLE_REPORT_TYPES),
+    default=discovery_reports.DEFAULT_REPORT_TYPE,
+    help="Type for generated report",
+)
+def echo_discovery_report_template(save_to_file, report_type):
+    """Generate csv|xlsx report example file for the "run-from-report" command."""
+    report = discovery_reports.get_report(
+        report_file=save_to_file, report_type=report_type
+    )
     echo_report_tpl_command = commands.EchoReportTemplateCommand(report=report)
     echo_report_tpl_command.execute()
 
 
-@cli.command(name="echo-excel-connections-report-template")
+@cli.command(name="echo-connections-report-template")
 @click.option(
     "-f",
     "--save-to-file",
     required=True,
     help="File to save generated user input template file",
 )
-def echo_excel_connections_template(save_to_file):
-    """Generate .xlsx report example file for the "connect-ports" command."""
-    report = connections_reports.ExcelReport(file_name=save_to_file)
+@click.option(
+    "-t",
+    "--report-type",
+    type=click.Choice(connections_reports.EDITABLE_REPORT_TYPES),
+    default=connections_reports.DEFAULT_REPORT_TYPE,
+    help="Type for generated report",
+)
+def echo_connections_report_template(save_to_file, report_type):
+    """Generate csv|xlsx report example file for the "connect-ports" command."""
+    report = connections_reports.get_report(
+        report_file=save_to_file, report_type=report_type
+    )
     echo_report_tpl_command = commands.EchoConnectionsTemplateCommand(report=report)
     echo_report_tpl_command.execute()
 
