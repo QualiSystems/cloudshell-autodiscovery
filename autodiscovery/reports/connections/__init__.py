@@ -12,6 +12,7 @@ REPORTS_MAP = OrderedDict(
 )
 DEFAULT_REPORT_TYPE = CSVReport.FILE_EXTENSION
 REPORT_TYPES = REPORTS_MAP.keys()
+EDITABLE_REPORT_TYPES = [report_type for report_type in REPORT_TYPES if report_type != ConsoleReport.FILE_EXTENSION]
 
 
 def get_report(report_file, report_type=DEFAULT_REPORT_TYPE):
