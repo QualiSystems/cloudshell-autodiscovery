@@ -12,6 +12,16 @@ from autodiscovery.parsers.input_data_parsers import get_input_data_parser
 from autodiscovery.reports import connections as connections_reports
 from autodiscovery.reports import discovery as discovery_reports
 
+import asyncio
+from functools import wraps
+
+
+def coro(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        return asyncio.run(f(*args, **kwargs))
+    return wrapper
+
 
 @click.group()
 def cli():
@@ -119,6 +129,7 @@ def echo_connections_report_template(save_to_file, report_type):
 
 
 @cli.command()
+@coro
 @click.option(
     "-i",
     "--input-file",
@@ -153,7 +164,7 @@ def echo_connections_report_template(save_to_file, report_type):
     help="Whether autoload discovered resource on the CloudShell or " "not",
     default=True,
 )
-def run(input_file, config_file, log_file, report_file, report_type, offline, autoload):
+async def run(input_file, config_file, log_file, report_file, report_type, offline, autoload):
     """Run Auto discovery command with given arguments from the input file."""
     input_data_parser = get_input_data_parser(input_file)
     input_data_model = input_data_parser.parse(input_file)
@@ -185,7 +196,7 @@ def run(input_file, config_file, log_file, report_file, report_type, offline, au
         autoload=autoload,
     )
 
-    auto_discover_command.execute(
+    await auto_discover_command.execute(
         devices_ips=input_data_model.devices_ips,
         snmp_comunity_strings=input_data_model.snmp_community_strings,
         vendor_settings=input_data_model.vendor_settings,

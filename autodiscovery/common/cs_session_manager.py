@@ -1,6 +1,6 @@
-from cloudshell.api.cloudshell_api import CloudShellAPISession
 from cloudshell.api.common_cloudshell_api import CloudShellAPIError
 
+from autodiscovery.common.async_cloudshell_api import AsyncCloudShellAPISession
 from autodiscovery.common.consts import CloudshellAPIErrorCodes
 from autodiscovery.exceptions import AutoDiscoveryException
 
@@ -20,19 +20,22 @@ class CloudShellSessionManager:
         self._logger = logger
         self._cs_sessions = {}
 
-    def _init_cs_session(self, cs_domain):
+    async def _init_cs_session(self, cs_domain):
         """Initialize CloudShell session.
 
         :param str cs_domain:
         :rtype: CloudShellAPISession
         """
         try:
-            cs_session = CloudShellAPISession(
+            cs_session = AsyncCloudShellAPISession(
                 host=self._cs_ip,
                 username=self._cs_user,
                 password=self._cs_password,
                 domain=cs_domain,
             )
+            # todo: make it somehow throught the connection
+            await cs_session.connect()
+
         except CloudShellAPIError as e:
             if e.code in (
                 CloudshellAPIErrorCodes.INCORRECT_LOGIN,
@@ -47,13 +50,30 @@ class CloudShellSessionManager:
 
         return cs_session
 
-    def get_session(self, cs_domain):
+    async def get_session(self, cs_domain):
         """Get session.
 
         :param str cs_domain: CloudShell Domain
         :return:
         """
         if cs_domain not in self._cs_sessions:
-            self._cs_sessions[cs_domain] = self._init_cs_session(cs_domain=cs_domain)
+            self._cs_sessions[cs_domain] = await self._init_cs_session(cs_domain=cs_domain)
 
         return self._cs_sessions[cs_domain]
+
+# import asyncio
+# import logging
+#
+# async def main():
+#
+#     manager = CloudShellSessionManager(cs_ip="192.168.85.27",
+#                                        cs_user="admin11",
+#                                        cs_password="admin",
+#                                        logger=logging.getLogger("test"))
+#
+#     ss = await manager.get_session("Global")
+#     print (ss)
+#     ss = await manager.get_session("Global")
+#     print (ss)
+#
+# asyncio.run(main())

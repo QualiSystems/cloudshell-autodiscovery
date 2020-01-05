@@ -23,15 +23,15 @@ class PDUTypeHandler(AbstractHandler):
 
         return entry
 
-    def upload(self, entry, vendor, cs_session):
+    async def upload(self, entry, vendor, cs_session):
         """Upload discovered device on the CloudShell.
 
         :param autodiscovery.reports.base.Entry entry:
         :param autodiscovery.models.vendor.PDUVendorDefinition vendor:
-        :param cloudshell.api.cloudshell_api.CloudShellAPISession cs_session:
+        :param autodiscovery.common.async_cloudshell_api.AsyncCloudShellAPISession cs_session:
         :return:
         """
-        resource_name = self._upload_resource(
+        resource_name = await self._upload_resource(
             cs_session=cs_session,
             entry=entry,
             resource_family=vendor.family_name,

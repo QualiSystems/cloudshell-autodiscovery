@@ -73,16 +73,16 @@ class AbstractHandler:
                     vendor_cli_creds.update_valid_creds(valid_creds)
                     return valid_creds
 
-    def _add_resource_driver(self, cs_session, resource_name, driver_name):
+    async def _add_resource_driver(self, cs_session, resource_name, driver_name):
         """Add appropriate driver to the created CloudShell resource.
 
-        :param cloudshell.api.cloudshell_api.CloudShellAPISession cs_session:
+        :param autodiscovery.common.async_cloudshell_api.AsyncCloudShellAPISession cs_session:
         :param str resource_name:
         :param str driver_name:
         :return:
         """
         try:
-            cs_session.UpdateResourceDriver(
+            await cs_session.UpdateResourceDriver(
                 resourceFullPath=resource_name, driverName=driver_name
             )
         except CloudShellAPIError as e:
@@ -93,7 +93,7 @@ class AbstractHandler:
                 )
             raise
 
-    def _create_cs_resource(
+    async def _create_cs_resource(
         self,
         cs_session,
         resource_name,
@@ -104,7 +104,7 @@ class AbstractHandler:
     ):
         """Create Resource on CloudShell with appropriate attributes.
 
-        :param cloudshell.api.cloudshell_api.CloudShellAPISession cs_session:
+        :param autodiscovery.common.async_cloudshell_api.AsyncCloudShellAPISession cs_session:
         :param str resource_name:
         :param str resource_family:
         :param str resource_model:
@@ -114,7 +114,7 @@ class AbstractHandler:
         :rtype: str
         """
         try:
-            cs_session.CreateResource(
+            await cs_session.CreateResource(
                 resourceFamily=resource_family,
                 resourceModel=resource_model,
                 resourceName=resource_name,
@@ -124,7 +124,7 @@ class AbstractHandler:
         except CloudShellAPIError as e:
             if e.code == CloudshellAPIErrorCodes.RESOURCE_ALREADY_EXISTS:
                 resource_name = f"{resource_name}-1"
-                cs_session.CreateResource(
+                await cs_session.CreateResource(
                     resourceFamily=resource_family,
                     resourceModel=resource_model,
                     resourceName=resource_name,
@@ -140,7 +140,7 @@ class AbstractHandler:
 
         return resource_name
 
-    def _upload_resource(
+    async def _upload_resource(
         self,
         cs_session,
         entry,
@@ -151,7 +151,7 @@ class AbstractHandler:
     ):
         """Upload resource to the CloudShell.
 
-        :param cs_session:
+        :param autodiscovery.common.async_cloudshell_api.AsyncCloudShellAPISession cs_session:
         :param entry:
         :param resource_family:
         :param resource_model:
@@ -162,10 +162,10 @@ class AbstractHandler:
         if entry.folder_path != "":
             # create folder before uploading resource. If folder
             # was already created it will return successful result
-            cs_session.CreateFolder(folderFullPath=entry.folder_path)
+            await cs_session.CreateFolder(folderFullPath=entry.folder_path)
 
         try:
-            resource_name = self._create_cs_resource(
+            resource_name = await self._create_cs_resource(
                 cs_session=cs_session,
                 resource_name=entry.device_name,
                 resource_family=resource_family,
@@ -185,17 +185,17 @@ class AbstractHandler:
             for key, value in entry.attributes.items()
         ]
 
-        cs_session.SetAttributesValues(
+        await cs_session.SetAttributesValues(
             [ResourceAttributesUpdateRequest(resource_name, attributes)]
         )
 
         self.logger.info(f"Attaching driver to the resource {resource_name}")
-        self._add_resource_driver(
+        await self._add_resource_driver(
             cs_session=cs_session, resource_name=resource_name, driver_name=driver_name
         )
 
         if self.autoload:
             self.logger.info(f"Autoloading resource {resource_name}")
-            cs_session.AutoLoad(resource_name)
+            await cs_session.AutoLoad(resource_name)
 
         return resource_name
