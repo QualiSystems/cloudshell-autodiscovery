@@ -2,8 +2,9 @@ import asyncio
 import re
 import uuid
 
-import click
-import progressbar
+from aiodecorators import Semaphore
+from tqdm import tqdm
+
 from autodiscovery.common.async_snmp import AsyncSNMPService
 from autodiscovery.exceptions import ReportableException
 from autodiscovery.handlers import (
@@ -15,6 +16,9 @@ from autodiscovery.handlers import (
 from autodiscovery.output import EmptyOutput
 
 
+ASYNCIO_CONCURRENCY_LIMIT = 50
+
+
 class AbstractRunCommand(object):
     def __init__(
         self,
@@ -22,6 +26,7 @@ class AbstractRunCommand(object):
         report,
         logger,
         cs_session_manager,
+        progress_bar,
         output=None,
         autoload=True,
     ):
@@ -31,6 +36,7 @@ class AbstractRunCommand(object):
         :param autodiscovery.reports.discovery.base.AbstractDiscoveryReport report:
         :param logging.Logger logger:
         :param cs_session_manager:
+        :param tqdm.std.tqdm progress_bar:
         :param autodiscovery.output.AbstractOutput output:
         :param bool autoload:
         """
@@ -38,9 +44,11 @@ class AbstractRunCommand(object):
         self.report = report
         self.logger = logger
         self.cs_session_manager = cs_session_manager
+        self.progress_bar = progress_bar
 
         if output is None:
             output = EmptyOutput()
+
         self.output = output
 
         self.vendor_type_handlers_map = {
@@ -63,6 +71,7 @@ class RunCommand(AbstractRunCommand):
         report,
         logger,
         cs_session_manager,
+        progress_bar,
         output=None,
         autoload=True,
         offline=False,
@@ -73,12 +82,13 @@ class RunCommand(AbstractRunCommand):
         :param autodiscovery.reports.discovery.base.AbstractDiscoveryReport report:
         :param logging.Logger logger:
         :param autodiscovery.common.cs_session_manager.CloudShellSessionManager cs_session_manager:  # noqa
+        :param tqdm.std.tqdm progress_bar:
         :param autodiscovery.output.AbstractOutput output:
         :param bool autoload:
         :param bool offline:
         """
         super(RunCommand, self).__init__(
-            data_processor, report, logger, cs_session_manager, output, autoload
+            data_processor, report, logger, cs_session_manager, progress_bar, output, autoload
         )
         self.offline = offline
 
@@ -138,14 +148,14 @@ class RunCommand(AbstractRunCommand):
         entry.device_name = sys_name
         return entry
 
+    @Semaphore(ASYNCIO_CONCURRENCY_LIMIT)
     async def discover_device(self,
                               ip_address,
                               snmp_comunity_strings,
                               vendor_settings,
                               vendor_config,
                               cs_domain,
-                              pbar,
-                              lock):
+                              progress_bar):
 
         msg = f"Discovering device with IP {ip_address}"
         self.logger.info(msg)
@@ -214,9 +224,7 @@ class RunCommand(AbstractRunCommand):
                 f"Device with IP {ip_address} was successfully discovered"
             )
 
-        # async with lock:
-        #     pbar.update(pbar.value + 1)
-        #     print("\n")
+        progress_bar.update()
 
     async def execute(
         self,
@@ -242,19 +250,29 @@ class RunCommand(AbstractRunCommand):
 
         devices_ips = [(device_ip, devices_ip_range.domain) for devices_ip_range in devices_ips
                        for device_ip in devices_ip_range.ip_range]
-        lock = asyncio.Lock()
 
-        with progressbar.ProgressBar(variables={'action': ''},
-                                     prefix="Total devices discovering process:\n",
-                                     max_value=len(devices_ips),
-                                     redirect_stdout=False,
-                                     widget_kwargs=dict(marker='█')) as bar:
+        self.progress_bar.total = len(devices_ips)
 
-            await asyncio.gather(*[self.discover_device(ip_address=device_ip,
-                                                        snmp_comunity_strings=snmp_comunity_strings,
-                                                        vendor_settings=vendor_settings,
-                                                        vendor_config=vendor_config,
-                                                        cs_domain=cs_domain,
-                                                        pbar=bar, lock=lock) for device_ip, cs_domain in devices_ips],
+        with self.progress_bar as progress_bar:
+            await asyncio.gather(*[asyncio.create_task((
+                self.discover_device(ip_address=device_ip,
+                                     snmp_comunity_strings=snmp_comunity_strings,
+                                     vendor_settings=vendor_settings,
+                                     vendor_config=vendor_config,
+                                     cs_domain=cs_domain,
+                                     progress_bar=progress_bar)))
+                for device_ip, cs_domain in devices_ips],
                                  return_exceptions=True)
+
             self.report.generate()
+
+        # todo: remove output class ???
+        from collections import Counter
+        from colorama import Fore
+        counter = Counter(getattr(entry, "status") for entry in self.report.entries)
+        failed_count = counter[self.report.entry_class.FAILED_STATUS]
+
+        print(f"\n{Fore.GREEN}Discovery process finished: "
+              f"\n\tSuccessfully discovered {len(self.report.entries)-failed_count} devices."
+              f"\n\t{Fore.RED}Failed to discover {failed_count} devices.{Fore.RESET}\n")
+

@@ -8,3 +8,6 @@ xlsxwriter==0.9.6
 cloudshell-automation-api>=9.3,<9.4
 cloudshell-cli==4.0.1
 aiosnmp==0.2.2
+aiodecorators==0.2
+aiohttp==3.6.2
+colorama==0.4.3

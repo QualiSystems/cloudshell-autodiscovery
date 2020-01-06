@@ -7,6 +7,7 @@ from autodiscovery.common.cs_session_manager import CloudShellSessionManager
 from autodiscovery.common.utils import get_logger
 from autodiscovery.data_processors import JsonDataProcessor
 from autodiscovery.output import ConsoleOutput
+from autodiscovery.output import TqdmProgressBarOutput
 from autodiscovery.parsers.config_data_parsers import get_config_data_parser
 from autodiscovery.parsers.input_data_parsers import get_input_data_parser
 from autodiscovery.reports import connections as connections_reports
@@ -15,8 +16,10 @@ from autodiscovery.reports import discovery as discovery_reports
 import asyncio
 from functools import wraps
 
+from tqdm import tqdm
 
-def coro(f):
+
+def coroutine(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
         return asyncio.run(f(*args, **kwargs))
@@ -129,7 +132,7 @@ def echo_connections_report_template(save_to_file, report_type):
 
 
 @cli.command()
-@coro
+@coroutine
 @click.option(
     "-i",
     "--input-file",
@@ -186,12 +189,15 @@ async def run(input_file, config_file, log_file, report_file, report_type, offli
         logger=logger,
     )
 
+    progress_bar = tqdm(desc="Total discovering process")
+
     auto_discover_command = commands.RunCommand(
         data_processor=JsonDataProcessor(logger=logger),
         report=report,
         logger=logger,
         cs_session_manager=cs_session_manager,
-        output=ConsoleOutput(),
+        output=TqdmProgressBarOutput(progress_bar=progress_bar),
+        progress_bar=progress_bar,
         offline=offline,
         autoload=autoload,
     )
