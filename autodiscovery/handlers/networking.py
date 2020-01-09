@@ -25,7 +25,6 @@ class NetworkingTypeHandler(AbstractHandler):
         entry.folder_path = vendor_settings.get_folder_path_by_vendor(vendor)
         entry.model_type = model_type
 
-
         cli_creds = self._get_cli_credentials(
             vendor=vendor, vendor_settings=vendor_settings, device_ip=entry.ip
         )

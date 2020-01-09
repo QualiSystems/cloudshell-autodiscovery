@@ -1,6 +1,8 @@
 import click
 from colorama import Fore
 
+from tqdm import tqdm
+
 
 class AbstractOutput(object):
     def send(self, message, error=False):
@@ -18,14 +20,7 @@ class ConsoleOutput(AbstractOutput):
         click.secho(message, fg=fg)
 
 
-class TqdmProgressBarOutput(AbstractOutput):
-    def __init__(self, progress_bar):
-        """
-
-        :param tqdm.std.tqdm progress_bar:
-        """
-        self._progress_bar = progress_bar
-
+class TqdmOutput(AbstractOutput):
     def send(self, message, error=False):
         color = Fore.RED if error else Fore.GREEN
-        self._progress_bar.set_description(f"{color}{message}")
+        tqdm.write(f"{color}{message}")

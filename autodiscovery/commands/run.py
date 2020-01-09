@@ -4,6 +4,7 @@ import uuid
 
 from aiodecorators import Semaphore
 from tqdm import tqdm
+from colorama import Fore
 
 from autodiscovery.common.async_snmp import AsyncSNMPService
 from autodiscovery.exceptions import ReportableException
@@ -21,14 +22,13 @@ ASYNCIO_CONCURRENCY_LIMIT = 50
 
 class AbstractRunCommand(object):
     def __init__(
-        self,
-        data_processor,
-        report,
-        logger,
-        cs_session_manager,
-        progress_bar,
-        output=None,
-        autoload=True,
+            self,
+            data_processor,
+            report,
+            logger,
+            cs_session_manager,
+            output=None,
+            autoload=True,
     ):
         """Init command.
 
@@ -36,7 +36,6 @@ class AbstractRunCommand(object):
         :param autodiscovery.reports.discovery.base.AbstractDiscoveryReport report:
         :param logging.Logger logger:
         :param cs_session_manager:
-        :param tqdm.std.tqdm progress_bar:
         :param autodiscovery.output.AbstractOutput output:
         :param bool autoload:
         """
@@ -44,7 +43,6 @@ class AbstractRunCommand(object):
         self.report = report
         self.logger = logger
         self.cs_session_manager = cs_session_manager
-        self.progress_bar = progress_bar
 
         if output is None:
             output = EmptyOutput()
@@ -66,15 +64,14 @@ class AbstractRunCommand(object):
 
 class RunCommand(AbstractRunCommand):
     def __init__(
-        self,
-        data_processor,
-        report,
-        logger,
-        cs_session_manager,
-        progress_bar,
-        output=None,
-        autoload=True,
-        offline=False,
+            self,
+            data_processor,
+            report,
+            logger,
+            cs_session_manager,
+            output=None,
+            autoload=True,
+            offline=False,
     ):
         """Init command.
 
@@ -82,13 +79,12 @@ class RunCommand(AbstractRunCommand):
         :param autodiscovery.reports.discovery.base.AbstractDiscoveryReport report:
         :param logging.Logger logger:
         :param autodiscovery.common.cs_session_manager.CloudShellSessionManager cs_session_manager:  # noqa
-        :param tqdm.std.tqdm progress_bar:
         :param autodiscovery.output.AbstractOutput output:
         :param bool autoload:
         :param bool offline:
         """
         super(RunCommand, self).__init__(
-            data_processor, report, logger, cs_session_manager, progress_bar, output, autoload
+            data_processor, report, logger, cs_session_manager, output, autoload
         )
         self.offline = offline
 
@@ -157,9 +153,8 @@ class RunCommand(AbstractRunCommand):
                               cs_domain,
                               progress_bar):
 
-        msg = f"Discovering device with IP {ip_address}"
-        self.logger.info(msg)
-        self.output.send(msg)
+        for send_func in (self.logger.info, self.output.send):
+            send_func(f"{Fore.GREEN}Discovering device with IP {ip_address}")
 
         try:
             with self.report.add_entry(
@@ -206,7 +201,6 @@ class RunCommand(AbstractRunCommand):
             self.logger.exception(
                 f"Failed to discover {ip_address} device due to:"
             )
-
         except Exception:
             self.output.send(
                 f"Failed to discover {ip_address} device. See log for details",
@@ -215,7 +209,6 @@ class RunCommand(AbstractRunCommand):
             self.logger.exception(
                 f"Failed to discover {ip_address} device due to:"
             )
-
         else:
             self.output.send(
                 f"Device with IP {ip_address} was successfully discovered"
@@ -227,11 +220,11 @@ class RunCommand(AbstractRunCommand):
         progress_bar.update()
 
     async def execute(
-        self,
-        devices_ips,
-        snmp_comunity_strings,
-        vendor_settings,
-        additional_vendors_data,
+            self,
+            devices_ips,
+            snmp_comunity_strings,
+            vendor_settings,
+            additional_vendors_data,
     ):
         """Execute Auto-discovery command.
 
@@ -251,9 +244,7 @@ class RunCommand(AbstractRunCommand):
         devices_ips = [(device_ip, devices_ip_range.domain) for devices_ip_range in devices_ips
                        for device_ip in devices_ip_range.ip_range]
 
-        self.progress_bar.total = len(devices_ips)
-
-        with self.progress_bar as progress_bar:
+        with tqdm(desc=f"{Fore.RESET}Total progress", total=len(devices_ips), position=1) as progress_bar:
             await asyncio.gather(*[asyncio.create_task((
                 self.discover_device(ip_address=device_ip,
                                      snmp_comunity_strings=snmp_comunity_strings,
@@ -264,15 +255,13 @@ class RunCommand(AbstractRunCommand):
                 for device_ip, cs_domain in devices_ips],
                                  return_exceptions=True)
 
-            self.report.generate()
+        self.report.generate()
 
-        # todo: remove output class ???
+        # todo: rework this
         from collections import Counter
-        from colorama import Fore
         counter = Counter(getattr(entry, "status") for entry in self.report.entries)
         failed_count = counter[self.report.entry_class.FAILED_STATUS]
 
-        print(f"\n{Fore.GREEN}Discovery process finished: "
-              f"\n\tSuccessfully discovered {len(self.report.entries)-failed_count} devices."
+        print(f"\n\n\n{Fore.GREEN}Discovery process finished: "
+              f"\n\tSuccessfully discovered {len(self.report.entries) - failed_count} devices."
               f"\n\t{Fore.RED}Failed to discover {failed_count} devices.{Fore.RESET}\n")
-
