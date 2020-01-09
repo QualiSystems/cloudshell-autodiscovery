@@ -57,9 +57,12 @@ class CloudShellSessionManager:
         :return:
         """
         if cs_domain not in self._cs_sessions:
-            self._cs_sessions[cs_domain] = await self._init_cs_session(cs_domain=cs_domain)
+            self._cs_sessions[cs_domain] = await self._init_cs_session(
+                cs_domain=cs_domain
+            )
 
         return self._cs_sessions[cs_domain]
+
 
 # import asyncio
 # import logging

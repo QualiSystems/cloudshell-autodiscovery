@@ -14,9 +14,7 @@ class AsyncSNMPService:
         self.ip_address = ip_address
         self.logger = logger
         self.snmp_community = snmp_community
-        self.snmp = aiosnmp.Snmp(host=ip_address,
-                                 port=port,
-                                 community=snmp_community)
+        self.snmp = aiosnmp.Snmp(host=ip_address, port=port, community=snmp_community)
 
     async def is_valid(self):
         is_valid = True
@@ -57,7 +55,9 @@ class AsyncSNMPService:
             f"Trying community string '{snmp_community}' "
             f"for device with IP {ip_address}"
         )
-        snmp_service = cls(ip_address=ip_address, snmp_community=snmp_community, logger=logger)
+        snmp_service = cls(
+            ip_address=ip_address, snmp_community=snmp_community, logger=logger
+        )
 
         if await snmp_service.is_valid():
             return snmp_service
@@ -65,9 +65,14 @@ class AsyncSNMPService:
     @classmethod
     async def get_snmp_service(cls, ip_address, snmp_community_strings, logger):
         done, pending = await asyncio.wait(
-            [cls._get_snmp_if_valid(ip_address=ip_address, snmp_community=snmp_community, logger=logger)
-             for snmp_community in snmp_community_strings],
-            return_when=asyncio.FIRST_COMPLETED)
+            [
+                cls._get_snmp_if_valid(
+                    ip_address=ip_address, snmp_community=snmp_community, logger=logger
+                )
+                for snmp_community in snmp_community_strings
+            ],
+            return_when=asyncio.FIRST_COMPLETED,
+        )
 
         for task in done:
             result = task.result()

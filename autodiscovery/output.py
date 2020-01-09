@@ -1,6 +1,5 @@
 import click
 from colorama import Fore
-
 from tqdm import tqdm
 
 

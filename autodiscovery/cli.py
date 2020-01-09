@@ -1,29 +1,27 @@
+import asyncio
+from functools import wraps
+
 import pkg_resources
 
 import click
+from tqdm import tqdm
 
 from autodiscovery import commands, config
 from autodiscovery.common.cs_session_manager import CloudShellSessionManager
 from autodiscovery.common.utils import get_logger
 from autodiscovery.data_processors import JsonDataProcessor
-from autodiscovery.output import ConsoleOutput
-from autodiscovery.output import EmptyOutput
-from autodiscovery.output import TqdmOutput
+from autodiscovery.output import ConsoleOutput, EmptyOutput, TqdmOutput
 from autodiscovery.parsers.config_data_parsers import get_config_data_parser
 from autodiscovery.parsers.input_data_parsers import get_input_data_parser
 from autodiscovery.reports import connections as connections_reports
 from autodiscovery.reports import discovery as discovery_reports
-
-import asyncio
-from functools import wraps
-
-from tqdm import tqdm
 
 
 def coroutine(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
         return asyncio.run(f(*args, **kwargs))
+
     return wrapper
 
 
@@ -168,7 +166,9 @@ def echo_connections_report_template(save_to_file, report_type):
     help="Whether autoload discovered resource on the CloudShell or " "not",
     default=True,
 )
-async def run(input_file, config_file, log_file, report_file, report_type, offline, autoload):
+async def run(
+    input_file, config_file, log_file, report_file, report_type, offline, autoload
+):
     """Run Auto discovery command with given arguments from the input file."""
     input_data_parser = get_input_data_parser(input_file)
     input_data_model = input_data_parser.parse(input_file)
