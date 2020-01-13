@@ -61,7 +61,7 @@ class AbstractExcelReport(AbstractParsableReport):
         wb = load_workbook(report_file)
         wb_sheet = wb.active
 
-        for row_num in xrange(2, wb_sheet.max_row + 1):  # first row is a header  # noqa
+        for row_num in range(2, wb_sheet.max_row + 1):  # first row is a header  # noqa
             entry_attrs = {}
             for header, column in self._header_with_column:
                 entry_attr = self._header_entry_map[header]

@@ -31,25 +31,33 @@ class TestRunCommand(unittest.TestCase):
         # verify
         self.assertEqual(result, "9")
 
-    @mock.patch("autodiscovery.commands.run.QualiSnmp")
-    def test_get_snmp_handler(self, quali_snmp_class):
-        quali_snmp = mock.MagicMock()
-        quali_snmp_class.return_value = quali_snmp
+    @mock.patch("autodiscovery.commands.run.Snmp")
+    def test_get_snmp_service(self, snmp_class):
+        snmp_service = mock.MagicMock()
+        snmp = mock.MagicMock(
+            get_snmp_service=mock.MagicMock(return_value=snmp_service)
+        )
+        snmp_params = mock.MagicMock
+        snmp_class.return_value = snmp
+        self.run_command._get_valid_snmp_params = mock.MagicMock(
+            return_value=snmp_params
+        )
         snmp_community = "valid snmp community"
         # act
-        result = self.run_command._get_snmp_handler(
+        result = self.run_command._get_snmp_service(
             device_ip="10.10.10.10", snmp_comunity_strings=[snmp_community]
         )
         # verify
-        self.assertEqual(result, (quali_snmp, snmp_community))
+        self.assertEqual(result, (snmp_service, snmp_community))
 
-    @mock.patch("autodiscovery.commands.run.QualiSnmp")
+    @mock.patch("autodiscovery.commands.run.Snmp")
     def test_get_snmp_handler_with_invalid_snmp_string(self, quali_snmp_class):
         quali_snmp_class.side_effect = Exception("")
-        snmp_community = "valid snmp community"
+        snmp_community = "invalid snmp community"
+        self.run_command._get_valid_snmp_params = mock.MagicMock(return_value=None)
         # act
         with self.assertRaisesRegexp(ReportableException, "SNMP timeout"):
-            self.run_command._get_snmp_handler(
+            self.run_command._get_snmp_service(
                 device_ip="10.10.10.10", snmp_comunity_strings=[snmp_community]
             )
 
@@ -60,7 +68,7 @@ class TestRunCommand(unittest.TestCase):
         snmp_community = "snmp community string"
         device_data = mock.MagicMock(ip_range=[ip])
         handler = mock.MagicMock()
-        self.run_command._get_snmp_handler = mock.MagicMock(
+        self.run_command._get_snmp_service = mock.MagicMock(
             return_value=(mock.MagicMock(), snmp_community)
         )
         self.run_command._parse_vendor_number = mock.MagicMock()

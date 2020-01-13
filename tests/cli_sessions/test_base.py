@@ -21,6 +21,12 @@ class TestAbstractDiscoverySession(unittest.TestCase):
             def disconnect(self):
                 pass
 
+            def _connect_actions(self):
+                pass
+
+            def _initialize_session(self):
+                pass
+
         self.device_ip = "test_device_ip"
         self.logger = mock.MagicMock()
         self.tested_class = TestedClass
