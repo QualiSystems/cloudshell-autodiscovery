@@ -16,6 +16,18 @@ class AsyncSNMPService:
         self.snmp_community = snmp_community
         self.snmp = aiosnmp.Snmp(host=ip_address, port=port, community=snmp_community)
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
+
+    def close(self):
+        self.snmp.close()
+
+    def __del__(self):
+        self.close()
+
     async def is_valid(self):
         is_valid = True
         try:
@@ -50,7 +62,6 @@ class AsyncSNMPService:
 
     @classmethod
     async def _get_snmp_if_valid(cls, ip_address, snmp_community, logger):
-        global count
         logger.info(
             f"Trying community string '{snmp_community}' "
             f"for device with IP {ip_address}"

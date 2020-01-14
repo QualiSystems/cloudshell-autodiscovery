@@ -117,14 +117,16 @@ class RunCommand(AbstractRunCommand):
         :type snmp_comunity_strings: list
         :rtype: autodiscovery.reports.base.Entry
         """
+        for send_func in (self.logger.info, self.output.send):
+            send_func(
+                f"Discovering SNMP community string for device with IP {entry.ip}"
+            )
+
         snmp_service = await AsyncSNMPService.get_snmp_service(
             ip_address=entry.ip,
             snmp_community_strings=snmp_comunity_strings,
             logger=self.logger,
         )
-        # set valid SNMP string to be first in the list
-        snmp_comunity_strings.remove(snmp_service.snmp_community)
-        snmp_comunity_strings.insert(0, snmp_service.snmp_community)
 
         for send_func in (self.logger.info, self.output.send):
             send_func(
@@ -134,9 +136,10 @@ class RunCommand(AbstractRunCommand):
         vendor_enterprise_numbers = self.data_processor.load_vendor_enterprise_numbers()
         entry.snmp_community = snmp_service.snmp_community
 
-        entry.sys_object_id = await snmp_service.get_sys_object_id()
-        entry.description = await snmp_service.get_sys_descr()
-        sys_name = await snmp_service.get_sys_name()
+        with snmp_service as snmp_service:
+            entry.sys_object_id = await snmp_service.get_sys_object_id()
+            entry.description = await snmp_service.get_sys_descr()
+            sys_name = await snmp_service.get_sys_name()
 
         vendor_number = self._parse_vendor_number(entry.sys_object_id)
         entry.vendor = vendor_enterprise_numbers[vendor_number]
@@ -157,10 +160,6 @@ class RunCommand(AbstractRunCommand):
         cs_domain,
         progress_bar,
     ):
-
-        for send_func in (self.logger.info, self.output.send):
-            send_func(f"{Fore.GREEN}Discovering device with IP {ip_address}")
-
         try:
             with self.report.add_entry(
                 ip=ip_address, domain=cs_domain, offline=self.offline
@@ -261,7 +260,6 @@ class RunCommand(AbstractRunCommand):
             )
 
         self.report.generate()
-
         # todo: rework this
         from collections import Counter
 
