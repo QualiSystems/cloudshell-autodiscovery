@@ -1,3 +1,5 @@
+from collections import Counter
+
 from autodiscovery.exceptions import ReportableException
 
 
@@ -25,6 +27,14 @@ class AbstractReport(object):
     @property
     def entries(self):
         return self._entries
+
+    def get_failed_entries_count(self):
+        """
+
+        :return:
+        """
+        counter = Counter(getattr(entry, "status") for entry in self._entries)
+        return counter[self.entry_class.FAILED_STATUS]
 
     def add_entry(self, *args, **kwargs):
         """Add new Entry to the Report.

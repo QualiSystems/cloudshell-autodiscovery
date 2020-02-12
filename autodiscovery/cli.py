@@ -4,13 +4,12 @@ from functools import wraps
 import pkg_resources
 
 import click
-from tqdm import tqdm
 
 from autodiscovery import commands, config
 from autodiscovery.common.cs_session_manager import CloudShellSessionManager
 from autodiscovery.common.utils import get_logger
 from autodiscovery.data_processors import JsonDataProcessor
-from autodiscovery.output import ConsoleOutput, EmptyOutput, TqdmOutput
+from autodiscovery.output import ConsoleOutput, TqdmOutput
 from autodiscovery.parsers.config_data_parsers import get_config_data_parser
 from autodiscovery.parsers.input_data_parsers import get_input_data_parser
 from autodiscovery.reports import connections as connections_reports
@@ -209,6 +208,7 @@ async def run(
 
 
 @cli.command(name="run-from-report")
+@coroutine
 @click.option(
     "-i",
     "--input-file",
@@ -232,7 +232,7 @@ async def run(
     help="Whether autoload discovered resource on the CloudShell " "or not",
     default=True,
 )
-def run_from_report(input_file, config_file, log_file, report_file, autoload):
+async def run_from_report(input_file, config_file, log_file, report_file, autoload):
     """Create and autoload CloudShell resources from the generated report."""
     input_data_parser = get_input_data_parser(input_file)
     input_data_model = input_data_parser.parse(input_file)
@@ -261,10 +261,11 @@ def run_from_report(input_file, config_file, log_file, report_file, autoload):
         autoload=autoload,
     )
 
-    command.execute(additional_vendors_data=additional_vendors_data)
+    await command.execute(additional_vendors_data=additional_vendors_data)
 
 
 @cli.command(name="connect-ports")
+@coroutine
 @click.option(
     "-i",
     "--input-file",
@@ -298,7 +299,7 @@ def run_from_report(input_file, config_file, log_file, report_file, autoload):
     help="Type for generated report",
 )
 @click.option("-l", "--log-file", help="File name for logs")
-def connect_ports(
+async def connect_ports(
     input_file,
     resources_names,
     domain,
@@ -337,6 +338,7 @@ def connect_ports(
 
 
 @cli.command(name="connect-ports-from-report")
+@coroutine
 @click.option(
     "-i",
     "--input-file",
@@ -353,7 +355,7 @@ def connect_ports(
     "command",
 )
 @click.option("-l", "--log-file", help="File name for logs")
-def connect_ports_from_report(input_file, connections_report_file, log_file):
+async def connect_ports_from_report(input_file, connections_report_file, log_file):
     """Create connections between CloudShell Port resources."""
     input_data_parser = get_input_data_parser(input_file)
     input_data_model = input_data_parser.parse(input_file)

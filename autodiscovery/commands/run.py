@@ -260,14 +260,10 @@ class RunCommand(AbstractRunCommand):
             )
 
         self.report.generate()
-        # todo: rework this
-        from collections import Counter
-
-        counter = Counter(getattr(entry, "status") for entry in self.report.entries)
-        failed_count = counter[self.report.entry_class.FAILED_STATUS]
+        failed_entries_count = self.report.get_failed_entries_count()
 
         print (
             f"\n\n\n{Fore.GREEN}Discovery process finished: "
-            f"\n\tSuccessfully discovered {len(self.report.entries) - failed_count} devices."
-            f"\n\t{Fore.RED}Failed to discover {failed_count} devices.{Fore.RESET}\n"
+            f"\n\tSuccessfully discovered {len(self.report.entries) - failed_entries_count} devices."
+            f"\n\t{Fore.RED}Failed to discover {failed_entries_count} devices.{Fore.RESET}\n"
         )

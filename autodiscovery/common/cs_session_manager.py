@@ -62,21 +62,3 @@ class CloudShellSessionManager:
             )
 
         return self._cs_sessions[cs_domain]
-
-
-# import asyncio
-# import logging
-#
-# async def main():
-#
-#     manager = CloudShellSessionManager(cs_ip="192.168.85.27",
-#                                        cs_user="admin11",
-#                                        cs_password="admin",
-#                                        logger=logging.getLogger("test"))
-#
-#     ss = await manager.get_session("Global")
-#     print (ss)
-#     ss = await manager.get_session("Global")
-#     print (ss)
-#
-# asyncio.run(main())
