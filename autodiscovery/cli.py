@@ -257,7 +257,7 @@ async def run_from_report(input_file, config_file, log_file, report_file, autolo
         report=report,
         logger=logger,
         cs_session_manager=cs_session_manager,
-        output=ConsoleOutput(),
+        output=TqdmOutput(),
         autoload=autoload,
     )
 
@@ -330,11 +330,11 @@ async def connect_ports(
         ),
         offline=offline,
         logger=logger,
-        output=ConsoleOutput(),
+        output=TqdmOutput(),
     )
 
     resources_names = [name.strip() for name in resources_names.split(",")]
-    command.execute(resources_names=resources_names, domain=domain)
+    await command.execute(resources_names=resources_names, domain=domain)
 
 
 @cli.command(name="connect-ports-from-report")
@@ -373,7 +373,7 @@ async def connect_ports_from_report(input_file, connections_report_file, log_fil
         cs_session_manager=cs_session_manager,
         report=report,
         logger=logger,
-        output=ConsoleOutput(),
+        output=TqdmOutput(),
     )
 
-    command.execute()
+    await command.execute()

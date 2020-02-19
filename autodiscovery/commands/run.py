@@ -57,7 +57,7 @@ class AbstractRunCommand(object):
             "pdu": PDUTypeHandler(logger=logger, autoload=autoload),
         }
 
-    def execute(self, *args, **kwargs):
+    async def execute(self, *args, **kwargs):
         raise NotImplementedError(f"Class {type(self)} must implement method 'execute'")
 
 

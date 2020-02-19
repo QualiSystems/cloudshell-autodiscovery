@@ -1,7 +1,14 @@
-from cloudshell.api.cloudshell_api import AttributeNameValue
+import asyncio
 
+from aiodecorators import Semaphore
+from cloudshell.api.cloudshell_api import AttributeNameValue
+from colorama import Fore
+from tqdm import tqdm
+
+from autodiscovery.commands.run import ASYNCIO_CONCURRENCY_LIMIT
 from autodiscovery.exceptions import ReportableException
 from autodiscovery.output import EmptyOutput
+
 
 ADJACENT_PORT_ATTRIBUTE = "Adjacent"
 SYSTEM_NAME_PORT_ATTRIBUTE = "System Name"
@@ -115,94 +122,124 @@ class ConnectPortsCommand(object):
             f"Unable to find Adjacent port '{adjacent_port_name}'"
         )
 
-    def execute(self, resources_names, domain):
-        """Execute command.
+    @Semaphore(ASYNCIO_CONCURRENCY_LIMIT)
+    async def discover_resource_connections(self, resource_name, domain, progress_bar):
+        msg = f"Updating physical connections for the resource '{resource_name}': "
+        self.output.send(msg)
+        self.logger.info(msg)
 
-        :param list[str] resources_names:
-        :param str domain:
-        :return:
-        """
-        cs_session = self.cs_session_manager.get_session(cs_domain=domain)
+        try:
+            cs_session = await self.cs_session_manager.get_session(
+                cs_domain=domain
+            )
+            resource = await cs_session.GetResourceDetails(resource_name)
 
-        for resource_name in resources_names:
-            msg = f"Updating physical connections for the resource '{resource_name}': "
-            self.output.send(msg)
-            self.logger.info(msg)
+            for port, adjacent in self._find_adjacent_ports(resource):
+                self.output.send(
+                    f"Updating physical connection for the port '{port}' "
+                )
+                self.logger.info(
+                    f"Processing port '{port}' with adjacent '{adjacent}'"
+                )
 
-            try:
-                resource = cs_session.GetResourceDetails(resource_name)
-                for port, adjacent in self._find_adjacent_ports(resource):
-                    self.output.send(
-                        f"\t- Updating physical connection for the port '{port}' "
-                    )
-                    self.logger.info(
-                        f"Processing port '{port}' with adjacent '{adjacent}'"
-                    )
-
-                    try:
-                        with self.report.add_entry(
+                try:
+                    with self.report.add_entry(
                             resource_name=resource_name,
                             source_port=port,
                             adjacent=adjacent,
                             target_port="",
                             domain=domain,
                             offline=self.offline,
-                        ) as entry:
+                    ) as entry:
+                        adjacent_sys_name, adjacent_port_name = [
+                            x.strip() for x in adjacent.split("through")
+                        ]
+                        adjacent_resource = self._find_resource_by_sys_name(
+                            cs_session=cs_session, sys_name=adjacent_sys_name
+                        )
 
-                            adjacent_sys_name, adjacent_port_name = [
-                                x.strip() for x in adjacent.split("through")
-                            ]
-                            adjacent_resource = self._find_resource_by_sys_name(
-                                cs_session=cs_session, sys_name=adjacent_sys_name
+                        adjacent_port = self._find_port_by_adjacent_name(
+                            adjacent_resource=adjacent_resource,
+                            adjacent_port_name=adjacent_port_name,
+                        )
+
+                        entry.target_port = adjacent_port.Name
+
+                        if not self.offline:
+                            await cs_session.UpdatePhysicalConnection(
+                                resourceAFullPath=entry.source_port,
+                                resourceBFullPath=entry.target_port,
                             )
 
-                            adjacent_port = self._find_port_by_adjacent_name(
-                                adjacent_resource=adjacent_resource,
-                                adjacent_port_name=adjacent_port_name,
+                except ReportableException as e:
+                    self.output.send(
+                        f"Failed to update physical connection "
+                        f"for the port '{port}'. {e}",
+                        error=True,
+                    )
+                    self.logger.exception(
+                        "Failed to update physical connection due to:"
+                    )
+
+                except Exception:
+                    self.output.send(
+                        "Failed to update physical connection "
+                        f"for the port '{port}' ",
+                        error=True,
+                    )
+                    self.logger.exception(
+                        "Failed to update physical connection due to:"
+                    )
+
+        except Exception:
+            self.output.send(
+                f"Failed to update physical connections for the resource "
+                f"'{resource_name}'. See log for the details",
+                error=True,
+            )
+            self.logger.exception("Failed to update physical connections due to:")
+
+        else:
+            msg = (
+                f"Physical connections for the resource '{resource_name}' "
+                "were updated"
+            )
+            self.output.send(msg)
+            self.logger.info(msg)
+
+        progress_bar.update()
+
+    async def execute(self, resources_names, domain):
+        """Execute command.
+
+        :param list[str] resources_names:
+        :param str domain:
+        :return:
+        """
+        with tqdm(
+            desc=f"{Fore.RESET}Total progress", total=len(resources_names), position=1
+        ) as progress_bar:
+            await asyncio.gather(
+                *[
+                    asyncio.create_task(
+                        (
+                            self.discover_resource_connections(
+                                resource_name=resource_name,
+                                domain=domain,
+                                progress_bar=progress_bar,
                             )
-
-                            entry.target_port = adjacent_port.Name
-
-                            if not self.offline:
-                                cs_session.UpdatePhysicalConnection(
-                                    resourceAFullPath=entry.source_port,
-                                    resourceBFullPath=entry.target_port,
-                                )
-
-                    except ReportableException as e:
-                        self.output.send(
-                            f"\t- Failed to update physical connection "
-                            f"for the port '{port}'. {e}",
-                            error=True,
                         )
-                        self.logger.exception(
-                            "Failed to update physical connection due to:"
-                        )
-
-                    except Exception:
-                        self.output.send(
-                            "\t- Failed to update physical connection "
-                            f"for the port '{port}' ",
-                            error=True,
-                        )
-                        self.logger.exception(
-                            "Failed to update physical connection due to:"
-                        )
-
-            except Exception:
-                self.output.send(
-                    f"Failed to update physical connections for the resource "
-                    f"'{resource_name}'. See log for the details",
-                    error=True,
-                )
-                self.logger.exception("Failed to update physical connections due to:")
-
-            else:
-                msg = (
-                    f"Physical connections for the resource '{resource_name}' "
-                    "were updated"
-                )
-                self.output.send(msg)
-                self.logger.info(msg)
+                    )
+                    for resource_name in resources_names
+                ],
+                return_exceptions=True
+            )
 
         self.report.generate()
+        failed_entries_count = self.report.get_failed_entries_count()
+
+        print(
+            f"\n\n\n{Fore.GREEN}Connections discovery process finished: "
+            f"\n\tSuccessfully discovered {len(self.report.entries) - failed_entries_count} connections."
+            f"\n\t{Fore.RED}Failed to discovery {failed_entries_count} connections.{Fore.RESET}\n"
+        )
