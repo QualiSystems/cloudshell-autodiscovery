@@ -32,7 +32,7 @@ class AsyncSNMPService:
         is_valid = True
         try:
             await self.snmp.get(self.SYS_DESCR_OID)
-        except aiosnmp.exceptions.SnmpTimeoutError:
+        except (aiosnmp.exceptions.SnmpTimeoutError, asyncio.TimeoutError):
             is_valid = False
 
         self.logger.info(
@@ -91,14 +91,6 @@ class AsyncSNMPService:
                 for pending_task in pending:
                     pending_task.cancel()
 
-                return result
-
-        # wait for all timeouts, not just only for the first (which ends with Exception)
-        if pending:
-            done, _ = await asyncio.wait(pending)
-            for task in done:
-                result = task.result()
-                if result:
-                    return result
+            return result
 
         raise ReportableException("SNMP timeout - no resource detected")
