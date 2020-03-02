@@ -2,7 +2,6 @@ import asyncio
 import re
 import uuid
 
-from aiodecorators import Semaphore
 from colorama import Fore
 from tqdm import tqdm
 
@@ -16,8 +15,6 @@ from autodiscovery.handlers import (
 )
 from autodiscovery.output import EmptyOutput
 
-ASYNCIO_CONCURRENCY_LIMIT = 50
-
 
 class AbstractRunCommand(object):
     def __init__(
@@ -26,6 +23,7 @@ class AbstractRunCommand(object):
         report,
         logger,
         cs_session_manager,
+        workers_num,
         output=None,
         autoload=True,
     ):
@@ -35,6 +33,7 @@ class AbstractRunCommand(object):
         :param autodiscovery.reports.discovery.base.AbstractDiscoveryReport report:
         :param logging.Logger logger:
         :param cs_session_manager:
+        :param int workers_num:
         :param autodiscovery.output.AbstractOutput output:
         :param bool autoload:
         """
@@ -42,6 +41,7 @@ class AbstractRunCommand(object):
         self.report = report
         self.logger = logger
         self.cs_session_manager = cs_session_manager
+        self.workers_num = workers_num
 
         if output is None:
             output = EmptyOutput()
@@ -68,6 +68,7 @@ class RunCommand(AbstractRunCommand):
         report,
         logger,
         cs_session_manager,
+        workers_num,
         output=None,
         autoload=True,
         offline=False,
@@ -83,7 +84,7 @@ class RunCommand(AbstractRunCommand):
         :param bool offline:
         """
         super(RunCommand, self).__init__(
-            data_processor, report, logger, cs_session_manager, output, autoload
+            data_processor, report, logger, cs_session_manager, workers_num, output, autoload
         )
         self.offline = offline
 
@@ -150,7 +151,6 @@ class RunCommand(AbstractRunCommand):
         entry.device_name = sys_name
         return entry
 
-    @Semaphore(ASYNCIO_CONCURRENCY_LIMIT)
     async def discover_device(
         self,
         ip_address,
@@ -159,7 +159,10 @@ class RunCommand(AbstractRunCommand):
         vendor_config,
         cs_domain,
         progress_bar,
+        semaphore,
     ):
+        await semaphore.acquire()
+
         try:
             with self.report.add_entry(
                 ip=ip_address, domain=cs_domain, offline=self.offline
@@ -208,6 +211,7 @@ class RunCommand(AbstractRunCommand):
             self.logger.info(f"Device with IP {ip_address} was successfully discovered")
 
         progress_bar.update()
+        semaphore.release()
 
     async def execute(
         self,
@@ -237,6 +241,8 @@ class RunCommand(AbstractRunCommand):
             for device_ip in devices_ip_range.ip_range
         ]
 
+        semaphore = asyncio.Semaphore(value=self.workers_num)
+
         with tqdm(
             desc=f"{Fore.RESET}Total progress", total=len(devices_ips), position=1
         ) as progress_bar:
@@ -251,6 +257,7 @@ class RunCommand(AbstractRunCommand):
                                 vendor_config=vendor_config,
                                 cs_domain=cs_domain,
                                 progress_bar=progress_bar,
+                                semaphore=semaphore,
                             )
                         )
                     )

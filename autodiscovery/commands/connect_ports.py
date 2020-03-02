@@ -1,11 +1,9 @@
 import asyncio
 
-from aiodecorators import Semaphore
 from cloudshell.api.cloudshell_api import AttributeNameValue
 from colorama import Fore
 from tqdm import tqdm
 
-from autodiscovery.commands.run import ASYNCIO_CONCURRENCY_LIMIT
 from autodiscovery.exceptions import ReportableException
 from autodiscovery.output import EmptyOutput
 
@@ -16,7 +14,7 @@ PORT_FAMILY = "CS_Port"
 
 
 class ConnectPortsCommand(object):
-    def __init__(self, cs_session_manager, report, offline, logger, output=None):
+    def __init__(self, cs_session_manager, report, offline, logger, workers_num, output=None):
         if output is None:
             output = EmptyOutput()
 
@@ -25,6 +23,7 @@ class ConnectPortsCommand(object):
         self.offline = offline
         self.output = output
         self.logger = logger
+        self.workers_num = workers_num
 
     def _get_resource_attribute_value(self, resource, attribute_name):
         """Get resource attribute value.
@@ -122,8 +121,9 @@ class ConnectPortsCommand(object):
             f"Unable to find Adjacent port '{adjacent_port_name}'"
         )
 
-    @Semaphore(ASYNCIO_CONCURRENCY_LIMIT)
-    async def discover_resource_connections(self, resource_name, domain, progress_bar):
+    async def discover_resource_connections(self, resource_name, domain, progress_bar, semaphore):
+        await semaphore.acquire()
+
         msg = f"Updating physical connections for the resource '{resource_name}': "
         self.output.send(msg)
         self.logger.info(msg)
@@ -208,6 +208,7 @@ class ConnectPortsCommand(object):
             self.logger.info(msg)
 
         progress_bar.update()
+        semaphore.release()
 
     async def execute(self, resources_names, domain):
         """Execute command.
@@ -216,6 +217,8 @@ class ConnectPortsCommand(object):
         :param str domain:
         :return:
         """
+        semaphore = asyncio.Semaphore(value=self.workers_num)
+
         with tqdm(
             desc=f"{Fore.RESET}Total progress", total=len(resources_names), position=1
         ) as progress_bar:
@@ -227,6 +230,7 @@ class ConnectPortsCommand(object):
                                 resource_name=resource_name,
                                 domain=domain,
                                 progress_bar=progress_bar,
+                                semaphore=semaphore,
                             )
                         )
                     )

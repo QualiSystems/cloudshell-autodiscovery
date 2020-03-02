@@ -6,10 +6,11 @@ import pkg_resources
 import click
 
 from autodiscovery import commands, config
+from autodiscovery.common.consts import ASYNCIO_CONCURRENCY_LIMIT
 from autodiscovery.common.cs_session_manager import CloudShellSessionManager
 from autodiscovery.common.utils import get_logger
 from autodiscovery.data_processors import JsonDataProcessor
-from autodiscovery.output import ConsoleOutput, TqdmOutput
+from autodiscovery.output import TqdmOutput
 from autodiscovery.parsers.config_data_parsers import get_config_data_parser
 from autodiscovery.parsers.input_data_parsers import get_input_data_parser
 from autodiscovery.reports import connections as connections_reports
@@ -165,8 +166,15 @@ def echo_connections_report_template(save_to_file, report_type):
     help="Whether autoload discovered resource on the CloudShell or " "not",
     default=True,
 )
+@click.option(
+    "-w",
+    "--workers",
+    default=ASYNCIO_CONCURRENCY_LIMIT,
+    show_default=True,
+    help="The number of concurrent devices discovering",
+)
 async def run(
-    input_file, config_file, log_file, report_file, report_type, offline, autoload
+    input_file, config_file, log_file, report_file, report_type, offline, autoload, workers
 ):
     """Run Auto discovery command with given arguments from the input file."""
     input_data_parser = get_input_data_parser(input_file)
@@ -197,6 +205,7 @@ async def run(
         output=TqdmOutput(),
         offline=offline,
         autoload=autoload,
+        workers_num=workers,
     )
 
     await auto_discover_command.execute(
@@ -232,7 +241,14 @@ async def run(
     help="Whether autoload discovered resource on the CloudShell " "or not",
     default=True,
 )
-async def run_from_report(input_file, config_file, log_file, report_file, autoload):
+@click.option(
+    "-w",
+    "--workers",
+    default=ASYNCIO_CONCURRENCY_LIMIT,
+    show_default=True,
+    help="The number of concurrent devices discovering",
+)
+async def run_from_report(input_file, config_file, log_file, report_file, autoload, workers):
     """Create and autoload CloudShell resources from the generated report."""
     input_data_parser = get_input_data_parser(input_file)
     input_data_model = input_data_parser.parse(input_file)
@@ -259,6 +275,7 @@ async def run_from_report(input_file, config_file, log_file, report_file, autolo
         cs_session_manager=cs_session_manager,
         output=TqdmOutput(),
         autoload=autoload,
+        workers_num=workers,
     )
 
     await command.execute(additional_vendors_data=additional_vendors_data)
@@ -299,6 +316,13 @@ async def run_from_report(input_file, config_file, log_file, report_file, autolo
     help="Type for generated report",
 )
 @click.option("-l", "--log-file", help="File name for logs")
+@click.option(
+    "-w",
+    "--workers",
+    default=ASYNCIO_CONCURRENCY_LIMIT,
+    show_default=True,
+    help="The number of concurrent devices discovering",
+)
 async def connect_ports(
     input_file,
     resources_names,
@@ -307,6 +331,7 @@ async def connect_ports(
     connections_report_file,
     connections_report_type,
     log_file,
+    workers,
 ):
     """Create connections between CloudShell Port resources.
 
@@ -330,6 +355,7 @@ async def connect_ports(
         ),
         offline=offline,
         logger=logger,
+        workers_num=workers,
         output=TqdmOutput(),
     )
 
@@ -355,7 +381,14 @@ async def connect_ports(
     "command",
 )
 @click.option("-l", "--log-file", help="File name for logs")
-async def connect_ports_from_report(input_file, connections_report_file, log_file):
+@click.option(
+    "-w",
+    "--workers",
+    default=ASYNCIO_CONCURRENCY_LIMIT,
+    show_default=True,
+    help="The number of concurrent devices discovering",
+)
+async def connect_ports_from_report(input_file, connections_report_file, log_file, workers):
     """Create connections between CloudShell Port resources."""
     input_data_parser = get_input_data_parser(input_file)
     input_data_model = input_data_parser.parse(input_file)
@@ -373,6 +406,7 @@ async def connect_ports_from_report(input_file, connections_report_file, log_fil
         cs_session_manager=cs_session_manager,
         report=report,
         logger=logger,
+        workers_num=workers,
         output=TqdmOutput(),
     )
 

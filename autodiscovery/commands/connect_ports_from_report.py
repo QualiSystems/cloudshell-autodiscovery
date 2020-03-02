@@ -1,16 +1,14 @@
 import asyncio
 
-from aiodecorators import Semaphore
 from colorama import Fore
 from tqdm import tqdm
 
-from autodiscovery.commands.run import ASYNCIO_CONCURRENCY_LIMIT
 from autodiscovery.exceptions import ReportableException
 from autodiscovery.output import EmptyOutput
 
 
 class ConnectPortsFromReportCommand(object):
-    def __init__(self, cs_session_manager, report, logger, output=None):
+    def __init__(self, cs_session_manager, report, logger, workers_num, output=None):
         """Init command.
 
         :param cs_session_manager:
@@ -25,13 +23,16 @@ class ConnectPortsFromReportCommand(object):
         self.report = report
         self.output = output
         self.logger = logger
+        self.workers_num = workers_num
 
-    @Semaphore(ASYNCIO_CONCURRENCY_LIMIT)
-    async def process_resource_connection(self, entry, progress_bar):
+    async def process_resource_connection(self, entry, progress_bar, semaphore):
+        await semaphore.acquire()
+
         self.logger.info(
             f"Processing connection between port {entry.source_port} "
             f"and {entry.target_port}"
         )
+
         try:
             with entry:
                 if entry.status == entry.SUCCESS_STATUS:
@@ -79,12 +80,15 @@ class ConnectPortsFromReportCommand(object):
             self.logger.info(msg)
 
         progress_bar.update()
+        semaphore.release()
 
     async def execute(self):
         """Execute command.
 
         :return:
         """
+        semaphore = asyncio.Semaphore(value=self.workers_num)
+
         with tqdm(
             desc=f"{Fore.RESET}Total progress", total=len(self.report.entries), position=1
         ) as progress_bar:
@@ -95,6 +99,7 @@ class ConnectPortsFromReportCommand(object):
                             self.process_resource_connection(
                                 entry=entry,
                                 progress_bar=progress_bar,
+                                semaphore=semaphore,
                             )
                         )
                     )

@@ -1,4 +1,5 @@
 import asyncio
+from asyncio import futures
 
 import aiosnmp
 
@@ -85,12 +86,12 @@ class AsyncSNMPService:
             return_when=asyncio.FIRST_COMPLETED,
         )
 
+        for pending_task in pending:
+            pending_task.cancel()
+
         for task in done:
             result = task.result()
             if result:
-                for pending_task in pending:
-                    pending_task.cancel()
-
-            return result
+                return result
 
         raise ReportableException("SNMP timeout - no resource detected")

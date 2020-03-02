@@ -1,3 +1,6 @@
+ASYNCIO_CONCURRENCY_LIMIT = 20
+
+
 class ResourceModelsAttributes:
     """Container for the CloudShell Resource Model Attributes names."""
 

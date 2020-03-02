@@ -1,25 +1,24 @@
 import asyncio
 
-from aiodecorators import Semaphore
 from colorama import Fore
 from tqdm import tqdm
 
-from autodiscovery.commands.run import ASYNCIO_CONCURRENCY_LIMIT
 from autodiscovery.commands.run import AbstractRunCommand
 from autodiscovery.exceptions import ReportableException
 
 
 class RunFromReportCommand(AbstractRunCommand):
-
-    @Semaphore(ASYNCIO_CONCURRENCY_LIMIT)
-    async def upload_device(self, entry, vendor_config, progress_bar):
+    async def upload_device(self, entry, vendor_config, progress_bar, semaphore):
         """
 
         :param entry:
         :param vendor_config:
         :param progress_bar:
+        :param semaphore:
         :return:
         """
+        await semaphore.acquire()
+
         msg = f"Uploading device with IP {entry.ip}"
         self.logger.info(msg)
         self.output.send(msg)
@@ -63,6 +62,7 @@ class RunFromReportCommand(AbstractRunCommand):
             self.logger.info(f"Device with IP {entry.ip} was successfully uploaded")
 
         progress_bar.update()
+        semaphore.release()
 
     async def execute(self, additional_vendors_data):
         """Execute command.
@@ -70,6 +70,8 @@ class RunFromReportCommand(AbstractRunCommand):
         :param list[dict] additional_vendors_data:
         :return:
         """
+        semaphore = asyncio.Semaphore(value=self.workers_num)
+
         vendor_config = self.data_processor.load_vendor_config(
             additional_vendors_data=additional_vendors_data
         )
@@ -85,6 +87,7 @@ class RunFromReportCommand(AbstractRunCommand):
                                 entry=entry,
                                 vendor_config=vendor_config,
                                 progress_bar=progress_bar,
+                                semaphore=semaphore,
                             )
                         )
                     )
@@ -96,7 +99,7 @@ class RunFromReportCommand(AbstractRunCommand):
         self.report.generate()
         failed_entries_count = self.report.get_failed_entries_count()
 
-        print (
+        print(
             f"\n\n\n{Fore.GREEN}Uploading process finished: "
             f"\n\tSuccessfully uploaded {len(self.report.entries) - failed_entries_count} devices."
             f"\n\t{Fore.RED}Failed to upload {failed_entries_count} devices.{Fore.RESET}\n"
