@@ -84,7 +84,13 @@ class RunCommand(AbstractRunCommand):
         :param bool offline:
         """
         super(RunCommand, self).__init__(
-            data_processor, report, logger, cs_session_manager, workers_num, output, autoload
+            data_processor,
+            report,
+            logger,
+            cs_session_manager,
+            workers_num,
+            output,
+            autoload,
         )
         self.offline = offline
 

@@ -7,14 +7,15 @@ from tqdm import tqdm
 from autodiscovery.exceptions import ReportableException
 from autodiscovery.output import EmptyOutput
 
-
 ADJACENT_PORT_ATTRIBUTE = "Adjacent"
 SYSTEM_NAME_PORT_ATTRIBUTE = "System Name"
 PORT_FAMILY = "CS_Port"
 
 
 class ConnectPortsCommand(object):
-    def __init__(self, cs_session_manager, report, offline, logger, workers_num, output=None):
+    def __init__(
+        self, cs_session_manager, report, offline, logger, workers_num, output=None
+    ):
         if output is None:
             output = EmptyOutput()
 
@@ -121,7 +122,9 @@ class ConnectPortsCommand(object):
             f"Unable to find Adjacent port '{adjacent_port_name}'"
         )
 
-    async def discover_resource_connections(self, resource_name, domain, progress_bar, semaphore):
+    async def discover_resource_connections(
+        self, resource_name, domain, progress_bar, semaphore
+    ):
         await semaphore.acquire()
 
         msg = f"Updating physical connections for the resource '{resource_name}': "
@@ -129,27 +132,21 @@ class ConnectPortsCommand(object):
         self.logger.info(msg)
 
         try:
-            cs_session = await self.cs_session_manager.get_session(
-                cs_domain=domain
-            )
+            cs_session = await self.cs_session_manager.get_session(cs_domain=domain)
             resource = await cs_session.GetResourceDetails(resource_name)
 
             for port, adjacent in self._find_adjacent_ports(resource):
-                self.output.send(
-                    f"Updating physical connection for the port '{port}' "
-                )
-                self.logger.info(
-                    f"Processing port '{port}' with adjacent '{adjacent}'"
-                )
+                self.output.send(f"Updating physical connection for the port '{port}' ")
+                self.logger.info(f"Processing port '{port}' with adjacent '{adjacent}'")
 
                 try:
                     with self.report.add_entry(
-                            resource_name=resource_name,
-                            source_port=port,
-                            adjacent=adjacent,
-                            target_port="",
-                            domain=domain,
-                            offline=self.offline,
+                        resource_name=resource_name,
+                        source_port=port,
+                        adjacent=adjacent,
+                        target_port="",
+                        domain=domain,
+                        offline=self.offline,
                     ) as entry:
                         adjacent_sys_name, adjacent_port_name = [
                             x.strip() for x in adjacent.split("through")
@@ -242,7 +239,7 @@ class ConnectPortsCommand(object):
         self.report.generate()
         failed_entries_count = self.report.get_failed_entries_count()
 
-        print(
+        print (
             f"\n\n\n{Fore.GREEN}Connections discovery process finished: "
             f"\n\tSuccessfully discovered {len(self.report.entries) - failed_entries_count} connections."
             f"\n\t{Fore.RED}Failed to discovery {failed_entries_count} connections.{Fore.RESET}\n"

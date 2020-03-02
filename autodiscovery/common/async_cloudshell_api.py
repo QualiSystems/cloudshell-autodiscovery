@@ -198,54 +198,70 @@ class AsyncCloudShellAPISession(CloudShellAPISession):
             )
         )
 
-    async def GetResourceDetails(self, resourceFullPath='', showAllDomains=False):
+    async def GetResourceDetails(self, resourceFullPath="", showAllDomains=False):
         return await self.generateAPIRequest(
             OrderedDict(
                 [
-                    ('method_name', 'GetResourceDetails'),
-                    ('resourceFullPath', resourceFullPath),
-                    ('showAllDomains', showAllDomains)
+                    ("method_name", "GetResourceDetails"),
+                    ("resourceFullPath", resourceFullPath),
+                    ("showAllDomains", showAllDomains),
                 ]
             )
         )
 
-    async def GetResourceList(self, folderFullPath=''):
+    async def GetResourceList(self, folderFullPath=""):
         return await self.generateAPIRequest(
             OrderedDict(
-                [('method_name', 'GetResourceList'),
-                 ('folderFullPath', folderFullPath)
-                 ]
+                [("method_name", "GetResourceList"), ("folderFullPath", folderFullPath)]
             )
         )
 
-    async def FindResources(self, resourceFamily='', resourceModel='', attributeValues=[], showAllDomains=False, resourceFullName='', exactName=True, includeSubResources=True, resourceAddress='', resourceUniqueIdentifier='', maxResults=500, includeExcludedResources=False):
+    async def FindResources(
+        self,
+        resourceFamily="",
+        resourceModel="",
+        attributeValues=[],
+        showAllDomains=False,
+        resourceFullName="",
+        exactName=True,
+        includeSubResources=True,
+        resourceAddress="",
+        resourceUniqueIdentifier="",
+        maxResults=500,
+        includeExcludedResources=False,
+    ):
         return await self.generateAPIRequest(
             OrderedDict(
                 [
-                    ('method_name', 'FindResources'),
-                    ('resourceFamily', resourceFamily),
-                    ('resourceModel', resourceModel),
-                    ('attributeValues', CommonAPIRequest.toContainer(attributeValues)),
-                    ('showAllDomains', showAllDomains),
-                    ('resourceFullName', resourceFullName),
-                    ('exactName', exactName),
-                    ('includeSubResources', includeSubResources),
-                    ('resourceAddress', resourceAddress),
-                    ('resourceUniqueIdentifier', resourceUniqueIdentifier),
-                    ('maxResults', maxResults),
-                    ('includeExcludedResources', includeExcludedResources)
+                    ("method_name", "FindResources"),
+                    ("resourceFamily", resourceFamily),
+                    ("resourceModel", resourceModel),
+                    ("attributeValues", CommonAPIRequest.toContainer(attributeValues)),
+                    ("showAllDomains", showAllDomains),
+                    ("resourceFullName", resourceFullName),
+                    ("exactName", exactName),
+                    ("includeSubResources", includeSubResources),
+                    ("resourceAddress", resourceAddress),
+                    ("resourceUniqueIdentifier", resourceUniqueIdentifier),
+                    ("maxResults", maxResults),
+                    ("includeExcludedResources", includeExcludedResources),
                 ]
             )
         )
 
-    async def UpdatePhysicalConnection(self, resourceAFullPath='', resourceBFullPath='', overrideExistingConnections=True):
+    async def UpdatePhysicalConnection(
+        self,
+        resourceAFullPath="",
+        resourceBFullPath="",
+        overrideExistingConnections=True,
+    ):
         return await self.generateAPIRequest(
             OrderedDict(
                 [
-                    ('method_name', 'UpdatePhysicalConnection'),
-                    ('resourceAFullPath', resourceAFullPath),
-                    ('resourceBFullPath', resourceBFullPath),
-                    ('overrideExistingConnections', overrideExistingConnections)
+                    ("method_name", "UpdatePhysicalConnection"),
+                    ("resourceAFullPath", resourceAFullPath),
+                    ("resourceBFullPath", resourceBFullPath),
+                    ("overrideExistingConnections", overrideExistingConnections),
                 ]
             )
         )

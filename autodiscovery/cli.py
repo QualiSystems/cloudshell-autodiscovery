@@ -174,7 +174,14 @@ def echo_connections_report_template(save_to_file, report_type):
     help="The number of concurrent devices discovering",
 )
 async def run(
-    input_file, config_file, log_file, report_file, report_type, offline, autoload, workers
+    input_file,
+    config_file,
+    log_file,
+    report_file,
+    report_type,
+    offline,
+    autoload,
+    workers,
 ):
     """Run Auto discovery command with given arguments from the input file."""
     input_data_parser = get_input_data_parser(input_file)
@@ -248,7 +255,9 @@ async def run(
     show_default=True,
     help="The number of concurrent devices discovering",
 )
-async def run_from_report(input_file, config_file, log_file, report_file, autoload, workers):
+async def run_from_report(
+    input_file, config_file, log_file, report_file, autoload, workers
+):
     """Create and autoload CloudShell resources from the generated report."""
     input_data_parser = get_input_data_parser(input_file)
     input_data_model = input_data_parser.parse(input_file)
@@ -388,7 +397,9 @@ async def connect_ports(
     show_default=True,
     help="The number of concurrent devices discovering",
 )
-async def connect_ports_from_report(input_file, connections_report_file, log_file, workers):
+async def connect_ports_from_report(
+    input_file, connections_report_file, log_file, workers
+):
     """Create connections between CloudShell Port resources."""
     input_data_parser = get_input_data_parser(input_file)
     input_data_model = input_data_parser.parse(input_file)

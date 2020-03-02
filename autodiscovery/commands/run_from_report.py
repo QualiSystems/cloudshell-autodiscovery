@@ -37,9 +37,7 @@ class RunFromReportCommand(AbstractRunCommand):
                     raise ReportableException(f"Unsupported vendor {entry.vendor}")
 
                 try:
-                    handler = self.vendor_type_handlers_map[
-                        vendor.vendor_type.lower()
-                    ]
+                    handler = self.vendor_type_handlers_map[vendor.vendor_type.lower()]
                 except KeyError:
                     raise ReportableException(
                         f"Invalid vendor type '{vendor.vendor_type}'. "
@@ -77,7 +75,9 @@ class RunFromReportCommand(AbstractRunCommand):
         )
 
         with tqdm(
-            desc=f"{Fore.RESET}Total progress", total=len(self.report.entries), position=1
+            desc=f"{Fore.RESET}Total progress",
+            total=len(self.report.entries),
+            position=1,
         ) as progress_bar:
             await asyncio.gather(
                 *[
@@ -99,7 +99,7 @@ class RunFromReportCommand(AbstractRunCommand):
         self.report.generate()
         failed_entries_count = self.report.get_failed_entries_count()
 
-        print(
+        print (
             f"\n\n\n{Fore.GREEN}Uploading process finished: "
             f"\n\tSuccessfully uploaded {len(self.report.entries) - failed_entries_count} devices."
             f"\n\t{Fore.RED}Failed to upload {failed_entries_count} devices.{Fore.RESET}\n"

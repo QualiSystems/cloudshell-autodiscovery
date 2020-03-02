@@ -90,7 +90,9 @@ class ConnectPortsFromReportCommand(object):
         semaphore = asyncio.Semaphore(value=self.workers_num)
 
         with tqdm(
-            desc=f"{Fore.RESET}Total progress", total=len(self.report.entries), position=1
+            desc=f"{Fore.RESET}Total progress",
+            total=len(self.report.entries),
+            position=1,
         ) as progress_bar:
             await asyncio.gather(
                 *[
@@ -116,4 +118,3 @@ class ConnectPortsFromReportCommand(object):
             f"\n\tSuccessfully discovered {len(self.report.entries) - failed_entries_count} connections."
             f"\n\t{Fore.RED}Failed to discovery {failed_entries_count} connections.{Fore.RESET}\n"
         )
-
