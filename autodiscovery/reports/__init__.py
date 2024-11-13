@@ -15,7 +15,7 @@ def get_report(report_file, report_type, reports_map):
 
 
 def parse_report(report_file, reports):
-    """Parse report file and it's data to the Report object based on it's file extension.
+    """Parse report file and it's data to the Report object based on the file extension.
 
     :param str report_file:
     :param tuple reports:

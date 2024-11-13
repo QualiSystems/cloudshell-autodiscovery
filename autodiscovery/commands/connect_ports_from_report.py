@@ -7,7 +7,7 @@ from autodiscovery.exceptions import ReportableException
 from autodiscovery.output import EmptyOutput
 
 
-class ConnectPortsFromReportCommand(object):
+class ConnectPortsFromReportCommand:
     def __init__(self, cs_session_manager, report, logger, workers_num, output=None):
         """Init command.
 
@@ -97,17 +97,15 @@ class ConnectPortsFromReportCommand(object):
             await asyncio.gather(
                 *[
                     asyncio.create_task(
-                        (
-                            self.process_resource_connection(
-                                entry=entry,
-                                progress_bar=progress_bar,
-                                semaphore=semaphore,
-                            )
+                        self.process_resource_connection(
+                            entry=entry,
+                            progress_bar=progress_bar,
+                            semaphore=semaphore,
                         )
                     )
                     for entry in self.report.entries
                 ],
-                return_exceptions=True
+                return_exceptions=True,
             )
 
         self.report.generate()
@@ -115,6 +113,8 @@ class ConnectPortsFromReportCommand(object):
 
         self.output.send(
             f"\n\n\n{Fore.GREEN}Connections discovery process finished: "
-            f"\n\tSuccessfully discovered {len(self.report.entries) - failed_entries_count} connections."
-            f"\n\t{Fore.RED}Failed to discovery {failed_entries_count} connections.{Fore.RESET}\n"
+            f"\n\tSuccessfully discovered "
+            f"{len(self.report.entries) - failed_entries_count} connections."
+            f"\n\t{Fore.RED}Failed to discovery {failed_entries_count} "
+            f"connections.{Fore.RESET}\n"
         )

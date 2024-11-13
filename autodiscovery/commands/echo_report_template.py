@@ -1,7 +1,7 @@
 from autodiscovery.common.consts import ResourceModelsAttributes
 
 
-class EchoReportTemplateCommand(object):
+class EchoReportTemplateCommand:
     def __init__(self, report):
         """Init command.
 

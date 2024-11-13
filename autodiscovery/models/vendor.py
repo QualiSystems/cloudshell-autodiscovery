@@ -4,7 +4,7 @@ from typing import List
 
 
 @dataclass
-class OperationSystem(object):
+class OperationSystem:
     name: str
     aliases: List[str]
     default_model: str
@@ -19,7 +19,7 @@ class OperationSystem(object):
         :return:
         """
         for model_map in self.models_map:
-            aliases_regexp = fr"({'|'.join(model_map['aliases'])})"
+            aliases_regexp = rf"({'|'.join(model_map['aliases'])})"
             if re.search(aliases_regexp, system_description, flags=re.DOTALL):
                 return model_map["model"]
 
@@ -56,13 +56,9 @@ class BaseVendorDefinition:
         :param str vendor_name: vendor name from the PEN data file
         :rtype: bool
         """
-        aliases_regexp = fr"({'|'.join(self.aliases)})"
+        aliases_regexp = rf"({'|'.join(self.aliases)})"
         return bool(
-            re.search(
-                aliases_regexp,
-                vendor_name,
-                flags=(re.DOTALL | re.IGNORECASE)
-            )
+            re.search(aliases_regexp, vendor_name, flags=(re.DOTALL | re.IGNORECASE))
         )
 
     def check_vendor_name(self, vendor_name):
@@ -90,7 +86,7 @@ class NetworkingVendorDefinition(BaseVendorDefinition):
         """
         for os in self.operation_systems:
             if os.aliases:
-                aliases_regexp = fr"({'|'.join(os.aliases)})"
+                aliases_regexp = rf"({'|'.join(os.aliases)})"
                 if re.search(aliases_regexp, system_description, flags=re.DOTALL):
                     return os
 

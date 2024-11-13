@@ -1,5 +1,4 @@
 import unittest
-
 from unittest import mock
 
 from autodiscovery.models import (
@@ -232,7 +231,7 @@ class TestOperationSystem(unittest.TestCase):
 class TestCLICredentials(unittest.TestCase):
     def test_equality(self):
         """Check that instances with the same attributes will be equals."""
-        self.assertEquals(
+        self.assertEqual(
             CLICredentials(
                 user="test user",
                 password="test password",

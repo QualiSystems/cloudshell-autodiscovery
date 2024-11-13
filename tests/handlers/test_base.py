@@ -1,6 +1,6 @@
 import unittest
-
 from unittest import mock
+
 from cloudshell.api.common_cloudshell_api import CloudShellAPIError
 
 from autodiscovery.common.consts import CloudshellAPIErrorCodes
@@ -58,7 +58,7 @@ class TestAbstractHandler(unittest.TestCase):
             code=CloudshellAPIErrorCodes.UNABLE_TO_LOCATE_DRIVER, message="", rawxml=""
         )
 
-        with self.assertRaisesRegexp(ReportableException, "is not installed"):
+        with self.assertRaisesRegex(ReportableException, "is not installed"):
             self.tested_instance._add_resource_driver(
                 cs_session=self.cs_session,
                 resource_name=resource_name,
@@ -107,7 +107,7 @@ class TestAbstractHandler(unittest.TestCase):
         resource_model = "test resource model"
         device_ip = "test device IP"
         folder_path = "test folder path"
-        expected_resource_name = "{}-1".format(resource_name)
+        expected_resource_name = f"{resource_name}-1"
         self.tested_instance._add_resource_driver = mock.MagicMock()
         self.cs_session.CreateResource.side_effect = [
             CloudShellAPIError(

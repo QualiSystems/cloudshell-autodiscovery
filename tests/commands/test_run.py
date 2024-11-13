@@ -1,5 +1,4 @@
 import unittest
-
 from unittest import mock
 
 from autodiscovery.commands import RunCommand
@@ -56,7 +55,7 @@ class TestRunCommand(unittest.TestCase):
         snmp_community = "invalid snmp community"
         self.run_command._get_valid_snmp_params = mock.MagicMock(return_value=None)
         # act
-        with self.assertRaisesRegexp(ReportableException, "SNMP timeout"):
+        with self.assertRaisesRegex(ReportableException, "SNMP timeout"):
             self.run_command._get_snmp_service(
                 device_ip="10.10.10.10", snmp_comunity_strings=[snmp_community]
             )

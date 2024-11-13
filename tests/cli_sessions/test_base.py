@@ -1,5 +1,4 @@
 import unittest
-
 from unittest import mock
 
 from autodiscovery.cli_sessions.base import AbstractDiscoverySession
@@ -140,7 +139,7 @@ class TestAbstractDiscoverySession(unittest.TestCase):
         self.assertEqual(valid_creds.creds_key, creds_value)
 
     def test_prepare_credentials_action_map_raise_exception_if_all_creds_arent_valid(
-        self
+        self,
     ):
         """Method should raise AutoDiscoveryException if credentials aren't valid."""
         valid_creds = mock.MagicMock()
@@ -154,7 +153,7 @@ class TestAbstractDiscoverySession(unittest.TestCase):
             creds_key=creds_key,
         )
         # verify
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
             AutoDiscoveryException, "All given credentials aren't valid"
         ):
             wrapped(session=session, logger=self.logger)

@@ -4,7 +4,7 @@ from autodiscovery import config
 from autodiscovery.common import utils
 
 
-class EchoVendorsConfigTemplateCommand(object):
+class EchoVendorsConfigTemplateCommand:
     def execute(self, template_format, save_to_file=None):
         """Execute echo user input file command.
 

@@ -1,6 +1,9 @@
+from autodiscovery.common.async_cloudshell_api import AsyncCloudShellAPISession
 from autodiscovery.common.consts import ResourceModelsAttributes
 from autodiscovery.exceptions import ReportableException
 from autodiscovery.handlers.base import AbstractHandler
+from autodiscovery.models import PDUVendorDefinition
+from autodiscovery.reports.discovery.base import Entry
 
 
 class PDUTypeHandler(AbstractHandler):
@@ -23,14 +26,13 @@ class PDUTypeHandler(AbstractHandler):
 
         return entry
 
-    async def upload(self, entry, vendor, cs_session):
-        """Upload discovered device on the CloudShell.
-
-        :param autodiscovery.reports.base.Entry entry:
-        :param autodiscovery.models.vendor.PDUVendorDefinition vendor:
-        :param autodiscovery.common.async_cloudshell_api.AsyncCloudShellAPISession cs_session:
-        :return:
-        """
+    async def upload(
+        self,
+        entry: Entry,
+        vendor: PDUVendorDefinition,
+        cs_session: AsyncCloudShellAPISession,
+    ):
+        """Upload discovered device on the CloudShell."""
         resource_name = await self._upload_resource(
             cs_session=cs_session,
             entry=entry,

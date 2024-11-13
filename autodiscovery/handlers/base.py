@@ -5,6 +5,7 @@ from cloudshell.api.cloudshell_api import (
 from cloudshell.api.common_cloudshell_api import CloudShellAPIError
 
 from autodiscovery.cli_sessions import SSHDiscoverySession, TelnetDiscoverySession
+from autodiscovery.common.async_cloudshell_api import AsyncCloudShellAPISession
 from autodiscovery.common.consts import CloudshellAPIErrorCodes
 from autodiscovery.exceptions import ReportableException
 
@@ -73,14 +74,13 @@ class AbstractHandler:
                     vendor_cli_creds.update_valid_creds(valid_creds)
                     return valid_creds
 
-    async def _add_resource_driver(self, cs_session, resource_name, driver_name):
-        """Add appropriate driver to the created CloudShell resource.
-
-        :param autodiscovery.common.async_cloudshell_api.AsyncCloudShellAPISession cs_session:
-        :param str resource_name:
-        :param str driver_name:
-        :return:
-        """
+    async def _add_resource_driver(
+        self,
+        cs_session: AsyncCloudShellAPISession,
+        resource_name: str,
+        driver_name: str,
+    ):
+        """Add appropriate driver to the created CloudShell resource."""
         try:
             await cs_session.UpdateResourceDriver(
                 resourceFullPath=resource_name, driverName=driver_name
@@ -95,24 +95,14 @@ class AbstractHandler:
 
     async def _create_cs_resource(
         self,
-        cs_session,
+        cs_session: AsyncCloudShellAPISession,
         resource_name,
         resource_family,
         resource_model,
         device_ip,
         folder_path,
     ):
-        """Create Resource on CloudShell with appropriate attributes.
-
-        :param autodiscovery.common.async_cloudshell_api.AsyncCloudShellAPISession cs_session:
-        :param str resource_name:
-        :param str resource_family:
-        :param str resource_model:
-        :param str device_ip:
-        :param str folder_path:
-        :return: name for the created Resource
-        :rtype: str
-        """
+        """Create Resource on CloudShell with appropriate attributes."""
         try:
             await cs_session.CreateResource(
                 resourceFamily=resource_family,
@@ -142,23 +132,14 @@ class AbstractHandler:
 
     async def _upload_resource(
         self,
-        cs_session,
+        cs_session: AsyncCloudShellAPISession,
         entry,
         resource_family,
         resource_model,
         driver_name,
         attribute_prefix="",
     ):
-        """Upload resource to the CloudShell.
-
-        :param autodiscovery.common.async_cloudshell_api.AsyncCloudShellAPISession cs_session:
-        :param entry:
-        :param resource_family:
-        :param resource_model:
-        :param driver_name:
-        :param attribute_prefix:
-        :return:
-        """
+        """Upload resource to the CloudShell."""
         if entry.folder_path != "":
             # create folder before uploading resource. If folder
             # was already created it will return successful result

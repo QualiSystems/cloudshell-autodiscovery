@@ -56,9 +56,9 @@ class AsyncCloudShellAPISession(CloudShellAPISession):
 
         request_headers["Content-Length"] = str(len(message))
         request_headers["Host"] = f"{self.host}:{self.port}"
-        request_headers[
-            "Authorization"
-        ] = f"MachineName={self.hostname};Token={self.token_id}"
+        request_headers["Authorization"] = (
+            f"MachineName={self.hostname};Token={self.token_id}"
+        )
 
         ssl_protocol = ssl.PROTOCOL_TLS
         ctx = ssl.SSLContext(ssl_protocol)

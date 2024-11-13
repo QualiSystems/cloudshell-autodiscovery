@@ -1,5 +1,4 @@
 import asyncio
-from asyncio import futures
 
 import aiosnmp
 
@@ -38,7 +37,8 @@ class AsyncSNMPService:
 
         self.logger.info(
             f"Community string '{self.snmp_community}' "
-            f"for device with IP {self.ip_address} is {'valid' if is_valid else 'invalid'}"
+            f"for device with IP {self.ip_address} is "
+            f"{'valid' if is_valid else 'invalid'}"
         )
         return is_valid
 

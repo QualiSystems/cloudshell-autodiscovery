@@ -1,5 +1,4 @@
 import unittest
-
 from unittest import mock
 
 from autodiscovery.exceptions import AutoDiscoveryException
@@ -28,7 +27,7 @@ class TestInputDataParsers(unittest.TestCase):
 
     def test_get_input_data_parser_invalid_file_format(self):
         """Method should raise AutoDiscoveryException if file is in invalid format."""
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
             AutoDiscoveryException, "Invalid Input Data file format"
         ):
             get_input_data_parser(file_name="test_file.invalid")
@@ -46,9 +45,7 @@ class TestAbstractInputDataParser(unittest.TestCase):
         """Check that method will return range of IPs between start IP and last IP."""
         expected_res = ["10.0.0.1", "10.0.0.2", "10.0.0.3", "10.0.0.4"]
         # act
-        result = self.tested_instance._find_ips(
-            start_ip=u"10.0.0.1", last_ip=u"10.0.0.4"
-        )
+        result = self.tested_instance._find_ips(start_ip="10.0.0.1", last_ip="10.0.0.4")
         # verify
         self.assertEqual(result, expected_res)
 
@@ -81,10 +78,10 @@ class TestAbstractInputDataParser(unittest.TestCase):
         device_ip_range_class.assert_any_call(ip_range=["192.168.42.235"], domain=None)
 
         self.tested_instance._find_ips.assert_any_call(
-            start_ip=u"192.168.10.3", last_ip=u"192.168.10.45"
+            start_ip="192.168.10.3", last_ip="192.168.10.45"
         )
         self.tested_instance._find_ips.assert_any_call(
-            start_ip=u"192.168.8.1", last_ip=u"192.168.9.10"
+            start_ip="192.168.8.1", last_ip="192.168.9.10"
         )
 
     def test_parse_method_raises_exception_if_it_was_not_implemented(self):

@@ -1,5 +1,4 @@
 import unittest
-
 from unittest import mock
 
 from autodiscovery.commands import ConnectPortsCommand
@@ -107,7 +106,7 @@ class TestRunCommand(unittest.TestCase):
         cs_session = mock.MagicMock()
         cs_session.FindResources.return_value.Resources = []
         # act
-        with self.assertRaisesRegexp(ReportableException, "Unable to find resource"):
+        with self.assertRaisesRegex(ReportableException, "Unable to find resource"):
             self.connect_ports_command._find_resource_by_sys_name(
                 cs_session=cs_session, sys_name=sys_name
             )
@@ -121,30 +120,28 @@ class TestRunCommand(unittest.TestCase):
             mock.MagicMock(),
         ]
         # act
-        with self.assertRaisesRegexp(ReportableException, "Found several resources"):
+        with self.assertRaisesRegex(ReportableException, "Found several resources"):
             self.connect_ports_command._find_resource_by_sys_name(
                 cs_session=cs_session, sys_name=sys_name
             )
 
     def test_find_port_by_adjacent_name(self):
         port_name = "Test Port Name"
-        port = mock.MagicMock(
-            Name="10.10.10.10/Chassis 1/Module 1/{}".format(port_name)
-        )
+        port = mock.MagicMock(Name=f"10.10.10.10/Chassis 1/Module 1/{port_name}")
         self.connect_ports_command._find_ports = mock.MagicMock(return_value=[port])
         # act
         result = self.connect_ports_command._find_port_by_adjacent_name(
             adjacent_resource=mock.MagicMock(), adjacent_port_name=port_name
         )
         # verify
-        self.assertEquals(result, port)
+        self.assertEqual(result, port)
 
     def test_find_port_by_adjacent_name_no_such_port(self):
         port_name = "Test Port Name"
         port = mock.MagicMock(Name="10.10.10.10/Chassis 1/Module 1/Other Port Name")
         self.connect_ports_command._find_ports = mock.MagicMock(return_value=[port])
         # act
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
             ReportableException, "Unable to find Adjacent port"
         ):
             self.connect_ports_command._find_port_by_adjacent_name(

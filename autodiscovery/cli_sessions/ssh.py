@@ -7,9 +7,7 @@ from autodiscovery.exceptions import AutoDiscoveryException
 
 class SSHDiscoverySession(SSHSession, AbstractDiscoverySession):
     def __init__(self, host, port=None):
-        super(SSHDiscoverySession, self).__init__(
-            host=host, port=port, username=None, password=None
-        )
+        super().__init__(host=host, port=port, username=None, password=None)
         self._handler = paramiko.SSHClient()
         self._handler.load_system_host_keys()
         self._handler.set_missing_host_key_policy(paramiko.AutoAddPolicy())

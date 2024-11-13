@@ -1,5 +1,4 @@
 import unittest
-
 from unittest import mock
 
 from autodiscovery.parsers.config_data_parsers import (
@@ -19,7 +18,7 @@ class TestConfigDataParsers(unittest.TestCase):
 
     def test_get_config_data_parser_invalid_file_format(self):
         """Method should raise exception if provided file is in invalid format."""
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
             AutoDiscoveryException, "Invalid Additional Config Data file format"
         ):
             get_config_data_parser(file_name="test_file.invalid")

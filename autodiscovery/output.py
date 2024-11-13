@@ -3,7 +3,7 @@ from colorama import Fore
 from tqdm import tqdm
 
 
-class AbstractOutput(object):
+class AbstractOutput:
     def send(self, message, error=False):
         raise NotImplementedError(f"Class {type(self)} must implement method 'send'")
 

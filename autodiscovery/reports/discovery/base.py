@@ -59,7 +59,7 @@ class AbstractDiscoveryReport(AbstractReport):
             status = Entry.SUCCESS_STATUS
 
         kwargs["status"] = status
-        return super(AbstractDiscoveryReport, self).add_entry(**kwargs)
+        return super().add_entry(**kwargs)
 
 
 class Entry(AbstractEntry):
@@ -82,7 +82,7 @@ class Entry(AbstractEntry):
         attributes=None,
         formatted_attrs=None,
     ):
-        super(Entry, self).__init__(status=status)
+        super().__init__(status=status)
         self.ip = ip
         self.domain = domain
         self.vendor = vendor

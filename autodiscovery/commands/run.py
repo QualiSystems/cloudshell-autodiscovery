@@ -16,7 +16,7 @@ from autodiscovery.handlers import (
 from autodiscovery.output import EmptyOutput
 
 
-class AbstractRunCommand(object):
+class AbstractRunCommand:
     def __init__(
         self,
         data_processor,
@@ -83,7 +83,7 @@ class RunCommand(AbstractRunCommand):
         :param bool autoload:
         :param bool offline:
         """
-        super(RunCommand, self).__init__(
+        super().__init__(
             data_processor,
             report,
             logger,
@@ -137,7 +137,9 @@ class RunCommand(AbstractRunCommand):
 
         for send_func in (self.logger.info, self.output.send):
             send_func(
-                f"Discovered SNMP community string '{snmp_service.snmp_community}' for device with IP {entry.ip}"
+                f"Discovered SNMP community string "
+                f"'{snmp_service.snmp_community}' "
+                f"for device with IP {entry.ip}"
             )
 
         vendor_enterprise_numbers = self.data_processor.load_vendor_enterprise_numbers()
@@ -255,28 +257,28 @@ class RunCommand(AbstractRunCommand):
             await asyncio.gather(
                 *[
                     asyncio.create_task(
-                        (
-                            self.discover_device(
-                                ip_address=device_ip,
-                                snmp_comunity_strings=snmp_comunity_strings,
-                                vendor_settings=vendor_settings,
-                                vendor_config=vendor_config,
-                                cs_domain=cs_domain,
-                                progress_bar=progress_bar,
-                                semaphore=semaphore,
-                            )
+                        self.discover_device(
+                            ip_address=device_ip,
+                            snmp_comunity_strings=snmp_comunity_strings,
+                            vendor_settings=vendor_settings,
+                            vendor_config=vendor_config,
+                            cs_domain=cs_domain,
+                            progress_bar=progress_bar,
+                            semaphore=semaphore,
                         )
                     )
                     for device_ip, cs_domain in devices_ips
                 ],
-                return_exceptions=True
+                return_exceptions=True,
             )
 
         self.report.generate()
         failed_entries_count = self.report.get_failed_entries_count()
 
-        print (
+        print(
             f"\n\n\n{Fore.GREEN}Discovery process finished: "
-            f"\n\tSuccessfully discovered {len(self.report.entries) - failed_entries_count} devices."
-            f"\n\t{Fore.RED}Failed to discover {failed_entries_count} devices.{Fore.RESET}\n"
+            f"\n\tSuccessfully discovered "
+            f"{len(self.report.entries) - failed_entries_count} devices."
+            f"\n\t{Fore.RED}Failed to discover {failed_entries_count} "
+            f"devices.{Fore.RESET}\n"
         )

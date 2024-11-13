@@ -1,5 +1,4 @@
 import unittest
-
 from unittest import mock
 
 from autodiscovery.cli_sessions import SSHDiscoverySession
@@ -57,7 +56,7 @@ class TestSSHDiscoverySession(unittest.TestCase):
         enable_prompt = "$"
 
         # verify
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
             AutoDiscoveryException, "All given credentials aren't valid"
         ):
             self.ssh_session.check_credentials(

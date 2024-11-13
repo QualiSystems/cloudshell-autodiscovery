@@ -19,5 +19,5 @@ class CloudshellAPIErrorCodes:
     RESOURCE_ALREADY_EXISTS = "114"
     UNABLE_TO_LOCATE_DRIVER = "129"
     UNABLE_TO_LOCATE_FAMILY_OR_MODEL = (
-        "100"
-    )  # not a typo, same code as for incorrect login
+        "100"  # not a typo, same code as for incorrect login
+    )

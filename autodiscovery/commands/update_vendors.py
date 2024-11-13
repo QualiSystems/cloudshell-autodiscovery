@@ -3,7 +3,7 @@ import requests
 from autodiscovery import config
 
 
-class UpdateVendorsCommand(object):
+class UpdateVendorsCommand:
     def __init__(self, data_processor, logger):
         """Init command.
 

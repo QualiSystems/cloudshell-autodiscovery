@@ -47,7 +47,7 @@ class AbstractConnectionsReport(AbstractReport):
             status = Entry.SUCCESS_STATUS
 
         kwargs["status"] = status
-        return super(AbstractConnectionsReport, self).add_entry(**kwargs)
+        return super().add_entry(**kwargs)
 
 
 class Entry(AbstractEntry):
@@ -72,7 +72,7 @@ class Entry(AbstractEntry):
         :param domain:
         :param comment:
         """
-        super(Entry, self).__init__(status=status)
+        super().__init__(status=status)
         self.resource_name = resource_name
         self.source_port = source_port
         self.adjacent = adjacent

@@ -32,7 +32,7 @@ def get_report(report_file, report_type=DEFAULT_REPORT_TYPE):
 
 
 def parse_report(report_file):
-    """Parse report file and it's data to the Report object based on it's file extension.
+    """Parse report file and it's data to the Report object based on the file extension.
 
     :param report_file:
     :rtype: autodiscovery.reports.base.AbstractParsableReport

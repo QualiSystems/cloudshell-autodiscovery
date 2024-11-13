@@ -9,7 +9,7 @@ from autodiscovery.exceptions import ReportableException
 
 class RunFromReportCommand(AbstractRunCommand):
     async def upload_device(self, entry, vendor_config, progress_bar, semaphore):
-        """
+        """Discover device based on report entries.
 
         :param entry:
         :param vendor_config:
@@ -82,25 +82,25 @@ class RunFromReportCommand(AbstractRunCommand):
             await asyncio.gather(
                 *[
                     asyncio.create_task(
-                        (
-                            self.upload_device(
-                                entry=entry,
-                                vendor_config=vendor_config,
-                                progress_bar=progress_bar,
-                                semaphore=semaphore,
-                            )
+                        self.upload_device(
+                            entry=entry,
+                            vendor_config=vendor_config,
+                            progress_bar=progress_bar,
+                            semaphore=semaphore,
                         )
                     )
                     for entry in self.report.entries
                 ],
-                return_exceptions=True
+                return_exceptions=True,
             )
 
         self.report.generate()
         failed_entries_count = self.report.get_failed_entries_count()
 
-        print (
+        print(
             f"\n\n\n{Fore.GREEN}Uploading process finished: "
-            f"\n\tSuccessfully uploaded {len(self.report.entries) - failed_entries_count} devices."
-            f"\n\t{Fore.RED}Failed to upload {failed_entries_count} devices.{Fore.RESET}\n"
+            f"\n\tSuccessfully uploaded "
+            f"{len(self.report.entries) - failed_entries_count} devices."
+            f"\n\t{Fore.RED}Failed to upload {failed_entries_count} "
+            f"devices.{Fore.RESET}\n"
         )

@@ -1,6 +1,9 @@
+from autodiscovery.common.async_cloudshell_api import AsyncCloudShellAPISession
 from autodiscovery.common.consts import ResourceModelsAttributes
 from autodiscovery.exceptions import ReportableException
 from autodiscovery.handlers.base import AbstractHandler
+from autodiscovery.models import NetworkingVendorDefinition
+from autodiscovery.reports.discovery.base import Entry
 
 
 class NetworkingTypeHandler(AbstractHandler):
@@ -45,14 +48,13 @@ class NetworkingTypeHandler(AbstractHandler):
 
         return entry
 
-    async def upload(self, entry, vendor, cs_session):
-        """Upload discovered device on the CloudShell.
-
-        :param autodiscovery.reports.base.Entry entry:
-        :param autodiscovery.models.vendor.NetworkingVendorDefinition vendor:
-        :param autodiscovery.common.async_cloudshell_api.AsyncCloudShellAPISession cs_session:
-        :return:
-        """
+    async def upload(
+        self,
+        entry: Entry,
+        vendor: NetworkingVendorDefinition,
+        cs_session: AsyncCloudShellAPISession,
+    ):
+        """Upload discovered device on the CloudShell."""
         device_os = vendor.get_device_os(entry.description)
         if device_os is None:
             raise ReportableException("Unable to determine device OS")

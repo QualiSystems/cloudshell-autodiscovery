@@ -26,7 +26,7 @@ class AbstractCSVReport(AbstractParsableReport):
         :param str report_file: path to the report file
         :rtype: list[Entry]
         """
-        with open(self.file_name, "r") as report_file:
+        with open(self.file_name) as report_file:
             reader = csv.DictReader(report_file, fieldnames=self._header)
 
             for row in list(reader)[1:]:  # first row is a header

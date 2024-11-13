@@ -9,9 +9,7 @@ from autodiscovery.models import CLICredentials
 
 class TelnetDiscoverySession(TelnetSession, AbstractDiscoverySession):
     def __init__(self, host, port=None):
-        super(TelnetDiscoverySession, self).__init__(
-            host=host, port=port, username=None, password=None
-        )
+        super().__init__(host=host, port=port, username=None, password=None)
         self._handler = telnetlib.Telnet()
 
     def check_credentials(self, cli_credentials, default_prompt, enable_prompt, logger):
@@ -37,12 +35,12 @@ class TelnetDiscoverySession(TelnetSession, AbstractDiscoverySession):
             )
             action_map = OrderedDict()
             valid_creds = CLICredentials()
-            action_map[
-                "[Ll]ogin:|[Uu]ser:|[Uu]sername:"
-            ] = self.prepare_credentials_action_map(
-                cli_credentials=cli_credentials,
-                valid_creds=valid_creds,
-                creds_key="user",
+            action_map["[Ll]ogin:|[Uu]ser:|[Uu]sername:"] = (
+                self.prepare_credentials_action_map(
+                    cli_credentials=cli_credentials,
+                    valid_creds=valid_creds,
+                    creds_key="user",
+                )
             )
 
             action_map["[Pp]assword:"] = self.prepare_credentials_action_map(

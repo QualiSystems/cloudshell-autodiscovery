@@ -4,7 +4,7 @@ from typing import List
 from autodiscovery.config import DEFAULT_CLOUDSHELL_DOMAIN, DEFAULT_RESOURCE_FOLDER_PATH
 
 
-class VendorSettingsCollection(object):
+class VendorSettingsCollection:
     def __init__(self, vendor_settings):
         """Init command.
 

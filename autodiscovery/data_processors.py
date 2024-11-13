@@ -4,7 +4,7 @@ from autodiscovery import config, models
 from autodiscovery.common import utils
 
 
-class JsonDataProcessor(object):
+class JsonDataProcessor:
     def __init__(self, logger):
         """Init command.
 
@@ -41,7 +41,7 @@ class JsonDataProcessor(object):
         """
         file_path = self._prepare_file_path(filename)
 
-        with open(file_path, "r") as outfile:
+        with open(file_path) as outfile:
             return json.load(outfile)
 
     def save_vendor_enterprise_numbers(self, data):

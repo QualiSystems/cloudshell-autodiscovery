@@ -3,7 +3,7 @@ from collections import Counter
 from autodiscovery.exceptions import ReportableException
 
 
-class AbstractReport(object):
+class AbstractReport:
     DEFAULT_REPORT_NAME = "report"
     FILE_EXTENSION = "*"
 
@@ -28,11 +28,8 @@ class AbstractReport(object):
     def entries(self):
         return self._entries
 
-    def get_failed_entries_count(self):
-        """
-
-        :return:
-        """
+    def get_failed_entries_count(self) -> int:
+        """Get count of failed entries."""
         counter = Counter(getattr(entry, "status") for entry in self._entries)
         return counter[self.entry_class.FAILED_STATUS]
 
@@ -81,7 +78,7 @@ class AbstractParsableReport(AbstractReport):
         )
 
 
-class AbstractEntry(object):
+class AbstractEntry:
     SUCCESS_STATUS = "Success"
     FAILED_STATUS = "Failed"
 

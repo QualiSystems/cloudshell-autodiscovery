@@ -12,7 +12,7 @@ SYSTEM_NAME_PORT_ATTRIBUTE = "System Name"
 PORT_FAMILY = "CS_Port"
 
 
-class ConnectPortsCommand(object):
+class ConnectPortsCommand:
     def __init__(
         self, cs_session_manager, report, offline, logger, workers_num, output=None
     ):
@@ -148,9 +148,9 @@ class ConnectPortsCommand(object):
                         domain=domain,
                         offline=self.offline,
                     ) as entry:
-                        adjacent_sys_name, adjacent_port_name = [
+                        adjacent_sys_name, adjacent_port_name = (
                             x.strip() for x in adjacent.split("through")
-                        ]
+                        )
                         adjacent_resource = self._find_resource_by_sys_name(
                             cs_session=cs_session, sys_name=adjacent_sys_name
                         )
@@ -222,25 +222,25 @@ class ConnectPortsCommand(object):
             await asyncio.gather(
                 *[
                     asyncio.create_task(
-                        (
-                            self.discover_resource_connections(
-                                resource_name=resource_name,
-                                domain=domain,
-                                progress_bar=progress_bar,
-                                semaphore=semaphore,
-                            )
+                        self.discover_resource_connections(
+                            resource_name=resource_name,
+                            domain=domain,
+                            progress_bar=progress_bar,
+                            semaphore=semaphore,
                         )
                     )
                     for resource_name in resources_names
                 ],
-                return_exceptions=True
+                return_exceptions=True,
             )
 
         self.report.generate()
         failed_entries_count = self.report.get_failed_entries_count()
 
-        print (
+        print(
             f"\n\n\n{Fore.GREEN}Connections discovery process finished: "
-            f"\n\tSuccessfully discovered {len(self.report.entries) - failed_entries_count} connections."
-            f"\n\t{Fore.RED}Failed to discovery {failed_entries_count} connections.{Fore.RESET}\n"
+            f"\n\tSuccessfully discovered "
+            f"{len(self.report.entries) - failed_entries_count} connections."
+            f"\n\t{Fore.RED}Failed to discovery {failed_entries_count} connections."
+            f"{Fore.RESET}\n"
         )

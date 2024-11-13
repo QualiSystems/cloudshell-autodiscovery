@@ -1,9 +1,8 @@
 import asyncio
 from functools import wraps
 
-import pkg_resources
-
 import click
+import pkg_resources
 
 from autodiscovery import commands, config
 from autodiscovery.common.consts import ASYNCIO_CONCURRENCY_LIMIT

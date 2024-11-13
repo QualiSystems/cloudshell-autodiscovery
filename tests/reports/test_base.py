@@ -1,5 +1,4 @@
 import unittest
-
 from unittest import mock
 
 from autodiscovery.exceptions import ReportableException
@@ -56,7 +55,7 @@ class TestAbstractEntry(unittest.TestCase):
 
     def test_exit_with_statement(self):
         """Check that entry status will be changed to the failed one."""
-        with self.assertRaisesRegexp(Exception, "Test Exception"):
+        with self.assertRaisesRegex(Exception, "Test Exception"):
             with self.entry as entry:
                 self.assertEqual(self.entry, entry)
                 raise ReportableException("Test Exception")

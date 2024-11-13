@@ -1,4 +1,4 @@
-class EchoConnectionsTemplateCommand(object):
+class EchoConnectionsTemplateCommand:
     def __init__(self, report):
         """Init command.
 
