@@ -57,7 +57,13 @@ class BaseVendorDefinition:
         :rtype: bool
         """
         aliases_regexp = fr"({'|'.join(self.aliases)})"
-        return bool(re.search(aliases_regexp, vendor_name, flags=re.DOTALL))
+        return bool(
+            re.search(
+                aliases_regexp,
+                vendor_name,
+                flags=(re.DOTALL | re.IGNORECASE)
+            )
+        )
 
     def check_vendor_name(self, vendor_name):
         """Check if given name is a name for the Vendor.

@@ -1,6 +1,6 @@
 import unittest
 
-import mock
+from unittest import mock
 
 from autodiscovery.exceptions import ReportableException
 from autodiscovery.reports.base import AbstractEntry, AbstractReport

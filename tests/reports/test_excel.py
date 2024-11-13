@@ -1,7 +1,7 @@
 import collections
 import unittest
 
-import mock
+from unittest import mock
 
 from autodiscovery.reports.excel import AbstractExcelReport
 

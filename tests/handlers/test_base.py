@@ -1,6 +1,6 @@
 import unittest
 
-import mock
+from unittest import mock
 from cloudshell.api.common_cloudshell_api import CloudShellAPIError
 
 from autodiscovery.common.consts import CloudshellAPIErrorCodes

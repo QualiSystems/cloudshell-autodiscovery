@@ -1,12 +1,13 @@
 click==6.7
-requests==2.13.0
+requests==2.18.0
 ipaddress==1.0.18
-PyYAML==3.12
+PyYAML==5.4
 terminaltables==3.1.0
 openpyxl==2.4.5
 xlsxwriter==0.9.6
 cloudshell-automation-api>=9.3,<9.4
 cloudshell-cli==4.0.1
 aiosnmp==0.2.2
-aiohttp==3.6.2
+aiohttp==3.10.2
 colorama==0.4.3
+tqdm==4.42.0

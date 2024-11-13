@@ -1,6 +1,6 @@
 import unittest
 
-import mock
+from unittest import mock
 
 from autodiscovery.common.utils import get_full_path, get_logger
 

@@ -1,6 +1,6 @@
 import unittest
 
-import mock
+from unittest import mock
 
 from autodiscovery.cli_sessions import SSHDiscoverySession
 from autodiscovery.exceptions import AutoDiscoveryException

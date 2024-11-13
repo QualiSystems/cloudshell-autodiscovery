@@ -374,6 +374,59 @@
       ]
    },
    {
+      "name": "Palo Alto",
+      "aliases": [
+         "[Pp]alo\\s*[Aa]lto"
+      ],
+      "type": "networking",
+      "default_os": "PanOS",
+      "default_prompt": ">\\s*$",
+      "operation_systems": [
+         {
+            "name": "PanOS",
+            "aliases": [
+               "[Pp]alo\\s*[Aa]lto"
+            ],
+            "default_model": "firewall",
+            "families": {
+               "firewall": {
+                  "family_name": "CS_Firewall",
+                  "model_name": "PaloAlto PanOS Firewall Shell 2G",
+                  "driver_name": "PaloAlto PanOS Firewall Shell 2G"
+               }
+            }
+         }
+      ]
+   },
+   {
+      "name": "Checkpoint",
+      "aliases": [
+         "Gaia",
+         "checkpoint",
+         ".2620."
+      ],
+      "type": "networking",
+      "default_os": "Gaia",
+      "default_prompt": "(?:(?!\\)).)#\\s*$",
+      "enable_prompt": ">\\s*$",
+      "operation_systems": [
+         {
+            "name": "Gaia",
+            "aliases": [
+               "[Cc]heckpoint"
+            ],
+            "default_model": "firewall",
+            "families": {
+               "firewall": {
+                  "family_name": "CS_Firewall",
+                  "model_name": "Checkpoint Gaia Firewall Shell 2G",
+                  "driver_name": "Checkpoint Gaia Firewall Shell 2G"
+               }
+            }
+         }
+      ]
+   },
+   {
       "name": "Cumulus",
       "aliases": [
          "Cumulus"
@@ -391,6 +444,75 @@
                   "family_name": "CS_Switch",
                   "model_name": "Cumulus Linux Switch 2G",
                   "driver_name": "Cumulus Linux Switch 2G"
+               }
+            }
+         }
+      ]
+   },
+   {
+      "name": "NVIDIA",
+      "aliases": [
+         "Onyx",
+         "MLNX[ -]?OS",
+         "Mellanox"
+      ],
+      "type": "networking",
+      "default_os": "Onyx",
+      "default_prompt": ">\\s*$",
+      "enable_prompt": "(?:(?!\\)).\\s)#\\s*$",
+      "operation_systems": [
+         {
+            "name": "Onyx",
+            "default_model": "switch",
+            "families": {
+               "switch": {
+                  "family_name": "CS_Switch",
+                  "model_name": "NVIDIA Onyx Switch 2G",
+                  "driver_name": "NVIDIA Onyx Switch 2G"
+               }
+            }
+         }
+      ]
+   },
+   {
+      "name": "CGS",
+      "aliases": [
+         "COS"
+      ],
+      "type": "networking",
+      "default_os": "COS",
+      "default_prompt": "((?<=\\n)|^).*[^\\)]#\\s*$",
+      "operation_systems": [
+         {
+            "name": "COS",
+            "default_model": "switch",
+            "families": {
+               "switch": {
+                  "family_name": "CS_Switch",
+                  "model_name": "CGS COS Switch Shell 2G",
+                  "driver_name": "CGS COS Switch Shell 2G"
+               }
+            }
+         }
+      ]
+   },
+   {
+      "name": "Calix",
+      "aliases": [
+         "[Cc]alix"
+      ],
+      "type": "networking",
+      "default_os": "AXOS",
+      "default_prompt": "(?:(?!\\)).)#\\s*$",
+      "operation_systems": [
+         {
+            "name": "AXOS",
+            "default_model": "router",
+            "families": {
+               "router": {
+                  "family_name": "CS_Switch",
+                  "model_name": "Calix AXOS Router 2G",
+                  "driver_name": "Calix AXOS Router 2G"
                }
             }
          }

@@ -1,6 +1,6 @@
 import unittest
 
-import mock
+from unittest import mock
 
 from autodiscovery.commands import ConnectPortsCommand
 from autodiscovery.commands.connect_ports import PORT_FAMILY

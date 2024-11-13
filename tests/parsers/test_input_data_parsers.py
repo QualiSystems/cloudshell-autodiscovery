@@ -1,6 +1,6 @@
 import unittest
 
-import mock
+from unittest import mock
 
 from autodiscovery.exceptions import AutoDiscoveryException
 from autodiscovery.parsers.input_data_parsers import (
