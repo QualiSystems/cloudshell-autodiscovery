@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import List
 
 from autodiscovery.config import DEFAULT_CLOUDSHELL_DOMAIN, DEFAULT_RESOURCE_FOLDER_PATH
 
@@ -84,7 +83,7 @@ class CLICredentials:
 @dataclass
 class VendorCLICredentials:
     name: str
-    cli_credentials: List[CLICredentials]
+    cli_credentials: list[CLICredentials]
 
     def update_valid_creds(self, valid_creds):
         """Set valid credentials to be first in the list of possible CLI credentials.
@@ -100,7 +99,7 @@ class VendorCLICredentials:
 
 @dataclass
 class DeviceIPRange:
-    ip_range: List[str]
+    ip_range: list[str]
     domain: str = DEFAULT_CLOUDSHELL_DOMAIN
 
     def __post_init__(self):
@@ -110,9 +109,9 @@ class DeviceIPRange:
 
 @dataclass
 class InputDataModel:
-    devices_ips: List[DeviceIPRange]
+    devices_ips: list[DeviceIPRange]
     cs_ip: str
     cs_user: str
     cs_password: str
-    snmp_community_strings: List[str]
+    snmp_community_strings: list[str]
     vendor_settings: VendorSettingsCollection

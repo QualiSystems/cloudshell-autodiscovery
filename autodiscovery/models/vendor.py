@@ -1,14 +1,13 @@
 import re
 from dataclasses import dataclass
-from typing import List
 
 
 @dataclass
 class OperationSystem:
     name: str
-    aliases: List[str]
+    aliases: list[str]
     default_model: str
-    models_map: List[dict]
+    models_map: list[dict]
     families: dict
 
     def get_device_model_type(self, system_description):
@@ -45,7 +44,7 @@ class OperationSystem:
 @dataclass
 class BaseVendorDefinition:
     name: str
-    aliases: List[str]
+    aliases: list[str]
     vendor_type: str
     default_prompt: str
     enable_prompt: str
@@ -75,7 +74,7 @@ class BaseVendorDefinition:
 @dataclass
 class NetworkingVendorDefinition(BaseVendorDefinition):
     default_os: str
-    operation_systems: List[OperationSystem]
+    operation_systems: list[OperationSystem]
 
     def get_device_os(self, system_description):
         """Find device Operation System by its system description.
@@ -114,7 +113,7 @@ class PDUVendorDefinition(BaseVendorDefinition):
 
 @dataclass
 class VendorDefinitionCollection:
-    vendors: List[BaseVendorDefinition]
+    vendors: list[BaseVendorDefinition]
 
     def get_vendor(self, vendor_name):
         """Find vendor by it name/aliases.
