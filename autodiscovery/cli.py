@@ -1,4 +1,4 @@
-import pkg_resources
+from importlib.metadata import version as _package_version
 
 import click
 
@@ -21,7 +21,7 @@ def cli():
 @cli.command()
 def version():
     """Get version of the CloudShell Autodiscovery CLI tool"""
-    click.echo(pkg_resources.get_distribution("cloudshell-autodiscovery").version)
+    click.echo(_package_version("cloudshell-autodiscovery"))
 
 
 @cli.command(name="update-vendor-data")

@@ -52,7 +52,7 @@ class TestAbstractHandler(unittest.TestCase):
             message="",
             rawxml="")
 
-        with self.assertRaisesRegexp(ReportableException, "is not installed"):
+        with self.assertRaisesRegex(ReportableException, "is not installed"):
             self.tested_instance._add_resource_driver(cs_session=self.cs_session,
                                                       resource_name=resource_name,
                                                       driver_name=driver_name)

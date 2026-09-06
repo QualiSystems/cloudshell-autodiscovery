@@ -7,7 +7,7 @@ def get_file_content(file_name):
         return f.read()
 
 setup(name='cloudshell-autodiscovery',
-      version='1.0.1',
+      version='1.1.0',
       description="",
       long_description=get_file_content('README.md'),
       author='Quali',
@@ -16,6 +16,15 @@ setup(name='cloudshell-autodiscovery',
       include_package_data=True,
       install_requires=get_file_content('requirements.txt'),
       license="Apache Software License 2.0",
+      python_requires=">=3.9",
+      classifiers=[
+          "Programming Language :: Python :: 3.9",
+          "Programming Language :: Python :: 3.10",
+          "Programming Language :: Python :: 3.11",
+          "Programming Language :: Python :: 3.12",
+          "Programming Language :: Python :: 3.13",
+          "License :: OSI Approved :: Apache Software License",
+      ],
       entry_points={
           "console_scripts": ['autodiscovery=autodiscovery.cli:cli']
       })

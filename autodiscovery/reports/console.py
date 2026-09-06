@@ -45,7 +45,7 @@ class AbstractConsoleReport(AbstractReport):
 
         for entry in self._entries:
             entry_row = [self._format_column_width(header=header, attr_value=getattr(entry, attr))
-                         for header, attr in self._header_entry_map.iteritems()]
+                         for header, attr in self._header_entry_map.items()]
 
             table_data.extend([entry_row, empty_row])  # add an empty row between records
 
