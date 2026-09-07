@@ -88,7 +88,7 @@ class YAMLInputDataParser(AbstractInputDataParser):
         with open(input_file) as input_f:
             file_data = input_f.read()
 
-        data = yaml.load(file_data)
+        data = yaml.safe_load(file_data)
         devices_ips = self._parse_devices_ips(data["devices-ips"])
         vendor_settings = models.VendorSettingsCollection(data.get("vendor-settings", {}))
         cs_data = data.get("cloudshell", {})

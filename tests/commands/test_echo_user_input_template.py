@@ -29,7 +29,7 @@ class TestEchoUserInputTemplateCommand(unittest.TestCase):
         self.echo_command.execute(template_format=template_format)
         # verify
         open.assert_called_once_with(example_file)
-        json.dumps.assert_called_once_with(yaml.load(file_data), indent=4, sort_keys=True)
+        json.dumps.assert_called_once_with(yaml.safe_load(file_data), indent=4, sort_keys=True)
         click.echo.assert_called_once_with(json_data)
 
     @mock.patch("autodiscovery.commands.echo_user_input_template.click")

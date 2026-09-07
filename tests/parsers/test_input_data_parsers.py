@@ -103,7 +103,7 @@ class TestYAMLInputDataParser(unittest.TestCase):
         # verify
         self.assertEqual(result, expected_res)
         self.input_parser._parse_devices_ips.assert_called_once()
-        yaml.load.assert_called_once()
+        yaml.safe_load.assert_called_once()
 
 
 class TestJSONInputDataParser(unittest.TestCase):
