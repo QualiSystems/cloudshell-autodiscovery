@@ -21,7 +21,7 @@ class EchoUserInputTemplateCommand(object):
             file_data = template_file.read()
 
         if template_format == "json":
-            file_data = json.dumps(yaml.load(file_data), indent=4, sort_keys=True)
+            file_data = json.dumps(yaml.safe_load(file_data), indent=4, sort_keys=True)
 
         if save_to_file is None:
             click.echo(file_data)

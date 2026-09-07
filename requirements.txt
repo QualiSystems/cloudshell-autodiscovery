@@ -1,13 +1,12 @@
-click==6.7
+click>=8,<9
 requests>=2.31
-ipaddress==1.0.18
-PyYAML==3.12
-terminaltables==3.1.0
-openpyxl==2.4.5
-xlsxwriter==0.9.6
+PyYAML>=6,<7
+terminaltables>=3.1,<4
+openpyxl>=3,<4
+xlsxwriter>=3,<4
 cloudshell-snmp>=6.0,<7.0
 cloudshell-automation-api>=2022.1
-cloudshell-cli>=5.0,<6.0
-# telnetlib was removed from the stdlib in Python 3.13 (PEP 594);
-# cloudshell-cli's TelnetSession still imports it
+cloudshell-cli>=5.0,<7
+# telnetlib was removed from the stdlib in Python 3.13 (PEP 594) and
+# autodiscovery.cli_sessions.telnet imports it directly
 standard-telnetlib;python_version>="3.13"
