@@ -1,8 +1,9 @@
 import re
 import uuid
 
-from cloudshell.snmp.quali_snmp import QualiSnmp
-from cloudshell.snmp.snmp_parameters import SNMPV2Parameters
+from cloudshell.snmp.cloudshell_snmp import Snmp
+from cloudshell.snmp.core.domain.snmp_oid import SnmpMibObject
+from cloudshell.snmp.snmp_parameters import SNMPReadParameters
 
 from autodiscovery.exceptions import ReportableException
 from autodiscovery.handlers import NetworkingTypeHandler
@@ -74,15 +75,18 @@ class RunCommand(AbstractRunCommand):
 
         :param str device_ip:
         :param list[str] snmp_comunity_strings:
-        :return: tuple with QualiSnmp instance and valid SNMP community string
-        :rtype: (QualiSnmp, str)
+        :return: tuple with SnmpContextManager instance and valid SNMP community string
+        :rtype: (cloudshell.snmp.core.snmp_context_manager.SnmpContextManager, str)
         """
         for snmp_community in snmp_comunity_strings:
             self.logger.info("Trying community string '{}' for device with IP {}".format(snmp_community, device_ip))
-            snmp_parameters = SNMPV2Parameters(ip=device_ip, snmp_community=snmp_community)
+            snmp_parameters = SNMPReadParameters(ip=device_ip, snmp_community=snmp_community)
 
             try:
-                return QualiSnmp(snmp_parameters, self.logger), snmp_community
+                with Snmp().get_snmp_service(snmp_parameters, self.logger) as snmp_service:
+                    # probe the device: raises on SNMP timeout/error
+                    snmp_service.get(SnmpMibObject("SNMPv2-MIB", "sysName", "0"))
+                return Snmp().get_snmp_service(snmp_parameters, self.logger), snmp_community
             except Exception:
                 self.logger.warning("SNMP Community string '{}' is not valid for device with IP {}"
                                     .format(snmp_community, device_ip))
@@ -113,11 +117,16 @@ class RunCommand(AbstractRunCommand):
 
         vendor_enterprise_numbers = self.data_processor.load_vendor_enterprise_numbers()
         entry.snmp_community = snmp_community
-        entry.sys_object_id = snmp_handler.get_property('SNMPv2-MIB', 'sysObjectID', '0')
-        vendor_number = self._parse_vendor_number(entry.sys_object_id)
-        entry.vendor = vendor_enterprise_numbers[vendor_number]
-        entry.description = snmp_handler.get_property('SNMPv2-MIB', 'sysDescr', '0')
-        sys_name = snmp_handler.get_property('SNMPv2-MIB', 'sysName', '0')
+
+        with snmp_handler as snmp_service:
+            entry.sys_object_id = snmp_service.get_property(
+                SnmpMibObject('SNMPv2-MIB', 'sysObjectID', '0')).safe_value
+            vendor_number = self._parse_vendor_number(entry.sys_object_id)
+            entry.vendor = vendor_enterprise_numbers[vendor_number]
+            entry.description = snmp_service.get_property(
+                SnmpMibObject('SNMPv2-MIB', 'sysDescr', '0')).safe_value
+            sys_name = snmp_service.get_property(
+                SnmpMibObject('SNMPv2-MIB', 'sysName', '0')).safe_value
 
         if not sys_name:
             sys_name = self._generate_device_name(vendor_name=entry.vendor)

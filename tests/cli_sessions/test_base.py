@@ -21,6 +21,18 @@ class TestAbstractDiscoverySession(unittest.TestCase):
             def disconnect(self):
                 pass
 
+            def _connect_actions(self, prompt, logger):
+                pass
+
+            def _initialize_session(self, prompt, logger):
+                pass
+
+            def _read_byte_data(self):
+                pass
+
+            def _set_timeout(self, timeout):
+                pass
+
         self.device_ip = "test_device_ip"
         self.logger = mock.MagicMock()
         self.tested_class = TestedClass
@@ -130,5 +142,5 @@ class TestAbstractDiscoverySession(unittest.TestCase):
                                                                    valid_creds=valid_creds,
                                                                    creds_key=creds_key)
         # verify
-        with self.assertRaisesRegexp(AutoDiscoveryException, "All given credentials aren't valid"):
+        with self.assertRaisesRegex(AutoDiscoveryException, "All given credentials aren't valid"):
             wrapped(session=session, logger=self.logger)

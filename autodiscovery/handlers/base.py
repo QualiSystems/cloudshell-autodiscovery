@@ -142,7 +142,7 @@ class AbstractHandler(object):
 
         self.logger.info("Adding attributes to the resource {}".format(resource_name))
         attributes = [AttributeNameValue("{}{}".format(attribute_prefix, key), value)
-                      for key, value in entry.attributes.iteritems()]
+                      for key, value in entry.attributes.items()]
 
         cs_session.SetAttributesValues([ResourceAttributesUpdateRequest(resource_name, attributes)])
 

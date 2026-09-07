@@ -49,7 +49,7 @@ class TestSSHDiscoverySession(unittest.TestCase):
         enable_prompt = "$"
 
         # verify
-        with self.assertRaisesRegexp(AutoDiscoveryException, "All given credentials aren't valid"):
+        with self.assertRaisesRegex(AutoDiscoveryException, "All given credentials aren't valid"):
             self.ssh_session.check_credentials(cli_credentials=cli_credentials,
                                                default_prompt=default_prompt,
                                                enable_prompt=enable_prompt,

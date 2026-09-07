@@ -96,7 +96,7 @@ class VendorSettingsCollection(object):
         self._default_creds = VendorCLICredentials(name="default", cli_credentials=default_creds)
         self._default_folder = default_settings.get("folder-path", DEFAULT_RESOURCE_FOLDER_PATH)
 
-        for vendor_name, vendor_settings in vendor_settings.iteritems():
+        for vendor_name, vendor_settings in vendor_settings.items():
             vendor_creds = vendor_settings.get("cli-credentials", [])
             cli_creds = [CLICredentials(user=creds.get("user"),
                                         password=creds.get("password"),
@@ -127,7 +127,7 @@ class VendorSettingsCollection(object):
         :param VendorDefinition vendor:
         :rtype: str
         """
-        for vendor_name, folder_path in self._folder_paths.iteritems():
+        for vendor_name, folder_path in self._folder_paths.items():
             if vendor.check_vendor_name(vendor_name):
                 return folder_path
 

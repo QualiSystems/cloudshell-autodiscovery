@@ -1,2 +1,2 @@
-from ssh import SSHDiscoverySession
-from telnet import TelnetDiscoverySession
+from autodiscovery.cli_sessions.ssh import SSHDiscoverySession
+from autodiscovery.cli_sessions.telnet import TelnetDiscoverySession

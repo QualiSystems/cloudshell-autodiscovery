@@ -27,23 +27,25 @@ class TestRunCommand(unittest.TestCase):
         # verify
         self.assertEqual(result, "9")
 
-    @mock.patch("autodiscovery.commands.run.QualiSnmp")
-    def test_get_snmp_handler(self, quali_snmp_class):
-        quali_snmp = mock.MagicMock()
-        quali_snmp_class.return_value = quali_snmp
+    @mock.patch("autodiscovery.commands.run.Snmp")
+    def test_get_snmp_handler(self, snmp_class):
+        snmp_service_ctx = mock.MagicMock()
+        snmp_class.return_value.get_snmp_service.return_value = snmp_service_ctx
         snmp_community = "valid snmp community"
         # act
         result = self.run_command._get_snmp_handler(device_ip="10.10.10.10",
                                                     snmp_comunity_strings=[snmp_community])
         # verify
-        self.assertEqual(result, (quali_snmp, snmp_community))
+        self.assertEqual(result, (snmp_service_ctx, snmp_community))
+        # the probe entered the SNMP service context and performed a get
+        snmp_service_ctx.__enter__.return_value.get.assert_called_once()
 
-    @mock.patch("autodiscovery.commands.run.QualiSnmp")
-    def test_get_snmp_handler_with_invalid_snmp_string(self, quali_snmp_class):
-        quali_snmp_class.side_effect = Exception("")
+    @mock.patch("autodiscovery.commands.run.Snmp")
+    def test_get_snmp_handler_with_invalid_snmp_string(self, snmp_class):
+        snmp_class.return_value.get_snmp_service.side_effect = Exception("")
         snmp_community = "valid snmp community"
         # act
-        with self.assertRaisesRegexp(ReportableException, "SNMP timeout"):
+        with self.assertRaisesRegex(ReportableException, "SNMP timeout"):
             self.run_command._get_snmp_handler(device_ip="10.10.10.10",
                                                snmp_comunity_strings=[snmp_community])
 
